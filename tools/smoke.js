@@ -1,6 +1,6 @@
 // node tools/smoke.js work/<slug>/planner.html — loads the built page headless and prints the default journey
 const { chromium } = require('playwright');
-(async()=>{ const b=await chromium.launch(); const p=await b.newPage({viewport:{width:1400,height:900}});
+(async()=>{ const b=await chromium.launch({executablePath: process.env.CHROME_PATH||undefined}); const p=await b.newPage({viewport:{width:1400,height:900}});
  p.on('pageerror',e=>console.log('PAGEERROR',e.message));
  await p.goto('file://'+require('path').resolve(process.argv[2])); await p.waitForTimeout(1500);
  console.log(await p.evaluate(()=>[document.getElementById('sd').textContent+' days', document.getElementById('sk').textContent+' km', document.getElementById('sa').textContent+' m']));

@@ -16,7 +16,7 @@ page_cfg = dict(title=cfg['title'], lang=cfg['lang'], proj=proj, forkLabels=cfg.
 subs = {'CFG': json.dumps(page_cfg, ensure_ascii=False), 'P': load('P.json'), 'SD': load('seg_data.json'), 'SC': load('seg_scores.json'),
         'MSEG': load('moped_segments.json'), 'MSD': load('moped_sd.json'), 'MSC': load('moped_sc.json'),
         'MF': json.dumps({k: v['share'] for k, v in mf.items()})}
-s = tpl
+s = tpl.replace('<title>Journey planner</title>', '<title>' + cfg['title'] + '</title>', 1)
 for k, v in subs.items():
     ph = '/*@%s@*/' % k; assert s.count(ph) == 1, k; s = s.replace(ph, v)
 open(os.path.join(W, 'planner.html'), 'w', encoding='utf-8').write(s)

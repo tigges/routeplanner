@@ -143,7 +143,7 @@ var skipOn={},skipOff={},skipWarn="";      // user-pinned hops, user-refused hop
 var pick={},FORK={};P.forks.forEach(function(f){pick[f.node]=f.options[0];FORK[f.node]=1;});
 
 function edgeView(s,rev){
- if(s.mode==="ferry") return {id:s.id,mode:"ferry",frm:rev?s.to:s.frm,to:rev?s.frm:s.to,km:s.km,ascent:0,effort:0,cand:[]};
+ if(s.mode==="ferry") return {id:s.id,mode:"ferry",note:s.note||"",frm:rev?s.to:s.frm,to:rev?s.frm:s.to,km:s.km,ascent:0,effort:0,cand:[]};
  var c;
  if(!rev){c=s.cand;}
  else{c=s.cand.slice().reverse().map(function(x){
@@ -179,7 +179,7 @@ function splitDays(ch,target){
  if(cur.length)legs.push(cur);
  var days=[],warn="";
  legs.forEach(function(L){
-  if(!Array.isArray(L)){days.push({mode:L.mode,frm:(NODE[L.frm]||{name:L.frm}).name,to:(NODE[L.to]||{name:L.to}).name,km:L.km,eff:0});return;}
+  if(!Array.isArray(L)){days.push({mode:L.mode,note:L.note||"",frm:(NODE[L.frm]||{name:L.frm}).name,to:(NODE[L.to]||{name:L.to}).name,km:L.km,eff:0});return;}
   var C=[{eff:0,km:0,beds:0,node:L[0].frm,label:'',x:NODE[L[0].frm].x,y:NODE[L[0].frm].y}],base=0,bk=0,SEGS=[];
   L.forEach(function(s){s.cand.forEach(function(c){
     C.push({eff:base+c.eff,km:bk+c.km,beds:c.beds,node:c.node,label:c.label,x:c.x,y:c.y});});
@@ -521,7 +521,7 @@ function render(){
   if(d.mode==="train"){el.className="day trn";
    el.innerHTML='<div class="n"></div><div>train: '+d.frm+' to '+d.to+'</div><div class="m">'+d.km+' km skipped</div>';}
   else if(d.mode==="ferry"){el.className="day fer";
-   el.innerHTML='<div class="n"></div><div>ferry: '+d.frm+' to '+d.to+'</div><div class="m">'+d.km+' km</div>';}
+   el.innerHTML='<div class="n"></div><div>'+(d.note||'ferry')+': '+d.frm+' to '+d.to+'</div><div class="m">'+d.km+' km</div>';}
   else{n++;el.className="day";
    var su=d.segs?daySupply(d):null;
    var sup=!su?'':su.covered?('<div class="sup"><b>'+su.shop+'</b> shops · <b>'+su.stay+'</b> beds · <b>'+su.bath+'</b> baths · <b>'+su.rail+'</b> stations'+

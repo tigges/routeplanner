@@ -48,20 +48,27 @@ for t in trunks:
 oldP = jload(W, 'P.json', {'segments': []}); oldSD = jload(W, 'seg_data.json', {})
 old = {s['id']: s for s in oldP['segments']}
 segments = []; SD = {}; kept = 0
+def ferry_seg(f, v):
+    sid = f['from'] + '--' + f['to'] + ('' if v == 'base' else '#' + v)
+    return dict(id=sid, frm=f['from'], to=f['to'], variant=v, mode='ferry', km=f['km'], ascent=0, note=f.get('note', ''),
+                effort=0, descent=0, effortR=0, line='', cand=[])
+FERRY = {(f['from'], f['to'], f.get('variant', 'base')): f for f in cfg.get('ferries', [])}   # a ferry between two consecutive
+used = set()                                                                                 # trunk towns replaces the ride leg
 for t in trunks:
     v = t['variant']
     for a, b in zip(t['nodes'], t['nodes'][1:]):
         sid = a + '--' + b + ('' if v == 'base' else '#' + v)
+        if (a, b, v) in FERRY:
+            segments.append(ferry_seg(FERRY[(a, b, v)], v)); used.add((a, b, v)); continue
         r = route(W, a + '--' + b, LL[a], LL[b])
         if sid in old and old[sid]['km'] == r['km'] and sid in oldSD and os.path.exists(os.path.join(SEGDIR, seg_fn(sid))):
             segments.append(old[sid]); SD[sid] = oldSD[sid]; kept += 1; continue
         seg, sd = make_segment(PR, sid, a, b, v, r); segments.append(seg); SD[sid] = sd
         json.dump(seg_geojson(sid, r['line']), open(os.path.join(SEGDIR, seg_fn(sid)), 'w'))
 if kept: print('kept', kept, 'unchanged segments with their data')
-for f in cfg.get('ferries', []):
-    v = f.get('variant', 'base'); sid = f['from'] + '--' + f['to'] + ('' if v == 'base' else '#' + v)
-    segments.append(dict(id=sid, frm=f['from'], to=f['to'], variant=v, mode='ferry', km=f['km'], ascent=0, note=f.get('note', ''),
-                         effort=0, descent=0, effortR=0, line='', cand=[]))
+for f in cfg.get('ferries', []):                                   # ferries that are not part of a trunk (loose links)
+    v = f.get('variant', 'base')
+    if (f['from'], f['to'], v) not in used: segments.append(ferry_seg(f, v))
 # --- forks: every non-base trunk forks at its first node ------------------------------------
 forks = {}
 for t in trunks:
