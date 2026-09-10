@@ -20,12 +20,13 @@ planner/     template.html — the page, with /*@…@*/ placeholders for data
 pipeline/    numbered steps; every step takes the config as its argument
 examples/    japan/ — the finished Japan data (P.json, seg_data.json, scores, moped lines, caches)
 docs/        RUNBOOK.md — how to build a country, step by step; DATA-MODEL.md — what the files contain
+skill/       route-planner/SKILL.md — master copy of the Claude skill that drives these sessions
 work/        (ignored) per-country working directory with all intermediate files and the built page
 downloads/   (ignored) OSM extracts
 ```
 
 Quick start, Japan: `python3 pipeline/01_graph.py config/japan.json && python3 pipeline/build_planner.py config/japan.json`
-→ `work/japan/planner.html` (open locally) and `work/japan/planner_pub.html` (publish as a claude.ai artifact).
+→ `work/japan/planner.html` (open locally); `python3 pipeline/publish.py config/japan.json` puts it on GitHub Pages.
 
 Quick start, new country: read `docs/RUNBOOK.md`.
 
