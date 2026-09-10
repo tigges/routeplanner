@@ -128,9 +128,17 @@ function applyVehicle(){
 var LABEL=CFG.forkLabels;
 var OPTNAME=CFG.optionNames;
 var OPTBASE=CFG.defaultOptionNames;
+function optName(node,o){return OPTNAME[node+":"+o]||(o==="base"?(OPTBASE[node]||"Base"):(OPTNAME[o]||o));}
 var RANK={};P.nodes.forEach(function(n){RANK[n.id]=n.rank||0;});
 P.forks.sort(function(a,b){return RANK[a.node]-RANK[b.node];});
-var SKIPPABLE=CFG.skippable;
+var SKIPRULE=CFG.skipRule||{density:25,minKm:20};   // shops + eateries per km at or above which a stretch counts as built-up
+var SKIP_ADD=CFG.skippable||[],SKIP_NEVER=CFG.neverSkip||[];
+function builtUp(id){var sd=SD[id],v=SEG[id];if(!sd||!sd.fac||!v||!v.km)return 0;return ((sd.fac.shop||[]).length+(sd.fac.eat||[]).length)/v.km;}
+function skipCands(ids){ // built-up stretches first, densest first, then any hand-added ones
+ var c=ids.filter(function(id){var v=SEG[id];return v&&v.mode==="ride"&&SKIP_NEVER.indexOf(id)<0&&v.km>=SKIPRULE.minKm&&builtUp(id)>=SKIPRULE.density;});
+ c.sort(function(a,b){return builtUp(b)-builtUp(a);});
+ SKIP_ADD.forEach(function(id){if(ids.indexOf(id)>=0&&c.indexOf(id)<0&&SKIP_NEVER.indexOf(id)<0)c.push(id);});
+ return c;}
 var skipOn={},skipOff={},skipWarn="";      // user-pinned hops, user-refused hops
 var pick={},FORK={};P.forks.forEach(function(f){pick[f.node]=f.options[0];FORK[f.node]=1;});
 
@@ -210,7 +218,7 @@ function applyCode(code){ try{ var st=JSON.parse(decodeURIComponent(escape(atob(
  if(st.v&&st.v!==VEH&&VEHNAME[st.v]){ VEH=st.v; try{localStorage.setItem("veh",VEH);}catch(e){} applyVehicle(); }
  document.querySelectorAll(".fork button.opt").forEach(function(b){ b.classList.toggle("on",pick[b.dataset.n]===b.dataset.o); });
  return true; }
-function routeSummary(){ var ride=LASTDAYS.filter(function(d){return d.mode==="ride"}); var vars=[]; for(var k in pick) if(pick[k]!==P.forks.filter(function(f){return f.node===k})[0].options[0]) vars.push(OPTNAME[pick[k]]||pick[k]);
+function routeSummary(){ var ride=LASTDAYS.filter(function(d){return d.mode==="ride"}); var vars=[]; for(var k in pick) if(pick[k]!==P.forks.filter(function(f){return f.node===k})[0].options[0]) vars.push(optName(k,pick[k]));
  return (VEH==="bike"?"":VEHNAME[VEH].split(" ")[0]+" · ")+NODE[document.getElementById("start").value].name+" → "+NODE[document.getElementById("end").value].name+" · "+ride.length+" days · "+(VEH==="opium"?"":"effort ")+document.getElementById("eff").value+(VEH==="opium"?" km/day":"")+(vars.length?" · "+vars.join(", "):""); }
 function favList(){ try{ return JSON.parse(localStorage.getItem("favs")||"[]"); }catch(e){ return []; } }
 function favRender(){ var h=document.getElementById("favs"), L=favList(); h.innerHTML=L.length?"":'<div style="border:0;color:#b9c6cf">No favourites saved yet in this browser.</div>';
@@ -385,7 +393,7 @@ function asTrain(v){return {id:v.id,mode:"train",frm:v.frm,to:v.to,km:v.km,ascen
 function rideDays(ch,target){return splitDays(ch,target).days.filter(function(d){return d.mode==="ride"}).length;}
 function applySkips(ch,dtar,target){
  var ids=ch.map(function(v){return v.id});
- var cands=SKIPPABLE.filter(function(id){return ids.indexOf(id)>=0});
+ var cands=skipCands(ids);
  var on={}; Object.keys(skipOn).forEach(function(id){if(ids.indexOf(id)>=0)on[id]=1;});
  var auto={};
  var apply=function(){return ch.map(function(v){return (on[v.id]||auto[v.id])?asTrain(v):v;});};
@@ -399,7 +407,7 @@ function applySkips(ch,dtar,target){
  cands.forEach(function(id){var v=SEG[id],b=document.createElement("button");
   b.className="opt train"+((on[id]||auto[id])?" on":"")+(auto[id]&&!on[id]?" auto":""); b.dataset.id=id;
   b.textContent=(NODE[v.frm]||{name:v.frm}).name+" → "+(NODE[v.to]||{name:v.to}).name+" · "+Math.round(v.km)+" km";
-  b.title=(on[id]?"kept by you":auto[id]?"proposed — click to refuse":"click to take the train here");
+  var bu=builtUp(id); b.title=(on[id]?"kept by you":auto[id]?"proposed — click to refuse":"click to take the train here")+(bu?" · built-up: "+Math.round(bu)+" shops and eateries per km":"");
   box.appendChild(b);});
  if(!cands.length) box.innerHTML='<span class="hintline">No skippable stretch on this route.</span>';
  return {chain:apply()};}
@@ -418,7 +426,7 @@ function forkCompare(target){
   var ids=f.options.map(function(o){return chains[o].map(function(v){return v.id});});
   if(ids.some(function(a){return !a.length})){host.innerHTML='<div style="color:#b9c6cf">not reachable on this journey</div>';return;}
   var pct=function(v){return v==null?'–':Math.round(v*100)+'%'};
-  var name=function(o){return o===f.options[0]?(OPTBASE[f.node]||OPTNAME[o]||o):(OPTNAME[o]||o);};
+  var name=function(o){return optName(f.node,o);};
   var row=function(diff,nm,cls){
    var km=0,asc=0,eff=0,rk=0,busy=0,si=0,fer=0;
    diff.forEach(function(v){ if(v.mode!=="ride"){fer+=1;return;} km+=v.km; asc+=v.ascent; eff+=v.effort; var c=SC[v.id]; if(c){rk+=c.route_any*v.km; busy+=c.busy*v.km; si+=c.sights;} });
@@ -541,7 +549,7 @@ var fb=document.getElementById("forks");
 P.forks.forEach(function(f){var d=document.createElement("div");d.className="fork";d.dataset.node=f.node;
  var h='<div class="q">'+(LABEL[f.node]||f.node)+'</div><div class="opts">';
  f.options.forEach(function(o){h+='<button class="opt'+(o===f.options[0]?" on":"")+'" data-n="'+f.node+'" data-o="'+o+'">'+
-  (o==="base"?(OPTBASE[f.node]||"Base"):(OPTNAME[o]||o))+'</button>';});
+  optName(f.node,o)+'</button>';});
  d.innerHTML=h+'</div><div class="cmp"></div>';fb.appendChild(d);});
 fb.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
  pick[b.dataset.n]=b.dataset.o;

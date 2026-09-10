@@ -27,20 +27,16 @@
   "optionNames": {
     "base": "Yotei line", "coast": "Coast road", "direct": "Direct", "mainland": "Mainland", "shikoku": "Cross to Shikoku",
     "pacific": "Pacific coast", "crossover": "Cross to Tsuruoka", "highland": "Central highland", "sanin": "San'in coast",
-    "shikoku-south": "Shikoku south coast", "sapporo": "Via Sapporo", "kurashiki": "Via Kurashiki",
+    "shikoku-south": "Shikoku south coast", "sapporo": "Via Sapporo", "kurashiki": "Via Kurashiki", "okayama:base": "Direct road",
     "hirosaki": "Via Hirosaki castle town", "hiraizumi": "Via Hiraizumi", "toyama": "Via Toyama + Takaoka"
   },
   "defaultOptionNames": {
     "aomori": "Sea of Japan", "otaru": "Yotei line", "niigata": "Sea of Japan coast", "chirihama": "Via Noto",
     "tsuruga": "Biwa west shore", "onomichi": "Shimanami + Tobishima", "imabari": "Ferry to Okamura",
-    "atsuta": "Ishikari coast", "okayama": "Direct", "kesennuma": "Pacific coast", "uozu": "Coast road"
+    "atsuta": "Ishikari coast", "okayama": "Via Kurashiki", "kesennuma": "Pacific coast", "uozu": "Coast road"
   },
-  "skippable": [
-    "tsukuba--tokyo#pacific", "tokyo--kamakura#pacific", "toyohashi--nagoya#pacific", "nagoya--ise#pacific",
-    "hamamatsu--toyohashi#pacific", "shizuoka--hamamatsu#pacific", "osaka--kobe", "kobe--himeji", "wakayama--osaka#pacific",
-    "mito--tsukuba#pacific", "iwaki--mito#pacific", "sendai--soma#pacific", "otsu--osaka", "himeji--okayama", "okayama--fukuyama",
-    "niigata--kashiwazaki", "kanazawa--tojinbo", "hofu--shimonoseki", "nobeoka--miyazaki", "numazu--shizuoka#pacific", "yamagata--tsuruoka#crossover"
-  ],
+  "skippable": [],
+  "neverSkip": [],
   "vehicles": {
     "names": {"bike": "Bicycle", "ebike": "E-bike (pedelec)", "opium": "Opium (45 km/h)"},
     "defaultTarget": {"bike": 140, "ebike": 120, "opium": 200},

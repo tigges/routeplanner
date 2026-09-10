@@ -12,7 +12,7 @@ def load(name, default='{}'):
 proj = json.load(open(os.path.join(W, 'proj.json')))
 mf = json.load(open(os.path.join(W, 'motorfree.json'))) if os.path.exists(os.path.join(W, 'motorfree.json')) else {}
 page_cfg = dict(title=cfg['title'], lang=cfg['lang'], proj=proj, forkLabels=cfg.get('forkLabels', {}), optionNames=cfg.get('optionNames', {}),
-                defaultOptionNames=cfg.get('defaultOptionNames', {}), skippable=cfg.get('skippable', []), vehicles=cfg['vehicles'])
+                defaultOptionNames=cfg.get('defaultOptionNames', {}), skippable=cfg.get('skippable', []), neverSkip=cfg.get('neverSkip', []), skipRule=cfg.get('skipRule'), vehicles=cfg['vehicles'])
 subs = {'CFG': json.dumps(page_cfg, ensure_ascii=False), 'P': load('P.json'), 'SD': load('seg_data.json'), 'SC': load('seg_scores.json'),
         'MSEG': load('moped_segments.json'), 'MSD': load('moped_sd.json'), 'MSC': load('moped_sc.json'),
         'MF': json.dumps({k: v['share'] for k, v in mf.items()})}

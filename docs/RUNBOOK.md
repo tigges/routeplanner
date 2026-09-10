@@ -26,7 +26,10 @@ trunks                          [{variant:"base", nodes:[…]}, {variant:"alpine
 ferries                         [{from, to, km, variant?}]
 forkLabels / optionNames /      the words shown on the fork buttons; defaultOptionNames names the default (first) option
 defaultOptionNames              per fork node
-skippable                       segment ids the "Days I have" slider may replace with a train hop (dull stretches)
+skipRule                        optional {density, minKm}: a segment counts as a train-hop candidate for the "Days I have"
+                                slider when it has at least `density` shops + eateries per km (built-up; default 25) and is
+                                at least `minKm` long (default 20). Computed on the page from the facility data.
+skippable / neverSkip           optional segment ids to add to, or bar from, the train-hop candidates
 vehicles                        names, default slider value, min/max day per vehicle; moped.* controls step 9
 graph.outline                   optional GeoJSON of the country border / coast (geoBoundaries, Natural Earth)
 ```
