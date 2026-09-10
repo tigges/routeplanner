@@ -86,6 +86,22 @@
    ]
   ]
  },
+ "signedRoutes": {
+  "label": "Prefer signed cycle routes",
+  "legs": [
+   "okayama--kurashiki#kurashiki",
+   "takaoka--himi#toyama",
+   "hamamatsu--toyohashi#pacific",
+   "tojinbo--fukui",
+   "odawara--numazu#pacific",
+   "onomichi--kure#mainland",
+   "kushima--kanoya",
+   "okayama--fukuyama",
+   "noshiro--akita",
+   "mito--tsukuba#pacific",
+   "akita--nikaho"
+  ]
+ },
  "ferries": [],
  "forkLabels": {
   "aomori": "Aomori onward",

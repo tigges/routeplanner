@@ -1,10 +1,10 @@
 """Step 4 — real lodging counts on every split candidate (beds within ±3 km along the line) and extra
-candidates at bed clusters, so day ends land where beds are. Works on P.json; --moped for moped_segments.json."""
+candidates at bed clusters, so day ends land where beds are. Works on P.json; --moped / --signed for the moped or signed-route lines."""
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import *
-cfg, W = load_cfg(); moped = '--moped' in sys.argv
-if moped: MS = jload(W, 'moped_segments.json'); segs = list(MS.values()); SD = jload(W, 'moped_sd.json')
+cfg, W = load_cfg(); LAYER = 'signed' if '--signed' in sys.argv else 'moped'; moped = '--moped' in sys.argv or '--signed' in sys.argv
+if moped: MS = jload(W, LAYER + '_segments.json'); segs = list(MS.values()); SD = jload(W, LAYER + '_sd.json')
 else: P = jload(W, 'P.json'); segs = P['segments']; SD = jload(W, 'seg_data.json')
 n_upd = n_add = 0
 for s in segs:
@@ -30,6 +30,6 @@ for s in segs:
             have.append(k); n_add += 1
         k += 2.0
     cand.sort(key=lambda c: (c['km'], c['node'] is not None)); s['cand'] = cand
-if moped: jdump(W, 'moped_segments.json', MS)
+if moped: jdump(W, LAYER + '_segments.json', MS)
 else: jdump(W, 'P.json', P)
 print('beds on %d candidates, %d bed-cluster candidates added' % (n_upd, n_add))

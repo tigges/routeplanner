@@ -1,12 +1,12 @@
 """Step 5 — two names for every facility and sight: local (OSM name) and English (OSM name:en, else a
 romanisation when config.lang.romanise is set, else the local name, else a generic label).
 Facility entries become [km, off, en, local] (local only when different); sights [km, en, kind, d, local].
-Runs on seg_data.json / seg_scores.json, or with --moped on the moped files."""
+Runs on seg_data.json / seg_scores.json, or with --moped / --signed on those layers' files."""
 import os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import *
-cfg, W = load_cfg(); moped = '--moped' in sys.argv
-SD = jload(W, 'moped_sd.json' if moped else 'seg_data.json'); SC = jload(W, 'moped_sc.json' if moped else 'seg_scores.json', {})
+cfg, W = load_cfg(); LAYER = 'signed' if '--signed' in sys.argv else 'moped'; moped = '--moped' in sys.argv or '--signed' in sys.argv
+SD = jload(W, LAYER + '_sd.json' if moped else 'seg_data.json'); SC = jload(W, LAYER + '_sc.json' if moped else 'seg_scores.json', {})
 rom = cfg['lang'].get('romanise')
 if rom == 'pykakasi':
     import pykakasi; kk = pykakasi.kakasi(); JA = re.compile(r'[぀-ヿ一-鿿]')
@@ -38,6 +38,6 @@ for v in SC.values():
     for e in v['sight_list']:
         if len(e) < 5: e.append(None)
         if rom and e[4] is None and romanise(e[1]) != e[1]: e[4] = e[1]; e[1] = romanise(e[1])   # local-only name
-jdump(W, 'moped_sd.json' if moped else 'seg_data.json', SD, compact=True)
-if SC: jdump(W, 'moped_sc.json' if moped else 'seg_scores.json', SC)
+jdump(W, LAYER + '_sd.json' if moped else 'seg_data.json', SD, compact=True)
+if SC: jdump(W, LAYER + '_sc.json' if moped else 'seg_scores.json', SC)
 print('names finished on', n, 'facility entries')

@@ -1,9 +1,9 @@
 """Step 6 — name every unnamed split candidate (would otherwise show as 'km478') after the nearest
-settlement, with Nominatim reverse geocoding (1 request/s, cached in rev_cache.json). --moped for the moped lines."""
+settlement, with Nominatim reverse geocoding (1 request/s, cached in rev_cache.json). --moped / --signed for the moped or signed-route lines."""
 import os, sys, time, urllib.request, urllib.parse
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import *
-cfg, W = load_cfg(); moped = '--moped' in sys.argv; pj = Proj(jload(W, 'proj.json'))
+cfg, W = load_cfg(); LAYER = 'signed' if '--signed' in sys.argv else 'moped'; moped = '--moped' in sys.argv or '--signed' in sys.argv; pj = Proj(jload(W, 'proj.json'))
 cache = jload(W, 'rev_cache.json', {})
 KEYS = ['city', 'town', 'village', 'hamlet', 'suburb', 'municipality', 'city_district', 'county']
 def rev(lat, lon):
@@ -18,7 +18,7 @@ def rev(lat, lon):
     time.sleep(1.1)
     if name is not None: cache[k] = name; jdump(W, 'rev_cache.json', cache)
     return name or ''
-if moped: MS = jload(W, 'moped_segments.json'); segs = list(MS.values())
+if moped: MS = jload(W, LAYER + '_segments.json'); segs = list(MS.values())
 else: P = jload(W, 'P.json'); segs = P['segments']
 n = 0
 for s in segs:
@@ -26,7 +26,7 @@ for s in segs:
         if c['node'] or c['label']: continue
         c['label'] = rev(*pj.ll(c['x'], c['y'])); n += 1
         if n % 20 == 0:
-            jdump(W, 'moped_segments.json', MS) if moped else jdump(W, 'P.json', P)
-if moped: jdump(W, 'moped_segments.json', MS)
+            jdump(W, LAYER + '_segments.json', MS) if moped else jdump(W, 'P.json', P)
+if moped: jdump(W, LAYER + '_segments.json', MS)
 else: jdump(W, 'P.json', P)
 print('named', n, 'candidates')

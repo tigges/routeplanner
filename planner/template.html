@@ -84,7 +84,7 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 <div id="warn"></div>
 <h2>This route</h2><div class="layers" id="routebar"><button class="opt" id="favsave">Save as favourite</button><button class="opt" id="copylink">Copy link</button><button class="opt" id="copycsv">Copy day list (CSV)</button><button class="opt" id="copygpx">Copy GPX</button></div>
 <div id="favs"></div><div id="expnote" class="hintline"></div><textarea id="exp" hidden></textarea>
-<h2>Forks</h2><div id="forks"></div>
+<h2>Forks</h2><div id="signedbar" class="fork" hidden><div class="layers" style="margin:0"><button class="opt" id="signed"></button></div><div class="hintline" id="signednote"></div></div><div id="forks"></div>
 <h2>Show on map</h2><div class="layers" id="layers"><button class="opt" data-l="shop">Shops</button><button class="opt" data-l="stay">Beds</button><button class="opt" data-l="bath">Baths</button><button class="opt" data-l="rail">Stations</button><button class="opt" data-l="water">Water</button></div>
 <h2>Days</h2><div id="days"></div>
 </div>
@@ -98,6 +98,10 @@ var SC=/*@SC@*/;
 var MSEG=/*@MSEG@*/;
 var MSD=/*@MSD@*/;
 var MSC=/*@MSC@*/;
+var SSEG=/*@SSEG@*/;
+var SSD=/*@SSD@*/;
+var SSC=/*@SSC@*/;
+var SIGNED=false; try{ SIGNED=localStorage.getItem("signed")==="1"; }catch(e){}
 var MF=/*@MF@*/;   // share of the bicycle line on ways a moped may not use
 var VEH="bike"; try{ VEH=localStorage.getItem("veh")||"bike"; }catch(e){} if(["bike","ebike","opium"].indexOf(VEH)<0) VEH="bike";
 var VEHNAME=CFG.vehicles.names, VEHDEF=CFG.vehicles.defaultTarget;
@@ -109,7 +113,8 @@ var BIKE={};   // originals per segment id: {seg fields, sd, sc}
 function applyVehicle(){
  P.segments.forEach(function(s){ if(s.mode!=="ride") return; var id=s.id;
   if(!BIKE[id]) BIKE[id]={seg:JSON.parse(JSON.stringify(s)),sd:SD[id],sc:SC[id]};
-  var b=BIKE[id].seg; s.moped=false; SD[id]=BIKE[id].sd; SC[id]=BIKE[id].sc;
+  var sg=SIGNED&&VEH!=="opium"&&SSEG[id]?SSEG[id]:null;   // "prefer signed cycle routes": its line replaces the bicycle line
+  var b=sg||BIKE[id].seg; s.moped=false; s.signed=!!sg; SD[id]=sg?(SSD[id]||BIKE[id].sd):BIKE[id].sd; SC[id]=sg?(SSC[id]||BIKE[id].sc):BIKE[id].sc;
   ["km","ascent","descent","effort","effortR","line","cand"].forEach(function(k){s[k]=b[k];});
   if(VEH==="opium"){
    if(MSEG[id]){ var m=MSEG[id]; ["km","ascent","descent","effort","effortR","line","cand"].forEach(function(k){s[k]=m[k];}); s.moped=true; SD[id]=MSD[id]||SD[id]; SC[id]=MSC[id]||SC[id]; }
@@ -207,7 +212,7 @@ var gC=document.createElementNS(NS,"g"),gG=document.createElementNS(NS,"g"),
 var gL=document.createElementNS(NS,"g"),gH=document.createElementNS(NS,"g"),gT=document.createElementNS(NS,"g"),gP=document.createElementNS(NS,"g");
 [gC,gG,gR,gH,gS,gL,gT,gP].forEach(function(g){svg.appendChild(g);});
 var LABELS=[], DOTS=[], CH=[], POIS=[], LASTDAYS=[];
-function stateCode(){ var st={s:document.getElementById("start").value,e:document.getElementById("end").value,t:+document.getElementById("eff").value,d:+document.getElementById("dtar").value,p:pick,k:Object.keys(skipOn),l:LANG,v:VEH};
+function stateCode(){ var st={s:document.getElementById("start").value,e:document.getElementById("end").value,t:+document.getElementById("eff").value,d:+document.getElementById("dtar").value,p:pick,k:Object.keys(skipOn),l:LANG,v:VEH,g:SIGNED?1:0};
  return btoa(unescape(encodeURIComponent(JSON.stringify(st)))); }
 function applyCode(code){ try{ var st=JSON.parse(decodeURIComponent(escape(atob(code)))); }catch(e){ return false; }
  if(NODE[st.s]) document.getElementById("start").value=st.s; if(NODE[st.e]) document.getElementById("end").value=st.e;
@@ -216,10 +221,11 @@ function applyCode(code){ try{ var st=JSON.parse(decodeURIComponent(escape(atob(
  skipOn={}; (st.k||[]).forEach(function(id){skipOn[id]=1;});
  if(st.l){LANG=st.l; try{localStorage.setItem("lang",LANG);}catch(e){} }
  if(st.v&&st.v!==VEH&&VEHNAME[st.v]){ VEH=st.v; try{localStorage.setItem("veh",VEH);}catch(e){} applyVehicle(); }
+ if(!!st.g!==SIGNED){ SIGNED=!!st.g; try{localStorage.setItem("signed",SIGNED?"1":"0");}catch(e){} applyVehicle(); }
  document.querySelectorAll(".fork button.opt").forEach(function(b){ b.classList.toggle("on",pick[b.dataset.n]===b.dataset.o); });
  return true; }
 function routeSummary(){ var ride=LASTDAYS.filter(function(d){return d.mode==="ride"}); var vars=[]; for(var k in pick) if(pick[k]!==P.forks.filter(function(f){return f.node===k})[0].options[0]) vars.push(optName(k,pick[k]));
- return (VEH==="bike"?"":VEHNAME[VEH].split(" ")[0]+" · ")+NODE[document.getElementById("start").value].name+" → "+NODE[document.getElementById("end").value].name+" · "+ride.length+" days · "+(VEH==="opium"?"":"effort ")+document.getElementById("eff").value+(VEH==="opium"?" km/day":"")+(vars.length?" · "+vars.join(", "):""); }
+ return (VEH==="bike"?"":VEHNAME[VEH].split(" ")[0]+" · ")+NODE[document.getElementById("start").value].name+" → "+NODE[document.getElementById("end").value].name+" · "+ride.length+" days · "+(VEH==="opium"?"":"effort ")+document.getElementById("eff").value+(VEH==="opium"?" km/day":"")+(SIGNED&&VEH!=="opium"?" · signed routes":"")+(vars.length?" · "+vars.join(", "):""); }
 function favList(){ try{ return JSON.parse(localStorage.getItem("favs")||"[]"); }catch(e){ return []; } }
 function favRender(){ var h=document.getElementById("favs"), L=favList(); h.innerHTML=L.length?"":'<div style="border:0;color:#b9c6cf">No favourites saved yet in this browser.</div>';
  L.forEach(function(f,i){ var d=document.createElement("div"); d.innerHTML='<span title="load this route">'+f.name+'</span><b>load</b><i title="remove">✕</i>';
@@ -476,6 +482,7 @@ function zoomDay(d,el){
 document.getElementById("fit").addEventListener("click",function(){zoomDay(null);});
 function setLangBtn(){ document.getElementById("lang").textContent=LANG==="local"?"English names":CFG.lang.localLabel; }
 document.getElementById("veh").addEventListener("click",function(){ VEH={bike:"ebike",ebike:"opium",opium:"bike"}[VEH]; try{localStorage.setItem("veh",VEH);}catch(e){} applyVehicle(); document.getElementById("eff").value=VEHDEF[VEH]; render(); });
+document.getElementById("signed").addEventListener("click",function(){ SIGNED=!SIGNED; try{localStorage.setItem("signed",SIGNED?"1":"0");}catch(e){} applyVehicle(); render(); });
 document.getElementById("lang").addEventListener("click",function(){ LANG=LANG==="local"?"en":"ja"; try{localStorage.setItem("lang",LANG);}catch(e){} setLangBtn(); render(); });
 
 function render(){
@@ -503,6 +510,14 @@ function render(){
   (VEHNAME.opium+" mode: a day is distance only (no climb penalty), "+EMIN+"–"+EMAX+" km. "+nre+" segments ("+Math.round(kmre)+" km) follow the moped line because the bicycle line used cycle-only paths; everything else is the same road."):
   VEH==="ebike"?"E-bike mode: same roads as the bicycle, climbing counts a third, days capped at "+EMAX+" effort (one battery, charge overnight).":
   (mfkm>0?Math.round(mfkm)+" km of this journey runs on cycle-only paths a moped could not use (see the vehicle switch on the map).":"");
+ var hasS=Object.keys(SSEG).length; document.getElementById("signedbar").hidden=!hasS;
+ if(hasS){ var bs=document.getElementById("signed"); bs.textContent=(CFG.signedRoutes&&CFG.signedRoutes.label)||"Prefer signed cycle routes";
+  bs.classList.toggle("on",SIGNED&&VEH!=="opium"); bs.disabled=VEH==="opium";
+  var sl=ch.filter(function(v){return v.mode==="ride"&&SSEG[v.id]}), sx=sl.reduce(function(a,v){return a+SSEG[v.id].km-BIKE[v.id].seg.km},0);
+  document.getElementById("signednote").textContent=VEH==="opium"?"Not used by the "+VEHNAME.opium+": it keeps its own line.":
+   !sl.length?"No leg on this journey has a signed-route line.":
+   (SIGNED?sl.length+" legs on this journey follow a signed cycle route, "+Math.round(sx)+" km longer in total than the direct lines.":
+    "Would move "+sl.length+" legs on this journey onto a signed cycle route, adding "+Math.round(sx)+" km."); }
  var inChain={};ch.forEach(function(s){inChain[s.id]=1});
  while(gG.firstChild)gG.removeChild(gG.firstChild);
  while(gR.firstChild)gR.removeChild(gR.firstChild);

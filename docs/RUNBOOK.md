@@ -47,6 +47,7 @@ graph.outline                   optional GeoJSON of the country border / coast (
 | `08_motorfree.py` | optional (vehicle): share of each line on cycle-only ways | extracts | ~5 min per extract |
 | `09_moped.py` | optional (vehicle): moped re-routing of affected segments + their facilities/scores/names | extracts, network | as 02+03 for those segments |
 | `10_cycleroutes.py` | optional: for legs with little signed-route share, stitch nearby ncn/rcn route relations along the corridor and re-route through them; writes cycleroute_candidates.json (a report, not applied). Make a good one the default with `viaBase` in the config, or offer it as a fork. | extracts, network | ~5 min per extract |
+| `11_signed.py` | optional: the "Prefer signed cycle routes" switch. For each leg in `signedRoutes.legs`, rebuilds the line through the step-10 waypoints, then its facilities, scores, names, beds and day ends (writes signed_segments/sd/sc.json). `--extract <file>` does one region per run; finish with a run without it. Choose legs by how much signed route they gain, not just by extra length (on Japan 21 of 32 candidates gained under 10 points). | extracts, network | as 02+03 for those legs (~3 min per region for 11 legs) |
 | `build_planner.py` | template + data → work/<slug>/planner.html and planner_pub.html | — | seconds |
 
 Minimum viable planner: 01 → build. Everything else adds data to the same page; run 02–06 for a real one.
@@ -62,6 +63,15 @@ page (~10–15 MB) to git history; fine for now, prune later if the repository g
 (the Artifact tool wraps it). Republish to the same artifact to keep the link. Keep a copy of
 `planner.html` in the country's Downloads/project as the offline version. The page is self-contained;
 its size is roughly 8 MB per 100 segments with facilities, double that with moped lines.
+
+## 3a. Config settings added on Japan (available to every country)
+- `viaBase`: `{"a--b#variant": [[lat,lon],…]}` bends an existing leg through waypoints (onto a signed cycle route) without adding a fork.
+  At present this only takes effect for a country that ships a prebuilt graph (Japan); a from-scratch country still ignores it.
+- `signedRoutes`: `{"label": "Prefer signed cycle routes", "legs": ["a--b#variant", …]}` — legs that get a signed-route line behind the page switch
+  (bicycle and e-bike only; the moped keeps its own line). Needs steps 10 and 11. With no `signedRoutes` the switch does not appear.
+- `vehicles.moped.dropFacilities`: categories left out of the moped data at build time (default eat, wc; they fall back to the bicycle list). Saves ~3 MB on Japan.
+- Steps 02, 03 and 11 take `--extract <file>` to scan one OSM extract per run (time-limited sessions).
+- Background jobs in the Claude sandbox are killed when a tool call ends unless started with `setsid nohup … &`.
 
 ## 4. Adding to an existing country
 Edit the config (a new trunk, a detour, a renamed fork) and re-run the steps in order. Routing, geocoding
