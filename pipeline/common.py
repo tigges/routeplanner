@@ -58,11 +58,12 @@ def geocode(W, nid, query):
     if not res: raise SystemExit('no geocode result for %s (%s) — give lat/lon in the config' % (nid, query))
     cache[nid] = (float(res[0]['lat']), float(res[0]['lon']), res[0]['display_name'][:80]); jdump(W, 'geo_cache.json', cache)
     print('geocoded', nid, cache[nid], flush=True); return cache[nid][:2]
-def route(W, key, a_ll, b_ll, profile='trekking', cache_name='route_cache.json'):
+def route(W, key, a_ll, b_ll, profile='trekking', cache_name='route_cache.json', via=()):
+    """BRouter leg a→b; via = optional list of (lat, lon) waypoints the line must pass (used to follow a cycle route)."""
     rt = jload(W, cache_name, {})
     if key in rt: return rt[key]
-    (la1, lo1), (la2, lo2) = a_ll, b_ll
-    url = 'https://brouter.de/brouter?lonlats=%.5f,%.5f|%.5f,%.5f&profile=%s&alternativeidx=0&format=geojson' % (lo1, la1, lo2, la2, profile)
+    pts = [a_ll] + [tuple(v) for v in via] + [b_ll]
+    url = 'https://brouter.de/brouter?lonlats=%s&profile=%s&alternativeidx=0&format=geojson' % ('|'.join('%.5f,%.5f' % (lo, la) for la, lo in pts), profile)
     for attempt in range(4):
         try:
             with urllib.request.urlopen(url, timeout=180) as r: gj = json.load(r)

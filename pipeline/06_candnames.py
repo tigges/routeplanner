@@ -25,6 +25,8 @@ for s in segs:
     for c in s.get('cand', []):
         if c['node'] or c['label']: continue
         c['label'] = rev(*pj.ll(c['x'], c['y'])); n += 1
+        if n % 20 == 0:
+            jdump(W, 'moped_segments.json', MS) if moped else jdump(W, 'P.json', P)
 if moped: jdump(W, 'moped_segments.json', MS)
 else: jdump(W, 'P.json', P)
 print('named', n, 'candidates')

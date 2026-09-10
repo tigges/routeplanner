@@ -11,11 +11,18 @@ if not todo: print('nothing to do'); sys.exit()
 tmp = os.path.join(W, 'segments_todo'); shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
 for sid in todo: shutil.copy(os.path.join(W, 'segments', seg_fn(sid)), tmp)
 os.makedirs(os.path.join(W, 'fac'), exist_ok=True); tag = 'all' if '--all' in sys.argv else 'r%d' % len(glob.glob(os.path.join(W, 'fac', '*.csv')))
+ONLYX = sys.argv[sys.argv.index('--extract') + 1] if '--extract' in sys.argv else None   # one extract per run (slow machines / time-limited sessions)
+TAGF = os.path.join(W, 'fac', '.tag')
+if ONLYX: tag = open(TAGF).read().strip() if os.path.exists(TAGF) else tag
+if ONLYX and '--merge' not in sys.argv: open(TAGF, 'w').write(tag)
 for pbf in cfg['osm']['extracts']:
+    if ONLYX and os.path.basename(pbf) != ONLYX: continue
     out = os.path.join(W, 'fac', '%s-%s.csv' % (os.path.basename(pbf).split('.')[0], tag))
     print('scanning', pbf, 'for', len(todo), 'segments', flush=True)
     subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'extract_facilities.py'), '--segments-dir', tmp,
                     '--pbf', pbf, '--corridor', str(cfg['osm'].get('corridor_km', 2.0)), '--out', out], check=True)
+if ONLYX and '--merge' not in sys.argv: print('extract done; run the others, then --merge'); sys.exit()
+if os.path.exists(TAGF): os.remove(TAGF)
 # merge every csv into seg_data (dedupe by segment + osm id); names finished in step 5
 CATS = {'food_shop': 'shop', 'lodging': 'stay', 'camping': 'camp', 'bath': 'bath', 'michi_no_eki': 'mne', 'water': 'water',
         'toilets': 'wc', 'bike': 'bike', 'laundry': 'laundry', 'rail': 'rail', 'food_eat': 'eat'}

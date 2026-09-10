@@ -46,6 +46,7 @@ graph.outline                   optional GeoJSON of the country border / coast (
 | `07_cities.py` | optional: sizeable places within reach of the lines → detour / rest-day candidates | extracts | ~2 min per extract |
 | `08_motorfree.py` | optional (vehicle): share of each line on cycle-only ways | extracts | ~5 min per extract |
 | `09_moped.py` | optional (vehicle): moped re-routing of affected segments + their facilities/scores/names | extracts, network | as 02+03 for those segments |
+| `10_cycleroutes.py` | optional: for legs with little signed-route share, stitch nearby ncn/rcn route relations along the corridor and re-route through them; writes cycleroute_candidates.json (a report, not applied). Make a good one the default with `viaBase` in the config, or offer it as a fork. | extracts, network | ~5 min per extract |
 | `build_planner.py` | template + data → work/<slug>/planner.html and planner_pub.html | — | seconds |
 
 Minimum viable planner: 01 → build. Everything else adds data to the same page; run 02–06 for a real one.
@@ -79,5 +80,5 @@ segments are scanned. Never edit `work/` files by hand — they are rebuilt.
 - BRouter's moped profile is shorter but sometimes busier; keep the bicycle line where mopeds may push
   (tunnels), and sanity-check any moped leg more than 3× the bicycle length (step 9 does).
 - Nominatim: one request per second, a real User-Agent, cache everything.
-- Geofabrik downloads and Overpass are not reachable from the Claude cloud sandbox; the user downloads
-  the extracts and the session stages them through the desktop bridge (400 MB per file).
+- Overpass is not reachable from the sandbox. Geofabrik IS reachable (curl -L follows to the dated file);
+  a session can download the country extracts straight into downloads/ (all Japan regions ~2.4 GB in a few minutes).

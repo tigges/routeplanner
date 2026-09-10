@@ -1,49 +1,185 @@
 {
-  "slug": "japan",
-  "title": "Across Japan",
-  "lang": {"local": "ja", "localLabel": "日本語", "romanise": "pykakasi"},
-  "workdir": "work/japan",
-  "osm": {
-    "extracts": [
-      "downloads/hokkaido-260907.osm.pbf", "downloads/tohoku-260907.osm.pbf", "downloads/kanto.osm.pbf",
-      "downloads/chubu.osm.pbf", "downloads/kansai-260907.osm.pbf", "downloads/chugoku-260907.osm.pbf",
-      "downloads/shikoku-260907.osm.pbf", "downloads/kyushu-260907.osm.pbf"
-    ],
-    "corridor_km": 2.0
+ "slug": "japan",
+ "title": "Across Japan",
+ "lang": {
+  "local": "ja",
+  "localLabel": "日本語",
+  "romanise": "pykakasi"
+ },
+ "workdir": "work/japan",
+ "osm": {
+  "extracts": [
+   "downloads/hokkaido-260907.osm.pbf",
+   "downloads/tohoku-260907.osm.pbf",
+   "downloads/kanto.osm.pbf",
+   "downloads/chubu.osm.pbf",
+   "downloads/kansai-260907.osm.pbf",
+   "downloads/chugoku-260907.osm.pbf",
+   "downloads/shikoku-260907.osm.pbf",
+   "downloads/kyushu-260907.osm.pbf"
+  ],
+  "corridor_km": 2.0
+ },
+ "graph": {
+  "prebuilt_dir": "examples/japan",
+  "note": "Japan's graph predates this pipeline and is shipped ready-made; for a new country leave 'prebuilt_dir' out and fill 'nodes' and 'trunks'."
+ },
+ "nodes": {
+  "bungotakada": {
+   "name": "Bungo-Takada",
+   "lat": 33.5562,
+   "lon": 131.4469,
+   "type": "gateway"
   },
-  "graph": {
-    "prebuilt_dir": "examples/japan",
-    "note": "Japan's graph predates this pipeline and is shipped ready-made; for a new country leave 'prebuilt_dir' out and fill 'nodes' and 'trunks'."
+  "kunisaki": {
+   "name": "Kunisaki",
+   "lat": 33.5633,
+   "lon": 131.7323,
+   "type": "gateway"
   },
-  "nodes": {},
-  "trunks": [],
-  "ferries": [],
-  "forkLabels": {
-    "aomori": "Aomori onward", "otaru": "Otaru to Suttsu", "sendai": "At Sendai", "niigata": "Niigata onward",
-    "chirihama": "Chirihama to Kanazawa", "tsuruga": "Tsuruga onward", "onomichi": "Onomichi onward",
-    "imabari": "After Shimanami", "matsuyama": "From Matsuyama", "atsuta": "Atsuta to Otaru",
-    "okayama": "Okayama to Fukuyama", "kesennuma": "Kesennuma to Sendai", "uozu": "Uozu to Himi"
+  "shimanto": {
+   "name": "Shimanto",
+   "lat": 32.9912,
+   "lon": 132.9337,
+   "type": "gateway"
   },
-  "optionNames": {
-    "base": "Yotei line", "coast": "Coast road", "direct": "Direct", "mainland": "Mainland", "shikoku": "Cross to Shikoku",
-    "pacific": "Pacific coast", "crossover": "Cross to Tsuruoka", "highland": "Central highland", "sanin": "San'in coast",
-    "shikoku-south": "Shikoku south coast", "sapporo": "Via Sapporo", "kurashiki": "Via Kurashiki", "okayama:base": "Direct road",
-    "hirosaki": "Via Hirosaki castle town", "hiraizumi": "Via Hiraizumi", "toyama": "Via Toyama + Takaoka"
+  "tosashimizu": {
+   "name": "Tosashimizu",
+   "lat": 32.7816,
+   "lon": 132.9549,
+   "type": "gateway"
+  }
+ },
+ "trunks": [
+  {
+   "variant": "kunisaki",
+   "nodes": [
+    "usa",
+    "bungotakada",
+    "kunisaki",
+    "beppu"
+   ]
   },
-  "defaultOptionNames": {
-    "aomori": "Sea of Japan", "otaru": "Yotei line", "niigata": "Sea of Japan coast", "chirihama": "Via Noto",
-    "tsuruga": "Biwa west shore", "onomichi": "Shimanami + Tobishima", "imabari": "Ferry to Okamura",
-    "atsuta": "Ishikari coast", "okayama": "Via Kurashiki", "kesennuma": "Pacific coast", "uozu": "Coast road"
+  {
+   "variant": "ashizuri",
+   "nodes": [
+    "uwajima",
+    "shimanto",
+    "tosashimizu",
+    "sukumo"
+   ],
+   "requires": [
+    "shikoku-south",
+    "ashizuri"
+   ]
+  }
+ ],
+ "viaBase": {
+  "toyohashi--nagoya#pacific": [
+   [
+    34.98144,
+    137.10003
+   ],
+   [
+    35.00538,
+    137.12134
+   ]
+  ]
+ },
+ "ferries": [],
+ "forkLabels": {
+  "aomori": "Aomori onward",
+  "otaru": "Otaru to Suttsu",
+  "sendai": "At Sendai",
+  "niigata": "Niigata onward",
+  "chirihama": "Chirihama to Kanazawa",
+  "tsuruga": "Tsuruga onward",
+  "onomichi": "Onomichi onward",
+  "imabari": "After Shimanami",
+  "matsuyama": "From Matsuyama",
+  "atsuta": "Atsuta to Otaru",
+  "okayama": "Okayama to Fukuyama",
+  "kesennuma": "Kesennuma to Sendai",
+  "uozu": "Uozu to Himi",
+  "usa": "Usa to Beppu",
+  "uwajima": "Uwajima to Sukumo"
+ },
+ "optionNames": {
+  "base": "Yotei line",
+  "coast": "Coast road",
+  "direct": "Direct",
+  "mainland": "Mainland",
+  "shikoku": "Cross to Shikoku",
+  "pacific": "Pacific coast",
+  "crossover": "Cross to Tsuruoka",
+  "highland": "Central highland",
+  "sanin": "San'in coast",
+  "shikoku-south": "Shikoku south coast",
+  "sapporo": "Via Sapporo",
+  "kurashiki": "Via Kurashiki",
+  "okayama:base": "Direct road",
+  "hirosaki": "Via Hirosaki castle town",
+  "hiraizumi": "Via Hiraizumi",
+  "toyama": "Via Toyama + Takaoka",
+  "kunisaki": "Around Kunisaki peninsula",
+  "ashizuri": "Around Cape Ashizuri"
+ },
+ "defaultOptionNames": {
+  "aomori": "Sea of Japan",
+  "otaru": "Yotei line",
+  "niigata": "Sea of Japan coast",
+  "chirihama": "Via Noto",
+  "tsuruga": "Biwa west shore",
+  "onomichi": "Shimanami + Tobishima",
+  "imabari": "Ferry to Okamura",
+  "atsuta": "Ishikari coast",
+  "okayama": "Via Kurashiki",
+  "kesennuma": "Pacific coast",
+  "uozu": "Coast road",
+  "usa": "Direct to Beppu",
+  "uwajima": "Direct to Sukumo"
+ },
+ "skippable": [],
+ "neverSkip": [],
+ "vehicles": {
+  "names": {
+   "bike": "Bicycle",
+   "ebike": "E-bike (pedelec)",
+   "opium": "Opium (45 km/h)"
   },
-  "skippable": [],
-  "neverSkip": [],
-  "vehicles": {
-    "names": {"bike": "Bicycle", "ebike": "E-bike (pedelec)", "opium": "Opium (45 km/h)"},
-    "defaultTarget": {"bike": 140, "ebike": 120, "opium": 200},
-    "minDay": {"bike": 70, "ebike": 60, "opium": 80},
-    "maxDay": {"bike": 330, "ebike": 160, "opium": 300},
-    "moped": {"enabled": true, "reroute_if_motorfree_share_at_least": 0.05, "keep_bicycle_line": ["shimonoseki--moji"]}
+  "defaultTarget": {
+   "bike": 140,
+   "ebike": 120,
+   "opium": 200
   },
-  "sights": {"exclude_kinds": ["memorial", "artwork", "monument"]},
-  "cities": {"population_min": 30000, "detour_km": 25, "rest_day_km": 80}
+  "minDay": {
+   "bike": 70,
+   "ebike": 60,
+   "opium": 80
+  },
+  "maxDay": {
+   "bike": 330,
+   "ebike": 160,
+   "opium": 300
+  },
+  "moped": {
+   "enabled": true,
+   "reroute_if_motorfree_share_at_least": 0.05,
+   "keep_bicycle_line": [
+    "shimonoseki--moji"
+   ]
+  }
+ },
+ "sights": {
+  "exclude_kinds": [
+   "memorial",
+   "artwork",
+   "monument"
+  ]
+ },
+ "cities": {
+  "population_min": 30000,
+  "detour_km": 25,
+  "rest_day_km": 80
+ }
 }

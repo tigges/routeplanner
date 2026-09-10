@@ -36,9 +36,18 @@ SIGHT = {'tourism': {'attraction', 'museum', 'viewpoint', 'artwork', 'gallery', 
 seen_sight = set()
 def nearest(lat, lon, r):
     xy = proj(np.array([lat]), np.array([lon]))[0]; return tree.query_ball_point(xy, r), xy
+STATE = os.path.join(W, OUT + '.state.npz'); done_x = []
+if os.path.exists(STATE) and '--fresh' not in sys.argv:
+    z = np.load(STATE, allow_pickle=True)
+    if list(z['ids']) == list(segs):
+        route_mark, road_mark, road_dist = z['route_mark'], z['road_mark'], z['road_dist']; sights = z['sights'].item(); seen_sight = set(z['seen'].tolist()); done_x = list(z['done'])
+        print('resuming after', done_x)
+ONLYX = sys.argv[sys.argv.index('--extract') + 1] if '--extract' in sys.argv else None
 for pbf in cfg['osm']['extracts']:
     if not os.path.exists(pbf): print('missing', pbf); continue
-    name = os.path.basename(pbf); print('relations', name, flush=True); wayset = {}
+    name = os.path.basename(pbf)
+    if name in done_x or (ONLYX and name != ONLYX): continue
+    print('relations', name, flush=True); wayset = {}
     for o in osmium.FileProcessor(pbf, osmium.osm.RELATION).with_filter(osmium.filter.KeyFilter('route')):
         t = o.tags
         if t.get('route') != 'bicycle': continue
@@ -78,7 +87,12 @@ for pbf in cfg['osm']['extracts']:
                 sid, vi = meta[i]; d = float(np.hypot(*(tree.data[i]-xy)))
                 if sid not in best or d < best[sid][1]: best[sid] = (vi, d)
             for sid, (vi, d) in best.items(): sights[sid].append([vi, t.get('name:en') or t.get('name'), kind, round(d, 1), t.get('name')])
-    print('  done', name, flush=True)
+    print('  done', name, flush=True); done_x.append(name)
+    np.savez(STATE, ids=np.array(list(segs)), route_mark=route_mark, road_mark=road_mark, road_dist=road_dist, sights=np.array(sights, dtype=object), seen=np.array(list(seen_sight)), done=np.array(done_x))
+    if ONLYX: print('extract done; run the others'); sys.exit()
+missing = [os.path.basename(p) for p in cfg['osm']['extracts'] if os.path.exists(p) and os.path.basename(p) not in done_x]
+if missing: raise SystemExit('extracts not yet scanned: %s' % missing)
+if os.path.exists(STATE): os.remove(STATE)
 out = dict(prev)
 for sid, pts in segs.items():
     idxs = [i for i, (s, _) in enumerate(meta) if s == sid]; n = len(idxs); rm = route_mark[idxs]; rd = road_mark[idxs]
