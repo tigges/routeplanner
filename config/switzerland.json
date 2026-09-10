@@ -230,6 +230,73 @@
       "name": "Brunnen",
       "lat": 46.995,
       "lon": 8.606
+    },
+    "wassen": {
+      "name": "Wassen",
+      "lat": 46.7065,
+      "lon": 8.5995
+    },
+    "airolo": {
+      "name": "Airolo",
+      "lat": 46.5275,
+      "lon": 8.607
+    },
+    "bellinzona": {
+      "name": "Bellinzona",
+      "lat": 46.195,
+      "lon": 9.0295,
+      "type": "gateway"
+    },
+    "sanbernardino": {
+      "name": "San Bernardino",
+      "lat": 46.463,
+      "lon": 9.187
+    },
+    "thusis": {
+      "name": "Thusis",
+      "lat": 46.697,
+      "lon": 9.44
+    },
+    "tiefencastel": {
+      "name": "Tiefencastel",
+      "lat": 46.66,
+      "lon": 9.579
+    },
+    "stmoritz": {
+      "name": "St. Moritz",
+      "lat": 46.4975,
+      "lon": 9.844
+    },
+    "zernez": {
+      "name": "Zernez",
+      "lat": 46.699,
+      "lon": 10.093
+    },
+    "davos": {
+      "name": "Davos",
+      "lat": 46.793,
+      "lon": 9.823
+    },
+    "landquart": {
+      "name": "Landquart",
+      "lat": 46.967,
+      "lon": 9.554
+    },
+    "linthal": {
+      "name": "Linthal",
+      "lat": 46.921,
+      "lon": 8.999
+    },
+    "glarus": {
+      "name": "Glarus",
+      "lat": 47.0395,
+      "lon": 9.066
+    },
+    "sustenpass": {
+      "name": "Sustenpass",
+      "lat": 46.729,
+      "lon": 8.4459,
+      "entry": false
     }
   },
   "trunks": [
@@ -327,6 +394,47 @@
         "brunnen",
         "schwyz"
       ]
+    },
+    {
+      "variant": "susten",
+      "nodes": [
+        "meiringen",
+        "sustenpass",
+        "wassen",
+        "andermatt"
+      ]
+    },
+    {
+      "variant": "ticino",
+      "nodes": [
+        "andermatt",
+        "airolo",
+        "bellinzona",
+        "sanbernardino",
+        "thusis",
+        "chur"
+      ]
+    },
+    {
+      "variant": "engadin",
+      "nodes": [
+        "chur",
+        "tiefencastel",
+        "stmoritz",
+        "zernez",
+        "davos",
+        "landquart",
+        "sargans"
+      ]
+    },
+    {
+      "variant": "klausen",
+      "nodes": [
+        "fluelen",
+        "linthal",
+        "glarus",
+        "rapperswil"
+      ]
     }
   ],
   "ferries": [
@@ -352,7 +460,9 @@
     "spiez": "At Spiez",
     "meiringen": "At Meiringen",
     "andermatt": "From Andermatt",
-    "lucerne": "After Luzern"
+    "lucerne": "After Luzern",
+    "chur": "From Chur",
+    "fluelen": "At Flüelen"
   },
   "optionNames": {
     "lakes": "Pre-Alps: Montreux, Gstaad, Interlaken",
@@ -361,7 +471,11 @@
     "east": "Schwyz, Rapperswil, Toggenburg",
     "loetschberg": "Lötschberg car train to Brig",
     "grimsel": "Grimsel pass to Oberwald",
-    "gotthard": "Gotthard and the Lake Lucerne boat"
+    "gotthard": "Gotthard and the Lake Lucerne boat",
+    "susten": "Susten pass to Andermatt",
+    "ticino": "Gotthard, Ticino, San Bernardino",
+    "engadin": "Julier, Engadin, Flüela, Davos",
+    "klausen": "Klausen pass, Glarus"
   },
   "defaultOptionNames": {
     "lausanne": "Mittelland via Bern",
@@ -370,11 +484,14 @@
     "spiez": "Interlaken",
     "meiringen": "Brünig to Luzern",
     "andermatt": "Oberalp to Chur",
-    "lucerne": "Zug and Zürich"
+    "lucerne": "Zug and Zürich",
+    "chur": "Rhine valley to Sargans",
+    "fluelen": "Lake Lucerne boat"
   },
   "skippable": [
     "oberwald--andermatt#alps",
-    "sion--brig#alps"
+    "sion--brig#alps",
+    "andermatt--airolo#ticino"
   ],
   "vehicles": {
     "names": {
