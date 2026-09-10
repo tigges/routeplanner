@@ -51,7 +51,13 @@ graph.outline                   optional GeoJSON of the country border / coast (
 Minimum viable planner: 01 → build. Everything else adds data to the same page; run 02–06 for a real one.
 
 ## 3. Publish
-`planner_pub.html` is the page without the html/head/body wrapper — publish it as a claude.ai artifact
+**GitHub Pages (the simple URL):** `python3 pipeline/publish.py config/<country>.json` copies the built page to
+`docs/<slug>/index.html` and rebuilds the hub `docs/index.html`; commit and push `docs/`. Pages must be switched on once
+(repository Settings → Pages → Source: Deploy from a branch → main, folder /docs). Pages are then at
+`https://tigges.github.io/routeplanner/` (hub) and `https://tigges.github.io/routeplanner/<slug>/`. Each publish adds the
+page (~10–15 MB) to git history; fine for now, prune later if the repository gets heavy.
+
+**Claude artifact (optional):** `planner_pub.html` is the page without the html/head/body wrapper — publish it as a claude.ai artifact
 (the Artifact tool wraps it). Republish to the same artifact to keep the link. Keep a copy of
 `planner.html` in the country's Downloads/project as the offline version. The page is self-contained;
 its size is roughly 8 MB per 100 segments with facilities, double that with moped lines.
