@@ -77,7 +77,7 @@
       "name": "St. Gallen",
       "lat": 47.4232,
       "lon": 9.3699,
-      "type": "terminus"
+      "type": "gateway"
     },
     "montreux": {
       "name": "Montreux",
@@ -277,11 +277,6 @@
       "lat": 46.793,
       "lon": 9.823
     },
-    "landquart": {
-      "name": "Landquart",
-      "lat": 46.967,
-      "lon": 9.554
-    },
     "linthal": {
       "name": "Linthal",
       "lat": 46.921,
@@ -297,201 +292,225 @@
       "lat": 46.729,
       "lon": 8.4459,
       "entry": false
+    },
+    "muestair": {
+      "name": "Müstair",
+      "lat": 46.6285,
+      "lon": 10.445,
+      "type": "terminus"
     }
   },
   "trunks": [
     {
       "variant": "base",
       "nodes": [
-        "geneva",
-        "lausanne",
-        "yverdon",
-        "neuchatel",
-        "bern",
-        "lucerne",
-        "zug",
-        "zurich",
-        "winterthur",
-        "wil",
-        "stgallen"
-      ]
-    },
-    {
-      "variant": "lakes",
-      "nodes": [
-        "lausanne",
-        "montreux",
-        "aigle",
-        "chateaudoex",
-        "gstaad",
-        "zweisimmen",
-        "spiez",
-        "interlaken",
-        "meiringen",
-        "lucerne"
-      ]
-    },
-    {
-      "variant": "alps",
-      "nodes": [
-        "aigle",
-        "martigny",
-        "sion",
-        "brig",
-        "oberwald",
-        "andermatt",
-        "disentis",
+        "muestair",
+        "zernez",
+        "davos",
         "chur",
         "sargans",
-        "altstaetten",
-        "stgallen"
-      ]
-    },
-    {
-      "variant": "jura",
-      "nodes": [
-        "neuchatel",
-        "lachauxdefonds",
-        "delemont",
-        "basel",
-        "laufenburg",
-        "schaffhausen",
-        "kreuzlingen",
-        "stgallen"
-      ]
-    },
-    {
-      "variant": "east",
-      "nodes": [
-        "lucerne",
-        "schwyz",
         "rapperswil",
-        "wattwil",
-        "stgallen"
-      ]
-    },
-    {
-      "variant": "loetschberg",
-      "nodes": [
-        "spiez",
-        "kandersteg",
-        "goppenstein",
-        "brig"
-      ]
-    },
-    {
-      "variant": "grimsel",
-      "nodes": [
-        "meiringen",
-        "oberwald"
-      ]
-    },
-    {
-      "variant": "gotthard",
-      "nodes": [
-        "andermatt",
-        "fluelen",
-        "brunnen",
-        "schwyz"
-      ]
-    },
-    {
-      "variant": "susten",
-      "nodes": [
-        "meiringen",
-        "sustenpass",
-        "wassen",
-        "andermatt"
-      ]
-    },
-    {
-      "variant": "ticino",
-      "nodes": [
-        "andermatt",
-        "airolo",
-        "bellinzona",
-        "sanbernardino",
-        "thusis",
-        "chur"
+        "zurich",
+        "zug",
+        "lucerne",
+        "bern",
+        "neuchatel",
+        "yverdon",
+        "lausanne",
+        "geneva"
       ]
     },
     {
       "variant": "engadin",
       "nodes": [
-        "chur",
-        "tiefencastel",
-        "stmoritz",
         "zernez",
-        "davos",
-        "landquart",
-        "sargans"
+        "stmoritz",
+        "tiefencastel",
+        "chur"
+      ]
+    },
+    {
+      "variant": "north",
+      "nodes": [
+        "sargans",
+        "altstaetten",
+        "stgallen",
+        "wil",
+        "winterthur",
+        "zurich"
+      ]
+    },
+    {
+      "variant": "jura",
+      "nodes": [
+        "stgallen",
+        "kreuzlingen",
+        "schaffhausen",
+        "laufenburg",
+        "basel",
+        "delemont",
+        "lachauxdefonds",
+        "neuchatel"
+      ]
+    },
+    {
+      "variant": "toggenburg",
+      "nodes": [
+        "stgallen",
+        "wattwil",
+        "rapperswil"
+      ]
+    },
+    {
+      "variant": "east",
+      "nodes": [
+        "rapperswil",
+        "schwyz",
+        "lucerne"
+      ]
+    },
+    {
+      "variant": "lakes",
+      "nodes": [
+        "lucerne",
+        "meiringen",
+        "interlaken",
+        "spiez",
+        "zweisimmen",
+        "gstaad",
+        "chateaudoex",
+        "aigle",
+        "montreux",
+        "lausanne"
+      ]
+    },
+    {
+      "variant": "alps",
+      "nodes": [
+        "chur",
+        "disentis",
+        "andermatt",
+        "oberwald",
+        "brig",
+        "sion",
+        "martigny",
+        "aigle"
+      ]
+    },
+    {
+      "variant": "ticino",
+      "nodes": [
+        "chur",
+        "thusis",
+        "sanbernardino",
+        "bellinzona",
+        "airolo",
+        "andermatt"
+      ]
+    },
+    {
+      "variant": "gotthard",
+      "nodes": [
+        "schwyz",
+        "brunnen",
+        "fluelen",
+        "andermatt"
       ]
     },
     {
       "variant": "klausen",
       "nodes": [
-        "fluelen",
-        "linthal",
+        "rapperswil",
         "glarus",
-        "rapperswil"
+        "linthal",
+        "fluelen"
+      ]
+    },
+    {
+      "variant": "susten",
+      "nodes": [
+        "andermatt",
+        "wassen",
+        "sustenpass",
+        "meiringen"
+      ]
+    },
+    {
+      "variant": "grimsel",
+      "nodes": [
+        "oberwald",
+        "meiringen"
+      ]
+    },
+    {
+      "variant": "loetschberg",
+      "nodes": [
+        "brig",
+        "goppenstein",
+        "kandersteg",
+        "spiez"
       ]
     }
   ],
   "ferries": [
     {
-      "from": "kandersteg",
-      "to": "goppenstein",
+      "from": "goppenstein",
+      "to": "kandersteg",
       "km": 14,
       "variant": "loetschberg",
       "note": "car train (Lötschberg)"
     },
     {
-      "from": "fluelen",
-      "to": "brunnen",
+      "from": "brunnen",
+      "to": "fluelen",
       "km": 12,
       "variant": "gotthard",
       "note": "boat (Lake Lucerne)"
     }
   ],
   "forkLabels": {
-    "lausanne": "After Lausanne",
-    "neuchatel": "After Neuchâtel",
-    "aigle": "From Aigle",
-    "spiez": "At Spiez",
-    "meiringen": "At Meiringen",
-    "andermatt": "From Andermatt",
-    "lucerne": "After Luzern",
+    "zernez": "At Zernez",
     "chur": "From Chur",
-    "fluelen": "At Flüelen"
+    "sargans": "At Sargans",
+    "stgallen": "From St. Gallen",
+    "rapperswil": "From Rapperswil",
+    "schwyz": "At Schwyz",
+    "andermatt": "From Andermatt",
+    "oberwald": "At Oberwald",
+    "brig": "At Brig",
+    "lucerne": "After Luzern"
   },
   "optionNames": {
-    "lakes": "Pre-Alps: Montreux, Gstaad, Interlaken",
-    "alps": "High Alps: Rhone, Furka, Rhine",
-    "jura": "Jura and the Rhine, via Basel",
-    "east": "Schwyz, Rapperswil, Toggenburg",
-    "loetschberg": "Lötschberg car train to Brig",
-    "grimsel": "Grimsel pass to Oberwald",
-    "gotthard": "Gotthard and the Lake Lucerne boat",
-    "susten": "Susten pass to Andermatt",
-    "ticino": "Gotthard, Ticino, San Bernardino",
-    "engadin": "Julier, Engadin, Flüela, Davos",
-    "klausen": "Klausen pass, Glarus"
+    "engadin": "Engadin and the Julier",
+    "alps": "Oberalp, Furka, Rhone valley",
+    "ticino": "San Bernardino, Ticino, Gotthard",
+    "north": "St. Gallen and Winterthur",
+    "jura": "Rhine, Basel and the Jura",
+    "toggenburg": "Toggenburg to Rapperswil",
+    "east": "Schwyz to Luzern",
+    "klausen": "Klausen pass to Flüelen",
+    "gotthard": "Boat and Gotthard to Andermatt",
+    "susten": "Susten pass to Meiringen",
+    "grimsel": "Grimsel pass to Meiringen",
+    "loetschberg": "Lötschberg car train to Spiez",
+    "lakes": "Pre-Alps: Interlaken, Gstaad, Montreux"
   },
   "defaultOptionNames": {
-    "lausanne": "Mittelland via Bern",
-    "neuchatel": "Bern and Luzern",
-    "aigle": "Pre-Alps to Luzern",
-    "spiez": "Interlaken",
-    "meiringen": "Brünig to Luzern",
-    "andermatt": "Oberalp to Chur",
-    "lucerne": "Zug and Zürich",
-    "chur": "Rhine valley to Sargans",
-    "fluelen": "Lake Lucerne boat"
+    "zernez": "Flüela and Davos",
+    "chur": "Rhine to Sargans",
+    "sargans": "Walensee to Rapperswil",
+    "stgallen": "Wil and Winterthur",
+    "rapperswil": "Zürich and Zug",
+    "schwyz": "Luzern",
+    "andermatt": "Furka and the Rhone",
+    "oberwald": "Rhone valley to Brig",
+    "brig": "Rhone valley to Sion",
+    "lucerne": "Mittelland via Bern"
   },
   "skippable": [
-    "oberwald--andermatt#alps",
-    "sion--brig#alps",
-    "andermatt--airolo#ticino"
+    "andermatt--oberwald#alps",
+    "brig--sion#alps",
+    "airolo--andermatt#ticino"
   ],
   "vehicles": {
     "names": {
