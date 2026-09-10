@@ -1,0 +1,577 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Journey planner</title>
+<style>
+:root{--bg:#0a141b;--panel:#0d1a23;--line:#22323d;--paper:#eef2f4;--dim:#c9d6de;--coast:#1e2f3b;
+ --route:#f0713f;--ghost:#2a4150;--stop:#4da3ff;--ferry:#8f9aa3}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--paper);
+ font-family:"Hiragino Sans","Noto Sans JP",-apple-system,"Segoe UI",system-ui,sans-serif}
+#app{display:grid;grid-template-columns:330px 1fr;height:100vh}
+#side{overflow-y:auto;background:var(--panel);border-right:1px solid var(--line)}
+#stage{position:relative;overflow:hidden}
+svg{display:block;width:100%;height:100%;cursor:grab}svg.drag{cursor:grabbing}
+h1{font-size:17px;margin:18px 16px 3px;font-weight:600;letter-spacing:-.01em}
+.sub{margin:0 16px 14px;font-size:12px;color:var(--dim);line-height:1.5}
+.stats{display:flex;gap:14px;margin:0 16px 16px}
+.stats div{font-size:11px;color:var(--dim)}
+.stats b{display:block;font-size:20px;color:var(--paper);font-weight:600}
+h2{font-size:11px;color:#6d8492;margin:0 16px 8px;font-weight:600}
+.fork{margin:0 16px 12px}
+.fork .q{font-size:12.5px;margin-bottom:5px}
+.opts{display:flex;gap:5px;flex-wrap:wrap}
+.opt{border:1px solid var(--line);background:transparent;color:var(--dim);border-radius:6px;
+ padding:4px 9px;font-size:11.5px;cursor:pointer;font-family:inherit}
+.opt.on{background:#15303f;color:var(--paper);border-color:#2f5a72}
+.sl{margin:4px 16px 16px}
+.sl input{width:100%}
+.sl select{width:100%;background:#0f1e28;color:var(--paper);border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-size:12.5px;font-family:inherit}
+.slrow{display:flex;justify-content:space-between;font-size:11.5px;color:var(--dim);margin-bottom:4px}
+.day{display:grid;grid-template-columns:26px 1fr auto;gap:7px;align-items:center;
+ padding:5px 16px;font-size:12px;border-left:3px solid transparent}
+.day:hover{background:#122531}
+.day.fer{color:var(--dim);font-style:italic}
+.day .n{color:#b9c6cf;font-size:11px;font-variant-numeric:tabular-nums}
+.day .m{font-size:12px;color:#e6edf1;font-variant-numeric:tabular-nums}
+.bar{grid-column:2/4;height:3px;background:#1b2f3b;border-radius:2px}
+.bar i{display:block;height:100%;background:var(--route);border-radius:2px}
+.day .sup{grid-column:2/4;font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums;line-height:1.4}
+.day .sup b{color:var(--paper);font-weight:600}
+.day .sup .gap{color:#e8a13f}
+.day .sup .nodata{color:#b9c6cf;font-style:italic}
+.day svg.spark{grid-column:2/4;display:block;width:100%;height:26px}
+.layers{display:flex;gap:5px;flex-wrap:wrap;margin:0 16px 14px}
+#skips{margin:8px 0 0}
+.hintline{font-size:12px;color:#d6e0e6;margin-top:6px;line-height:1.4}
+.opt.train{border-color:#3d5a6e}.opt.train.on{background:#1f3a4d;color:#dbe7ee;border-color:#4d7a99}
+.opt.train.auto.on{border-style:dashed}
+.day.trn{color:#9fc3dc;font-style:italic}
+.day.sel{background:#15303f;border-left-color:var(--route)}
+.fork .cmp .ref{opacity:1;color:#d6e0e6;margin-bottom:8px;padding-left:8px;border-left:2px solid #4d7a99}
+#favs{margin:6px 16px 0}#favs div{display:flex;gap:8px;align-items:center;font-size:12px;padding:4px 0;border-bottom:1px solid var(--line)}
+#favs div span{flex:1;cursor:pointer}#favs div b{color:#7fc4ff;cursor:pointer;font-weight:500}#favs div i{color:#b9c6cf;cursor:pointer;font-style:normal}
+#exp{width:calc(100% - 32px);margin:6px 16px;height:120px;font-size:11px;background:#0d1a22;color:#c9d6de;border:1px solid var(--line);border-radius:6px}
+#topbtns{position:absolute;right:14px;top:12px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:60%}
+#pop{display:none;position:absolute;z-index:5;max-width:260px;background:#15303f;border:1px solid #4d7a99;border-radius:8px;padding:8px 10px;font-size:12.5px;color:#eef2f4;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+#pop .ja{color:#c9d6de;margin-top:2px}#pop .sub{color:#8fa3b0;margin-top:3px;font-size:11.5px}#pop .links{margin-top:6px;display:flex;gap:10px;flex-wrap:wrap}#pop a{color:#7fc4ff;text-decoration:none;font-size:11.5px}
+#veh{font-size:11.5px;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--dim);cursor:pointer;font-family:inherit}
+body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8;border-color:#7fd1a8}
+#lang{font-size:11.5px;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--dim);cursor:pointer;font-family:inherit}
+#fit{font-size:11.5px;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--dim);cursor:pointer;font-family:inherit}
+#fit:hover{color:var(--paper)}
+.cmp{font-size:12px;color:#e6edf1;margin:4px 0 0;line-height:1.45;font-variant-numeric:tabular-nums}
+.cmp div{display:flex;gap:6px;flex-wrap:wrap}.cmp b{color:var(--paper);font-weight:600;min-width:118px}
+.cmp .g{color:#8fd3a1}.cmp .r{color:#e8a13f}
+.layers .opt.on{background:#15303f;color:var(--paper);border-color:#2b4d63}
+#hint{position:absolute;left:14px;bottom:12px;font-size:11px;color:#b9c6cf}
+#warn{margin:0 16px 12px;font-size:11.5px;color:#e8a13f}
+</style></head><body><div id="app">
+<div id="side">
+<h1 id="title"></h1>
+<p class="sub">Choose a route at each fork and a daily effort. Days are computed, not stored. Elevation on every segment; shops, beds, baths, taps and stations within 2 km on every segment, so any journey inherits them.</p>
+<div class="stats"><div><b id="sd"></b>days</div><div><b id="sk"></b>km</div><div><b id="sa"></b>m climbed</div></div>
+<div class="sl"><div class="slrow"><span>From</span><span></span></div>
+<select id="start"></select>
+<div class="slrow" style="margin-top:8px"><span>To</span><span></span></div>
+<select id="end"></select></div>
+<div class="sl"><div class="slrow"><span id="efflabel">Daily effort</span><span id="slv"></span></div>
+<input type="range" id="eff" min="110" max="280" step="10" value="140"></div>
+<div class="sl"><div class="slrow"><span>Days I have</span><span id="dlv">no limit</span></div>
+<input type="range" id="dtar" min="0" max="60" step="1" value="0">
+<div class="hintline" id="vehnote"></div>
+<div class="hintline">Set a limit and the planner proposes train hops through the dull stretches until the days fit. Click a hop to keep or drop it.</div>
+<div class="layers" id="skips"></div></div>
+<div id="warn"></div>
+<h2>This route</h2><div class="layers" id="routebar"><button class="opt" id="favsave">Save as favourite</button><button class="opt" id="copylink">Copy link</button><button class="opt" id="copycsv">Copy day list (CSV)</button><button class="opt" id="copygpx">Copy GPX</button></div>
+<div id="favs"></div><div id="expnote" class="hintline"></div><textarea id="exp" hidden></textarea>
+<h2>Forks</h2><div id="forks"></div>
+<h2>Show on map</h2><div class="layers" id="layers"><button class="opt" data-l="shop">Shops</button><button class="opt" data-l="stay">Beds</button><button class="opt" data-l="bath">Baths</button><button class="opt" data-l="rail">Stations</button><button class="opt" data-l="water">Water</button></div>
+<h2>Days</h2><div id="days"></div>
+</div>
+<div id="stage"><svg id="map" preserveAspectRatio="xMidYMid meet"></svg><div id="hint">Drag to pan, scroll to zoom · click a day to zoom to it · tap a dot for its name · zoom under ~60 km for road stations and sights</div><div id="topbtns"><button id="veh" title="switch vehicle">Bicycle</button><button id="lang"></button><button id="fit">Whole route</button></div></div></div>
+<script>
+var CFG=/*@CFG@*/;
+document.getElementById("title").textContent=CFG.title; document.title=CFG.title+" - journey planner";
+var P=/*@P@*/;
+var SD=/*@SD@*/;
+var SC=/*@SC@*/;
+var MSEG=/*@MSEG@*/;
+var MSD=/*@MSD@*/;
+var MSC=/*@MSC@*/;
+var MF=/*@MF@*/;   // share of the bicycle line on ways a moped may not use
+var VEH="bike"; try{ VEH=localStorage.getItem("veh")||"bike"; }catch(e){} if(["bike","ebike","opium"].indexOf(VEH)<0) VEH="bike";
+var VEHNAME=CFG.vehicles.names, VEHDEF=CFG.vehicles.defaultTarget;
+var EMIN=70,EMAX=330;
+var SEG={},OUT={};
+P.segments.forEach(function(s){SEG[s.id]=s;(OUT[s.frm]=OUT[s.frm]||[]).push(s);});
+var NODE={};P.nodes.forEach(function(n){NODE[n.id]=n;});
+var BIKE={};   // originals per segment id: {seg fields, sd, sc}
+function applyVehicle(){
+ P.segments.forEach(function(s){ if(s.mode!=="ride") return; var id=s.id;
+  if(!BIKE[id]) BIKE[id]={seg:JSON.parse(JSON.stringify(s)),sd:SD[id],sc:SC[id]};
+  var b=BIKE[id].seg; s.moped=false; SD[id]=BIKE[id].sd; SC[id]=BIKE[id].sc;
+  ["km","ascent","descent","effort","effortR","line","cand"].forEach(function(k){s[k]=b[k];});
+  if(VEH==="opium"){
+   if(MSEG[id]){ var m=MSEG[id]; ["km","ascent","descent","effort","effortR","line","cand"].forEach(function(k){s[k]=m[k];}); s.moped=true; SD[id]=MSD[id]||SD[id]; SC[id]=MSC[id]||SC[id]; }
+   else { s.effort=Math.round(b.km); s.effortR=s.effort;
+    s.cand=b.cand.map(function(c){var d={}; for(var k in c) d[k]=c[k]; d.eff=+c.km.toFixed(1); d.effR=+(b.km-c.km).toFixed(1); return d;}); }
+  } else if(VEH==="ebike"){   // motor takes two thirds of the climbing out of the effort
+   s.effort=Math.round(b.km+(b.effort-b.km)/3); s.effortR=Math.round(b.km+(b.effortR-b.km)/3);
+   s.cand=b.cand.map(function(c){var d={}; for(var k in c) d[k]=c[k]; d.eff=+(c.km+(c.eff-c.km)/3).toFixed(1); d.effR=+((b.km-c.km)+(c.effR-(b.km-c.km))/3).toFixed(1); return d;});
+  }
+ });
+ EMIN=CFG.vehicles.minDay[VEH]; EMAX=CFG.vehicles.maxDay[VEH];
+ document.getElementById("efflabel").textContent=VEH==="opium"?"Km per day":"Daily effort";
+ document.getElementById("veh").textContent=VEHNAME[VEH];
+ document.body.className=document.body.className.replace(/(ebike|opium)/g,"").trim(); if(VEH!=="bike") document.body.classList.add(VEH);
+}
+var LABEL=CFG.forkLabels;
+var OPTNAME=CFG.optionNames;
+var OPTBASE=CFG.defaultOptionNames;
+var RANK={};P.nodes.forEach(function(n){RANK[n.id]=n.rank||0;});
+P.forks.sort(function(a,b){return RANK[a.node]-RANK[b.node];});
+var SKIPPABLE=CFG.skippable;
+var skipOn={},skipOff={},skipWarn="";      // user-pinned hops, user-refused hops
+var pick={},FORK={};P.forks.forEach(function(f){pick[f.node]=f.options[0];FORK[f.node]=1;});
+
+function edgeView(s,rev){
+ if(s.mode==="ferry") return {id:s.id,mode:"ferry",frm:rev?s.to:s.frm,to:rev?s.frm:s.to,km:s.km,ascent:0,effort:0,cand:[]};
+ var c;
+ if(!rev){c=s.cand;}
+ else{c=s.cand.slice().reverse().map(function(x){
+   return {km:+(s.km-x.km).toFixed(1),eff:x.effR,beds:x.beds,node:null,label:x.label,x:x.x,y:x.y};});
+  c=c.slice(1); c.push({km:s.km,eff:s.effortR,beds:0,node:s.frm,label:"",
+   x:s.cand[0]?s.cand[0].x:0,y:s.cand[0]?s.cand[0].y:0});}
+ return {id:s.id,rev:!!rev,mode:"ride",moped:!!s.moped,frm:rev?s.to:s.frm,to:rev?s.frm:s.to,km:s.km,
+   ascent:rev?s.descent:s.ascent,effort:rev?s.effortR:s.effort,cand:c,line:s.line};}
+
+function chain(){
+ var a=document.getElementById("start").value,b=document.getElementById("end").value;
+ if(a===b) return [];
+ var rev=NODE[b].rank<NODE[a].rank;
+ [NODE[a].requires,NODE[b].requires].forEach(function(req){ if(!req) return; (Array.isArray(req)?req:[req]).forEach(function(r){
+  for(var k in pick) if(P.forks.some(function(f){return f.node===k&&f.options.indexOf(r)>=0;})) pick[k]=r; });});
+ var IN={};P.segments.forEach(function(s){(IN[s.to]=IN[s.to]||[]).push(s);});
+ var out=[],cur=a,g=0,last=null;
+ while(cur!==b&&g++<400){
+  var opts=(rev?IN[cur]:OUT[cur])||[],ch=null;
+  if(!rev&&FORK[cur]) for(var i=0;i<opts.length;i++) if(opts[i].variant===pick[cur]){ch=opts[i];break;}   // your choice at a fork wins
+  if(!ch&&last) for(var i=0;i<opts.length;i++) if(opts[i].variant===last){ch=opts[i];break;}
+  if(!ch) for(var i=0;i<opts.length;i++) if(opts[i].variant===pick[opts[i].frm]){ch=opts[i];break;}
+  if(!ch) for(var i=0;i<opts.length;i++) if(opts[i].variant==="base"){ch=opts[i];break;}
+  if(!ch&&opts.length===1) ch=opts[0];
+  if(!ch) break;
+  var v=edgeView(ch,rev); out.push(v); cur=v.to;
+  last=((pick[ch.frm]===ch.variant||last===ch.variant)&&ch.variant!=="base")?ch.variant:null;}
+ return cur===b?out:[];}
+
+function splitDays(ch,target){
+ var legs=[],cur=[];
+ ch.forEach(function(s){if(s.mode==="ferry"||s.mode==="train"){if(cur.length)legs.push(cur);legs.push(s);cur=[];}else cur.push(s);});
+ if(cur.length)legs.push(cur);
+ var days=[],warn="";
+ legs.forEach(function(L){
+  if(!Array.isArray(L)){days.push({mode:L.mode,frm:(NODE[L.frm]||{name:L.frm}).name,to:(NODE[L.to]||{name:L.to}).name,km:L.km,eff:0});return;}
+  var C=[{eff:0,km:0,beds:0,node:L[0].frm,label:'',x:NODE[L[0].frm].x,y:NODE[L[0].frm].y}],base=0,bk=0,SEGS=[];
+  L.forEach(function(s){s.cand.forEach(function(c){
+    C.push({eff:base+c.eff,km:bk+c.km,beds:c.beds,node:c.node,label:c.label,x:c.x,y:c.y});});
+    SEGS.push({s:s,k0:bk,k1:bk+s.km});base+=s.effort;bk+=s.km;});
+  var n=C.length,dp=new Array(n).fill(Infinity),bp=new Array(n).fill(-1);dp[0]=0;
+  for(var i=1;i<n;i++){for(var j=Math.max(0,i-160);j<i;j++){
+    if(dp[j]===Infinity)continue;var e=C[i].eff-C[j].eff;
+    if(e<EMIN||e>EMAX)continue;
+    var c=dp[j]+Math.pow((e-target)/target,2)*100-Math.min(C[i].beds,6)*1.2-(C[i].node?14:0);
+    if(c<dp[i]){dp[i]=c;bp[i]=j;}}}
+  if(dp[n-1]===Infinity){warn="No valid split at this effort - try a higher target.";
+   days.push({mode:"ride",frm:L[0].frm,to:L[L.length-1].to,km:bk,eff:base,x:C[n-1].x,y:C[n-1].y});return;}
+  var path=[],i=n-1;while(i>0){path.push(C[i]);i=bp[i];}path.push(C[0]);path.reverse();
+  function nm(c){return c.node?(NODE[c.node]?NODE[c.node].name:c.node):(c.label||("km"+Math.round(c.km)));}
+  for(var k=1;k<path.length;k++) days.push({mode:"ride",frm:nm(path[k-1]),
+    to:nm(path[k])===nm(path[k-1])?nm(path[k])+" +"+Math.round(path[k].km-path[k-1].km)+" km":nm(path[k]),km:+(path[k].km-path[k-1].km).toFixed(1),
+    eff:Math.round(path[k].eff-path[k-1].eff),x:path[k].x,y:path[k].y,
+    segs:SEGS.filter(function(g){return g.k1>path[k-1].km+0.05&&g.k0<path[k].km-0.05;}).map(function(g){
+      return {s:g.s,a:Math.max(0,path[k-1].km-g.k0),b:Math.min(g.s.km,path[k].km-g.k0)};})});});
+ return {days:days,warn:warn};}
+
+var NS="http://www.w3.org/2000/svg",svg=document.getElementById("map");
+var gC=document.createElementNS(NS,"g"),gG=document.createElementNS(NS,"g"),
+    gR=document.createElementNS(NS,"g"),gS=document.createElementNS(NS,"g");
+var gL=document.createElementNS(NS,"g"),gH=document.createElementNS(NS,"g"),gT=document.createElementNS(NS,"g"),gP=document.createElementNS(NS,"g");
+[gC,gG,gR,gH,gS,gL,gT,gP].forEach(function(g){svg.appendChild(g);});
+var LABELS=[], DOTS=[], CH=[], POIS=[], LASTDAYS=[];
+function stateCode(){ var st={s:document.getElementById("start").value,e:document.getElementById("end").value,t:+document.getElementById("eff").value,d:+document.getElementById("dtar").value,p:pick,k:Object.keys(skipOn),l:LANG,v:VEH};
+ return btoa(unescape(encodeURIComponent(JSON.stringify(st)))); }
+function applyCode(code){ try{ var st=JSON.parse(decodeURIComponent(escape(atob(code)))); }catch(e){ return false; }
+ if(NODE[st.s]) document.getElementById("start").value=st.s; if(NODE[st.e]) document.getElementById("end").value=st.e;
+ if(st.t) document.getElementById("eff").value=st.t; document.getElementById("dtar").value=st.d||0;
+ for(var k in st.p||{}) if(FORK[k]) pick[k]=st.p[k];
+ skipOn={}; (st.k||[]).forEach(function(id){skipOn[id]=1;});
+ if(st.l){LANG=st.l; try{localStorage.setItem("lang",LANG);}catch(e){} }
+ if(st.v&&st.v!==VEH&&VEHNAME[st.v]){ VEH=st.v; try{localStorage.setItem("veh",VEH);}catch(e){} applyVehicle(); }
+ document.querySelectorAll(".fork button.opt").forEach(function(b){ b.classList.toggle("on",pick[b.dataset.n]===b.dataset.o); });
+ return true; }
+function routeSummary(){ var ride=LASTDAYS.filter(function(d){return d.mode==="ride"}); var vars=[]; for(var k in pick) if(pick[k]!==P.forks.filter(function(f){return f.node===k})[0].options[0]) vars.push(OPTNAME[pick[k]]||pick[k]);
+ return (VEH==="bike"?"":VEHNAME[VEH].split(" ")[0]+" · ")+NODE[document.getElementById("start").value].name+" → "+NODE[document.getElementById("end").value].name+" · "+ride.length+" days · "+(VEH==="opium"?"":"effort ")+document.getElementById("eff").value+(VEH==="opium"?" km/day":"")+(vars.length?" · "+vars.join(", "):""); }
+function favList(){ try{ return JSON.parse(localStorage.getItem("favs")||"[]"); }catch(e){ return []; } }
+function favRender(){ var h=document.getElementById("favs"), L=favList(); h.innerHTML=L.length?"":'<div style="border:0;color:#b9c6cf">No favourites saved yet in this browser.</div>';
+ L.forEach(function(f,i){ var d=document.createElement("div"); d.innerHTML='<span title="load this route">'+f.name+'</span><b>load</b><i title="remove">✕</i>';
+  d.querySelector("span").onclick=d.querySelector("b").onclick=function(){ if(applyCode(f.code)){ setLangBtn(); render(); } };
+  d.querySelector("i").onclick=function(){ var L2=favList(); L2.splice(i,1); try{localStorage.setItem("favs",JSON.stringify(L2));}catch(e){} favRender(); };
+  h.appendChild(d); }); }
+function copyText(text,what){ var note=document.getElementById("expnote"), ta=document.getElementById("exp");
+ var done=function(){ note.textContent=what+" copied to the clipboard ("+Math.round(text.length/1024)+" KB)."; ta.hidden=true; };
+ var fail=function(){ ta.hidden=false; ta.value=text; ta.select(); note.textContent="Copy blocked by the browser — the text is in the box below, select all and copy."; };
+ if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done,fail); else fail(); }
+function dayCSV(){ var rows=[["day","mode","from","to","from_lat","from_lon","to_lat","to_lon","km","climb_m","effort"]];
+ var n=0, prev=NODE[document.getElementById("start").value], px=prev.x, py=prev.y;
+ LASTDAYS.forEach(function(d){ var fl=toLL(px,py), tl=(d.x!==undefined)?toLL(d.x,d.y):null; if(d.mode==="ride") n++;
+  rows.push([d.mode==="ride"?n:"", d.mode, d.frm, d.to, fl[0].toFixed(5), fl[1].toFixed(5), tl?tl[0].toFixed(5):"", tl?tl[1].toFixed(5):"", d.km, d.mode==="ride"?Math.max(0,Math.round((d.eff-d.km)*10)):"", d.mode==="ride"?d.eff:""]);
+  if(tl){px=d.x;py=d.y;} });
+ return rows.map(function(r){return r.map(function(c){c=String(c); return /[",\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;}).join(",");}).join("\n"); }
+function routeGPX(){ var esc=function(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;");};
+ var g='<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="route planner" xmlns="http://www.topografix.com/GPX/1/1">\n<metadata><name>'+esc(routeSummary())+'</name></metadata>\n';
+ var n=0; LASTDAYS.forEach(function(d){ if(d.mode!=="ride"||d.x===undefined)return; n++; var ll=toLL(d.x,d.y); g+='<wpt lat="'+ll[0].toFixed(5)+'" lon="'+ll[1].toFixed(5)+'"><name>Day '+n+' end: '+esc(d.to)+'</name></wpt>\n'; });
+ n=0; LASTDAYS.forEach(function(d){ if(d.mode!=="ride")return; n++; g+='<trk><name>Day '+n+': '+esc(d.frm)+' → '+esc(d.to)+'</name><trkseg>\n';
+  dayPoints(d).forEach(function(p){ var ll=toLL(p[0],p[1]); g+='<trkpt lat="'+ll[0].toFixed(5)+'" lon="'+ll[1].toFixed(5)+'"/>\n'; }); g+='</trkseg></trk>\n'; });
+ return g+'</gpx>\n'; }   // {x,y,name,kind}
+var PJ=CFG.proj, LANG="en";
+try{ LANG=localStorage.getItem("lang")||"en"; }catch(e){}
+function nm(e,i){ var ja=e[i+1]; return LANG==="local"&&ja?ja:e[i]; }          // e[i]=English form, e[i+1]=local-language form (if different)
+function toLL(x,y){ var lon=(x-PJ.bx)/PJ.kx, m=(y-PJ.by)/PJ.ky; return [180/Math.PI*(2*Math.atan(Math.exp(m))-Math.PI/2), lon]; }
+var pop=document.createElement("div"); pop.id="pop"; document.getElementById("stage").appendChild(pop);
+var GENERIC=/^(Toilets|Drinking water|Water tap|Convenience store|Supermarket|Bakery|Hotel|Guest house|Hostel|Campsite|Caravan site|Station|Laundry|Bike shop|Repair stand|Bath house|Hot spring|Spa|Motel|Apartment)$/;
+function showPop(x,y,en,ja,sub,place){
+ var r=svg.getBoundingClientRect(),st=document.getElementById("stage").getBoundingClientRect(),ppu=pxPerUnit();
+ var ll=toLL(x,y), px=(x-vb[0])*ppu+(r.left-st.left), py=(y-vb[1])*ppu+(r.top-st.top);
+ var town=null,td=1e9; LABELS.forEach(function(l){var d=Math.hypot(l.x-x,l.y-y); if(l.kind==="town"&&d<td){td=d;town=l.name;}});
+ var q=encodeURIComponent((ja||en)+((!place&&GENERIC.test(en)&&town)?" "+town:""));
+ pop.innerHTML='<b>'+en+'</b>'+(ja&&ja!==en?'<div class="ja">'+ja+'</div>':'')+(sub?'<div class="sub">'+sub+'</div>':'')+
+  '<div class="links"><a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query='+ll[0].toFixed(5)+','+ll[1].toFixed(5)+'">Pin in Google Maps ↗</a>'+
+  (en==="Point on the route"?'':'<a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query='+q+'">Search by name ↗</a>')+'</div>';
+ pop.style.display="block"; var w=pop.offsetWidth,h=pop.offsetHeight;
+ var left=px+14, top=py-h/2; if(left+w>st.width-8) left=px-w-14; if(top<8) top=8; if(top+h>st.height-8) top=st.height-h-8;
+ pop.style.left=left+"px"; pop.style.top=top+"px";}
+function hidePop(){ pop.style.display="none"; }
+function pxPerUnit(){var r=svg.getBoundingClientRect();return r.width/vb[2];}
+function drawLabels(){
+ while(gT.firstChild)gT.removeChild(gT.firstChild);
+ var ppu=pxPerUnit(); if(vb[2]>170) return;            // only when zoomed in (view narrower than ~300 km)
+ var fs=12/ppu, placed=[];
+ LABELS.forEach(function(l){
+  // simple declutter: skip if another label sits within ~14 px
+  if(placed.some(function(p){return Math.abs(p.x-l.x)*ppu<90&&Math.abs(p.y-l.y)*ppu<14})) return;
+  placed.push(l);
+  var t=document.createElementNS(NS,"text"); t.setAttribute("x",l.x+7/ppu); t.setAttribute("y",l.y+4/ppu);
+  t.setAttribute("font-size",fs); t.setAttribute("fill",l.kind==="day"?"#dbe7ee":"#8fa3b0"); t.setAttribute("font-weight",l.kind==="day"?"600":"400");
+  t.setAttribute("stroke","#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit");
+  t.textContent=l.name; gT.appendChild(t);});
+ if(vb[2]>34) return;                                    // ~60 km across: add road stations and sights
+ POIS=[]; var pois=[], x0=vb[0]-2,x1=vb[0]+vb[2]+2,y0=vb[1]-2,y1=vb[1]+vb[3]+2;
+ CH.forEach(function(v){ if(v.mode!=="ride")return; var sd=SD[v.id],sc=SC[v.id];
+  if(sd&&sd.fac.mne) sd.fac.mne.forEach(function(f){var p=ptAt(SEG[v.id],f[0]); if(p[0]>x0&&p[0]<x1&&p[1]>y0&&p[1]<y1) pois.push({x:p[0],y:p[1],name:"🅿 "+nm(f,2),en:f[2],ja:f[3]||null,kind:"mne",pri:0,sub:"road station (michi-no-eki)"});});
+  if(sc&&sc.sight_list) sc.sight_list.forEach(function(f){ if(f[2]==="memorial"||f[2]==="artwork"||f[2]==="monument")return; var p=ptAt(SEG[v.id],f[0]); if(p[0]>x0&&p[0]<x1&&p[1]>y0&&p[1]<y1) pois.push({x:p[0],y:p[1],name:(LANG==="local"&&f[4])?f[4]:f[1],en:f[1],ja:f[4]||null,kind:f[2],pri:f[3],sub:f[2].replace(/_/g," ")+" · "+f[3]+" km off the road"});});});
+ pois.sort(function(a,b){return a.pri-b.pri});           // road stations first, then sights nearest the road
+ var fs2=11/ppu, n=0;
+ pois.forEach(function(l){ if(n>=45)return;
+  if(placed.some(function(p){return Math.abs(p.x-l.x)*ppu<110&&Math.abs(p.y-l.y)*ppu<13})) return;
+  placed.push(l); n++; POIS.push(l);
+  var m=document.createElementNS(NS,"circle"); m.setAttribute("cx",l.x); m.setAttribute("cy",l.y); m.setAttribute("r",2.5/ppu); m.setAttribute("fill",l.kind==="mne"?"#7fd1a8":"#e7c46a"); gT.appendChild(m);
+  var t=document.createElementNS(NS,"text"); t.setAttribute("x",l.x+6/ppu); t.setAttribute("y",l.y+4/ppu);
+  t.setAttribute("font-size",fs2); t.setAttribute("fill",l.kind==="mne"?"#9fe0bf":"#e7c46a"); t.setAttribute("font-style",l.kind==="mne"?"normal":"italic");
+  t.setAttribute("stroke","#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit");
+  t.textContent=l.name; gT.appendChild(t);});
+ if(vb[2]>7) return;                                     // ~12 km across: name the facility dots in view
+ var fs3=10.5/ppu, m2=0;
+ DOTS.forEach(function(d){ if(m2>=60||d.x<x0||d.x>x1||d.y<y0||d.y>y1)return;
+  var nm=(LANG==="local"&&d.ja)?d.ja:d.en; if(/^(Toilets|Drinking water|Convenience store|Supermarket|Hotel|Guest house|Campsite|Station|Laundry|Repair stand|Bath house|Hot spring)$/.test(nm))return;
+  if(placed.some(function(p){return Math.abs(p.x-d.x)*ppu<100&&Math.abs(p.y-d.y)*ppu<12})) return;
+  placed.push(d); m2++;
+  var t=document.createElementNS(NS,"text"); t.setAttribute("x",d.x+7/ppu); t.setAttribute("y",d.y+4/ppu); t.setAttribute("font-size",fs3); t.setAttribute("fill","#b9c6cf");
+  t.setAttribute("stroke","#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit"); t.textContent=nm; gT.appendChild(t);});}
+applyVehicle(); setLangBtn(); favRender();
+document.getElementById("favsave").addEventListener("click",function(){ var L=favList(); L.unshift({name:routeSummary(),code:stateCode()}); try{localStorage.setItem("favs",JSON.stringify(L.slice(0,30)));}catch(e){} favRender(); });
+document.getElementById("copylink").addEventListener("click",function(){ copyText(location.href.split("#")[0]+"#r="+stateCode(),"Link"); });
+document.getElementById("copycsv").addEventListener("click",function(){ copyText(dayCSV(),"Day list"); });
+document.getElementById("copygpx").addEventListener("click",function(){ copyText(routeGPX(),"GPX"); });
+if(location.hash.indexOf("#r=")===0&&applyCode(location.hash.slice(3))){ setLangBtn(); render(); }
+function showCallout(x,y,text){
+ while(gP.firstChild)gP.removeChild(gP.firstChild);
+ var ppu=pxPerUnit(),fs=12/ppu,w=(text.length*7+14)/ppu,h=22/ppu;
+ var r=document.createElementNS(NS,"rect"); r.setAttribute("x",x+8/ppu); r.setAttribute("y",y-h/2); r.setAttribute("width",w); r.setAttribute("height",h); r.setAttribute("rx",4/ppu); r.setAttribute("fill","#15303f"); r.setAttribute("stroke","#4d7a99"); r.setAttribute("stroke-width",1/ppu);
+ var t=document.createElementNS(NS,"text"); t.setAttribute("x",x+15/ppu); t.setAttribute("y",y+4/ppu); t.setAttribute("font-size",fs); t.setAttribute("fill","#eef2f4"); t.setAttribute("font-family","inherit"); t.textContent=text;
+ gP.appendChild(r); gP.appendChild(t);}
+svg.addEventListener("click",function(e){ if(tapBlock){tapBlock=false;return;} tapAt(e.clientX,e.clientY); });
+var tapBlock=false;
+P.coast.forEach(function(s){var p=document.createElementNS(NS,"polyline");
+ p.setAttribute("points",s);p.setAttribute("fill","none");p.setAttribute("stroke","#1e2f3b");
+ p.setAttribute("stroke-width","1");gC.appendChild(p);});
+var xs=[],ys=[];P.segments.forEach(function(s){if(!s.line)return;
+ s.line.split(" ").forEach(function(v){var a=v.split(",");xs.push(+a[0]);ys.push(+a[1]);});});
+var full=[Math.min.apply(null,xs)-120,Math.min.apply(null,ys)-60,
+ (Math.max.apply(null,xs)-Math.min.apply(null,xs))+240,(Math.max.apply(null,ys)-Math.min.apply(null,ys))+120];
+var vb=full.slice();
+function setVB(b){vb=b;svg.setAttribute("viewBox",b.join(" "));
+ var k=vb[2]/full[2];
+ gC.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",Math.max(.3,1*k))});
+ gG.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",Math.max(.5,1.6*k))});
+ gR.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",Math.max(.9,2.6*k))});
+ gS.querySelectorAll("circle").forEach(function(c){c.setAttribute("r",Math.max(1,2.6*k))});
+ sizeDots(); drawLabels(); while(gP.firstChild)gP.removeChild(gP.firstChild); hidePop();
+ gH.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",4.5*k)});
+ gC.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",1*k)});
+ gG.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",1.6*k)});
+ gR.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",2.6*k)});
+ gS.querySelectorAll("circle").forEach(function(c){c.setAttribute("r",2.6*k)});}
+
+/* --- data layer: facilities and elevation live on segments; a day inherits its slices --- */
+function segKm(v,k){return v.rev?v.km-k:k;}          // planner-direction km -> stored-segment km
+function daySupply(d){
+ var out={shop:0,stay:0,bath:0,water:0,rail:0,covered:true,shopKm:[],prof:[]};
+ var off=0;
+ d.segs.forEach(function(g){var v=g.s,sd=SD[v.id];if(!sd){out.covered=false;return;}
+  if(!sd.covered)out.covered=false;
+  function inRange(k){var kk=segKm(v,k);return kk>=Math.min(segKm(v,g.a),segKm(v,g.b))-0.01&&kk<=Math.max(segKm(v,g.a),segKm(v,g.b))+0.01;}
+  // NB stored km run in the segment's own direction; convert to planner direction for positions
+  function pk(k){return off+(v.rev?(v.km-k):k)-g.a;}
+  ['shop','stay','bath','water','rail'].forEach(function(c){(sd.fac[c]||[]).forEach(function(f){
+    var kk=v.rev?v.km-f[0]:f[0]; if(kk>=g.a-0.01&&kk<=g.b+0.01){out[c]++; if(c==='shop')out.shopKm.push(off+kk-g.a);}});});
+  (sd.prof||[]).forEach(function(p){var kk=v.rev?v.km-p[0]:p[0]; if(kk>=g.a-0.01&&kk<=g.b+0.01)out.prof.push([off+kk-g.a,p[1]]);});
+  off+=g.b-g.a;});
+ out.prof.sort(function(a,b){return a[0]-b[0]});
+ var ks=[0].concat(out.shopKm.sort(function(a,b){return a-b}),[d.km]),gap=0;
+ for(var i=1;i<ks.length;i++)gap=Math.max(gap,ks[i]-ks[i-1]);
+ out.gap=gap; return out;}
+function spark(pr,km){
+ if(pr.length<2)return '';
+ var W=300,H=26,mx=Math.max.apply(null,pr.map(function(p){return p[1]})),top=Math.max(100,mx);
+ var pts=pr.map(function(p){return (p[0]/km*W).toFixed(1)+','+(H-2-(p[1]/top)*(H-6)).toFixed(1)}).join(' ');
+ return '<svg class="spark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><polyline points="0,'+(H-2)+' '+pts+' '+W+','+(H-2)+'" fill="#f0713f" fill-opacity=".18" stroke="none"/>'+
+  '<polyline points="'+pts+'" fill="none" stroke="#f0713f" stroke-width="1.2" vector-effect="non-scaling-stroke"/>'+
+  '<text x="'+(W-2)+'" y="8" fill="#b9c6cf" font-size="8" text-anchor="end">'+Math.round(mx)+' m</text></svg>';}
+var layers={};
+function ptAt(v,k){var pts=v.line.split(" ").map(function(p){var a=p.split(",");return [+a[0],+a[1]]});
+ var L=[0];for(var i=1;i<pts.length;i++)L.push(L[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
+ var f=k/v.km*L[L.length-1],i=1;while(i<L.length-1&&L[i]<f)i++;
+ var t=(f-L[i-1])/((L[i]-L[i-1])||1);return [pts[i-1][0]+(pts[i][0]-pts[i-1][0])*t,pts[i-1][1]+(pts[i][1]-pts[i-1][1])*t];}
+var LCOL={shop:"#ffd166",stay:"#4da3ff",bath:"#c77dff",rail:"#eef2f4",water:"#5ee0c8"};
+function drawLayers(ch){
+ while(gL.firstChild)gL.removeChild(gL.firstChild); DOTS=[];
+ var k=vb[2]/full[2];
+ ch.forEach(function(v){if(v.mode!=="ride")return;var sd=SD[v.id];if(!sd)return;
+  Object.keys(layers).forEach(function(c){if(!layers[c])return;(sd.fac[c]||[]).forEach(function(f){
+   var p=ptAt(SEG[v.id],f[0]);var e=document.createElementNS("http://www.w3.org/2000/svg","circle");
+   e.setAttribute("cx",p[0]);e.setAttribute("cy",p[1]);e.setAttribute("r",1.4*k);
+   e.setAttribute("fill",LCOL[c]);e.setAttribute("fill-opacity",".85");e.setAttribute("class","lay");e.style.cursor="pointer";
+   var label=nm(f,2)+" · "+f[0]+" km · "+f[1]+" km off the road";
+   var t=document.createElementNS("http://www.w3.org/2000/svg","title");t.textContent=label;e.appendChild(t);
+   DOTS.push({x:p[0],y:p[1],label:label,en:f[2],ja:f[3]||null,sub:f[0]+" km into the segment · "+f[1]+" km off the road",el:e});
+   gL.appendChild(e);});});});
+ sizeDots();}
+function tapAt(clientX,clientY){
+ var r=svg.getBoundingClientRect(),ppu=pxPerUnit();
+ var mx=vb[0]+(clientX-r.left)/ppu, my=vb[1]+(clientY-r.top)/ppu, best=null, bd=22/ppu;
+ for(var i=0;i<DOTS.length;i++){var d=DOTS[i],dd=Math.hypot(d.x-mx,d.y-my); if(dd<bd){bd=dd;best=d;}}
+ LABELS.forEach(function(l){ var dd=Math.hypot(l.x-mx,l.y-my); if(dd<bd){bd=dd;best={x:l.x,y:l.y,en:l.name,ja:null,sub:l.kind==="day"?"day start / end":"town on the route",place:true};} });
+ POIS.forEach(function(l){ var dd=Math.hypot(l.x-mx,l.y-my); if(dd<bd){bd=dd;best={x:l.x,y:l.y,en:l.en,ja:l.ja,sub:l.sub};} });
+ if(!best&&selDay){ var pts=dayPoints(selDay), bl=14/ppu, bp=null;
+  for(var i=1;i<pts.length;i++){ var a=pts[i-1],b=pts[i],dx=b[0]-a[0],dy=b[1]-a[1],L2=dx*dx+dy*dy,t=L2?Math.max(0,Math.min(1,((mx-a[0])*dx+(my-a[1])*dy)/L2)):0,qx=a[0]+t*dx,qy=a[1]+t*dy,dd=Math.hypot(qx-mx,qy-my); if(dd<bl){bl=dd;bp=[qx,qy];} }
+  if(bp){ var ll=toLL(bp[0],bp[1]); best={x:bp[0],y:bp[1],en:"Point on the route",ja:null,sub:selDay.frm+" → "+selDay.to+" · "+ll[0].toFixed(4)+", "+ll[1].toFixed(4),place:true}; } }
+ while(gP.firstChild)gP.removeChild(gP.firstChild); hidePop();
+ if(best){ showPop(best.x,best.y,best.en,best.ja,best.sub,best.place);
+  var ring=document.createElementNS(NS,"circle"); ring.setAttribute("cx",best.x); ring.setAttribute("cy",best.y); ring.setAttribute("r",9/ppu); ring.setAttribute("fill","none"); ring.setAttribute("stroke","#fff"); ring.setAttribute("stroke-width",1.5/ppu); gP.insertBefore(ring,gP.firstChild);} }
+function sizeDots(){var ppu=pxPerUnit(),k=vb[2]/full[2]; gL.querySelectorAll("circle").forEach(function(c){c.setAttribute("r",Math.max(1.4*k,vb[2]<=40?6/ppu:4.5/ppu))});}
+
+function asTrain(v){return {id:v.id,mode:"train",frm:v.frm,to:v.to,km:v.km,ascent:0,effort:0,cand:[],rev:v.rev};}
+function rideDays(ch,target){return splitDays(ch,target).days.filter(function(d){return d.mode==="ride"}).length;}
+function applySkips(ch,dtar,target){
+ var ids=ch.map(function(v){return v.id});
+ var cands=SKIPPABLE.filter(function(id){return ids.indexOf(id)>=0});
+ var on={}; Object.keys(skipOn).forEach(function(id){if(ids.indexOf(id)>=0)on[id]=1;});
+ var auto={};
+ var apply=function(){return ch.map(function(v){return (on[v.id]||auto[v.id])?asTrain(v):v;});};
+ if(dtar>0){
+  var cur=apply(); var n=rideDays(cur,target);
+  for(var i=0;i<cands.length&&n>dtar;i++){var id=cands[i]; if(on[id]||skipOff[id])continue; auto[id]=1; cur=apply(); n=rideDays(cur,target);}
+  skipWarn = n>dtar ? ("Still "+n+" riding days with every sensible train hop taken — raise the daily effort, allow more days, or shorten the route.") : "";
+ } else skipWarn="";
+ // chips
+ var box=document.getElementById("skips"); box.innerHTML="";
+ cands.forEach(function(id){var v=SEG[id],b=document.createElement("button");
+  b.className="opt train"+((on[id]||auto[id])?" on":"")+(auto[id]&&!on[id]?" auto":""); b.dataset.id=id;
+  b.textContent=(NODE[v.frm]||{name:v.frm}).name+" → "+(NODE[v.to]||{name:v.to}).name+" · "+Math.round(v.km)+" km";
+  b.title=(on[id]?"kept by you":auto[id]?"proposed — click to refuse":"click to take the train here");
+  box.appendChild(b);});
+ if(!cands.length) box.innerHTML='<span class="hintline">No skippable stretch on this route.</span>';
+ return {chain:apply()};}
+
+function chainStats(ch,target){
+ var km=0,asc=0,rk=0,busy=0,si=0,rideKm=0;
+ ch.forEach(function(v){ if(v.mode!=="ride")return; km+=v.km; asc+=v.ascent; var c=SC[v.id]; if(c){rideKm+=v.km; rk+=c.route_any*v.km; busy+=c.busy*v.km; si+=c.sights;} });
+ var days=splitDays(ch,target).days.filter(function(d){return d.mode==="ride"}).length;
+ return {km:km,asc:asc,days:days,route:rideKm?rk/rideKm:null,busy:rideKm?busy/rideKm:null,sights:rideKm?si/rideKm*100:null};}
+function forkCompare(target){
+ var saved={}; for(var k in pick) saved[k]=pick[k];
+ P.forks.forEach(function(f){
+  var host=document.querySelector('.fork[data-node="'+f.node+'"] .cmp'); if(!host) return;
+  var chains={}; f.options.forEach(function(o){ pick[f.node]=o; chains[o]=chain(); });
+  pick[f.node]=saved[f.node];
+  var ids=f.options.map(function(o){return chains[o].map(function(v){return v.id});});
+  if(ids.some(function(a){return !a.length})){host.innerHTML='<div style="color:#b9c6cf">not reachable on this journey</div>';return;}
+  var pct=function(v){return v==null?'–':Math.round(v*100)+'%'};
+  var name=function(o){return o===f.options[0]?(OPTBASE[f.node]||OPTNAME[o]||o):(OPTNAME[o]||o);};
+  var row=function(diff,nm,cls){
+   var km=0,asc=0,eff=0,rk=0,busy=0,si=0,fer=0;
+   diff.forEach(function(v){ if(v.mode!=="ride"){fer+=1;return;} km+=v.km; asc+=v.ascent; eff+=v.effort; var c=SC[v.id]; if(c){rk+=c.route_any*v.km; busy+=c.busy*v.km; si+=c.sights;} });
+   var route=km?rk/km:null,bz=km?busy/km:null,sg=km?si/km*100:null;
+   return '<div class="'+(cls||'')+'"><b>'+nm+'</b><span>'+(eff/target).toFixed(1)+' d</span><span>'+Math.round(km).toLocaleString()+' km</span><span>'+Math.round(asc).toLocaleString()+' m</span>'+
+    (VEH==="opium"?'<span title="segments re-routed for a moped on this stretch">'+diff.filter(function(v){return v.moped}).length+' of '+diff.filter(function(v){return v.mode==="ride"}).length+' re-routed</span>':'<span class="'+(route>=0.3?'g':'')+'" title="share of this stretch on a designated cycle route">'+pct(route)+' cycle route</span>')+
+    '<span class="'+(bz>=0.3?'r':'')+'" title="share on trunk or primary roads">'+pct(bz)+' busy</span>'+
+    '<span title="named sights within 2 km, per 100 km">'+(sg==null?'–':sg.toFixed(0))+' sights/100km</span>'+(fer?'<span>'+fer+' ferry</span>':'')+'</div>';};
+  var html='',any=false;
+  f.options.slice(1).forEach(function(o,j){
+   var a=ids[0],b=ids[j+1],inB={},inA={}; b.forEach(function(id){inB[id]=1;}); a.forEach(function(id){inA[id]=1;});
+   var dO=chains[o].filter(function(v){return !inA[v.id]}), dR=chains[f.options[0]].filter(function(v){return !inB[v.id]});
+   if(!dO.length&&!dR.length) return; any=true;
+   html+=row(dO,name(o))+row(dR,'instead of '+name(f.options[0]),'ref');});
+  if(!any){host.innerHTML='<div style="color:#b9c6cf">not on the current journey</div>';return;}
+  host.innerHTML='<div style="color:#b9c6cf">the stretch that differs:</div>'+html;
+ });}
+function applySkipsQuiet(ch){ var on={}; Object.keys(skipOn).forEach(function(id){on[id]=1;}); return ch.map(function(v){return on[v.id]?asTrain(v):v;}); }
+
+function dayPoints(d){
+ var out=[];
+ (d.segs||[]).forEach(function(g){var v=SEG[g.s.id]; if(!v||!v.line) return;
+  var pts=v.line.split(" ").map(function(p){var a=p.split(",");return [+a[0],+a[1]]});
+  var L=[0];for(var i=1;i<pts.length;i++)L.push(L[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
+  var tot=L[L.length-1]||1;
+  var a=g.s.rev?v.km-g.b:g.a, b=g.s.rev?v.km-g.a:g.b;           // stored-direction km range
+  var fa=a/v.km*tot, fb=b/v.km*tot, seg=[];
+  seg.push(ptAt(v,a));
+  for(var i=0;i<pts.length;i++) if(L[i]>fa&&L[i]<fb) seg.push(pts[i]);
+  seg.push(ptAt(v,b));
+  if(g.s.rev) seg.reverse();
+  out=out.concat(seg);});
+ return out;}
+var selDay=null;
+function zoomDay(d,el){
+ while(gH.firstChild)gH.removeChild(gH.firstChild);
+ document.querySelectorAll("#days .day.sel").forEach(function(e){e.classList.remove("sel")});
+ if(!d||selDay===d){selDay=null;setVB(full.slice());return;}
+ selDay=d; if(el)el.classList.add("sel");
+ var pts=dayPoints(d); if(pts.length<2) return;
+ var p=document.createElementNS(NS,"polyline"); p.setAttribute("points",pts.map(function(q){return q[0]+","+q[1]}).join(" "));
+ p.setAttribute("fill","none"); p.setAttribute("stroke","#ffd166"); p.setAttribute("stroke-linecap","round"); p.setAttribute("stroke-linejoin","round"); gH.appendChild(p);
+ var xs=pts.map(function(q){return q[0]}),ys=pts.map(function(q){return q[1]});
+ var x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y0=Math.min.apply(null,ys),y1=Math.max.apply(null,ys);
+ var r=svg.getBoundingClientRect(),asp=r.width/r.height, w=Math.max(x1-x0,(y1-y0)*asp,6)*1.5, h=w/asp;
+ var cx=(x0+x1)/2,cy=(y0+y1)/2; setVB([cx-w/2,cy-h/2,w,h]);}
+document.getElementById("fit").addEventListener("click",function(){zoomDay(null);});
+function setLangBtn(){ document.getElementById("lang").textContent=LANG==="local"?"English names":CFG.lang.localLabel; }
+document.getElementById("veh").addEventListener("click",function(){ VEH={bike:"ebike",ebike:"opium",opium:"bike"}[VEH]; try{localStorage.setItem("veh",VEH);}catch(e){} applyVehicle(); document.getElementById("eff").value=VEHDEF[VEH]; render(); });
+document.getElementById("lang").addEventListener("click",function(){ LANG=LANG==="local"?"en":"ja"; try{localStorage.setItem("lang",LANG);}catch(e){} setLangBtn(); render(); });
+
+function render(){
+ var ch=chain(),target=+document.getElementById("eff").value;
+ if(!ch.length){document.getElementById("warn").textContent="No route between those two points with the current fork choices.";
+  document.getElementById("sd").textContent="0";document.getElementById("sk").textContent="0";
+  document.getElementById("sa").textContent="0";document.getElementById("days").innerHTML="";
+  while(gR.firstChild)gR.removeChild(gR.firstChild);while(gS.firstChild)gS.removeChild(gS.firstChild);return;}
+ var dtar=+document.getElementById("dtar").value;
+ document.getElementById("dlv").textContent=dtar?dtar+" days":"no limit";
+ var applied=applySkips(ch,dtar,target); ch=applied.chain;
+ var r=splitDays(ch,target),days=r.days;
+ var ride=days.filter(function(d){return d.mode==="ride"}); LASTDAYS=days;
+ try{ history.replaceState(null,"","#r="+stateCode()); }catch(e){}
+ var km=ch.reduce(function(a,s){return a+(s.mode==="ride"?s.km:0)},0);
+ var asc=ch.reduce(function(a,s){return a+s.ascent},0);
+ document.getElementById("sd").textContent=ride.length;
+ document.getElementById("sk").textContent=Math.round(km).toLocaleString();
+ document.getElementById("sa").textContent=asc.toLocaleString();
+ document.getElementById("slv").textContent=target+"  (~"+Math.round(km/ride.length)+" km/day)";
+ document.getElementById("warn").textContent=r.warn;
+ var nre=ch.filter(function(v){return v.moped}).length, kmre=ch.reduce(function(a,v){return a+(v.moped?v.km:0)},0);
+ var mfkm=ch.reduce(function(a,v){return a+(v.mode==="ride"&&MF[v.id]?MF[v.id]*v.km:0)},0);
+ document.getElementById("vehnote").textContent=VEH==="opium"?
+  (VEHNAME.opium+" mode: a day is distance only (no climb penalty), "+EMIN+"–"+EMAX+" km. "+nre+" segments ("+Math.round(kmre)+" km) follow the moped line because the bicycle line used cycle-only paths; everything else is the same road."):
+  VEH==="ebike"?"E-bike mode: same roads as the bicycle, climbing counts a third, days capped at "+EMAX+" effort (one battery, charge overnight).":
+  (mfkm>0?Math.round(mfkm)+" km of this journey runs on cycle-only paths a moped could not use (see the vehicle switch on the map).":"");
+ var inChain={};ch.forEach(function(s){inChain[s.id]=1});
+ while(gG.firstChild)gG.removeChild(gG.firstChild);
+ while(gR.firstChild)gR.removeChild(gR.firstChild);
+ while(gS.firstChild)gS.removeChild(gS.firstChild);
+ P.segments.forEach(function(s){if(!s.line)return;
+  var p=document.createElementNS(NS,"polyline");p.setAttribute("points",s.line);
+  p.setAttribute("fill","none");p.setAttribute("stroke-linecap","round");p.setAttribute("stroke-linejoin","round");
+  if(inChain[s.id]){p.setAttribute("stroke","#f0713f");gR.appendChild(p);}
+  else{p.setAttribute("stroke","#2a4150");p.setAttribute("stroke-dasharray","4 4");gG.appendChild(p);}});
+ ride.forEach(function(d){if(d.x===undefined)return;
+  var c=document.createElementNS(NS,"circle");c.setAttribute("cx",d.x);c.setAttribute("cy",d.y);
+  c.setAttribute("fill","#4da3ff");c.setAttribute("fill-opacity",".9");gS.appendChild(c);});
+ var box=document.getElementById("days");box.innerHTML="";
+ var maxE=Math.max.apply(null,ride.map(function(d){return d.eff}));var n=0;
+ days.forEach(function(d){var el=document.createElement("div");
+  if(d.mode==="train"){el.className="day trn";
+   el.innerHTML='<div class="n"></div><div>train: '+d.frm+' to '+d.to+'</div><div class="m">'+d.km+' km skipped</div>';}
+  else if(d.mode==="ferry"){el.className="day fer";
+   el.innerHTML='<div class="n"></div><div>ferry: '+d.frm+' to '+d.to+'</div><div class="m">'+d.km+' km</div>';}
+  else{n++;el.className="day";
+   var su=d.segs?daySupply(d):null;
+   var sup=!su?'':su.covered?('<div class="sup"><b>'+su.shop+'</b> shops · <b>'+su.stay+'</b> beds · <b>'+su.bath+'</b> baths · <b>'+su.rail+'</b> stations'+
+      (su.gap>=30?' · <span class="gap">'+su.gap.toFixed(0)+' km with no shop</span>':' · longest gap '+su.gap.toFixed(0)+' km')+'</div>')
+     :'<div class="sup nodata">facility data not loaded for this stretch</div>';
+   el.innerHTML='<div class="n">'+n+'</div><div>'+d.frm+' &#8594; '+d.to+'</div><div class="m">'+d.km+' km · '+d.eff+' eff</div>'+
+    '<div class="bar"><i style="width:'+(100*d.eff/maxE).toFixed(0)+'%"></i></div>'+(su?spark(su.prof,d.km):'')+sup;}
+  if(d.mode==="ride"){el.style.cursor="pointer"; el.addEventListener("click",function(){zoomDay(d,el);});}
+  box.appendChild(el);});
+ while(gH.firstChild)gH.removeChild(gH.firstChild); selDay=null;
+ LABELS=[]; var seenL={};
+ ride.forEach(function(d){ if(d.x===undefined)return; var key=d.to; if(seenL[key])return; seenL[key]=1; LABELS.push({x:d.x,y:d.y,name:d.to,kind:"day"}); });
+ ch.forEach(function(v){ [v.frm,v.to].forEach(function(n){ var nd=NODE[n]; if(!nd||seenL[nd.name])return; seenL[nd.name]=1; LABELS.push({x:nd.x,y:nd.y,name:nd.name,kind:"town"}); }); });
+ if(ride.length){ var f0=NODE[ch[0].frm]; if(f0&&!seenL[f0.name]) LABELS.unshift({x:f0.x,y:f0.y,name:f0.name,kind:"day"}); }
+ CH=ch; drawLayers(ch);
+ setVB(vb);
+ forkCompare(target);}
+
+var ents=P.nodes.filter(function(n){return n.entry;}).sort(function(a,b){return a.rank-b.rank;});
+["start","end"].forEach(function(w){var el=document.getElementById(w);
+ ents.forEach(function(n){var o=document.createElement("option");o.value=n.id;o.textContent=n.name;el.appendChild(o);});
+ el.value=(w==="start"?ents[0].id:ents[ents.length-1].id);
+ el.addEventListener("change",render);});
+var fb=document.getElementById("forks");
+P.forks.forEach(function(f){var d=document.createElement("div");d.className="fork";d.dataset.node=f.node;
+ var h='<div class="q">'+(LABEL[f.node]||f.node)+'</div><div class="opts">';
+ f.options.forEach(function(o){h+='<button class="opt'+(o===f.options[0]?" on":"")+'" data-n="'+f.node+'" data-o="'+o+'">'+
+  (o==="base"?(OPTBASE[f.node]||"Base"):(OPTNAME[o]||o))+'</button>';});
+ d.innerHTML=h+'</div><div class="cmp"></div>';fb.appendChild(d);});
+fb.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+ pick[b.dataset.n]=b.dataset.o;
+ b.parentNode.querySelectorAll("button").forEach(function(x){x.classList.remove("on")});
+ b.classList.add("on");render();});
+document.getElementById("eff").addEventListener("input",render);
+document.getElementById("dtar").addEventListener("input",render);
+document.getElementById("skips").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;var id=b.dataset.id;
+ if(b.classList.contains("on")){ if(skipOn[id]){delete skipOn[id];skipOff[id]=1;} else {skipOff[id]=1;} }
+ else { delete skipOff[id]; skipOn[id]=1; }
+ render();});
+document.getElementById("layers").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+ layers[b.dataset.l]=!layers[b.dataset.l];b.classList.toggle("on",!!layers[b.dataset.l]);render();});
+var drag=null;
+svg.addEventListener("mousedown",function(e){drag={x:e.clientX,y:e.clientY,vb:vb.slice()};svg.classList.add("drag")});
+window.addEventListener("mouseup",function(){drag=null;svg.classList.remove("drag")});
+window.addEventListener("mousemove",function(e){if(!drag)return;var r=svg.getBoundingClientRect(),k=drag.vb[2]/r.width;
+ setVB([drag.vb[0]-(e.clientX-drag.x)*k,drag.vb[1]-(e.clientY-drag.y)*k,drag.vb[2],drag.vb[3]]);});
+var tch=null;
+svg.addEventListener("touchstart",function(e){ if(e.touches.length===1){tch={x:e.touches[0].clientX,y:e.touches[0].clientY,vb:vb.slice()};}
+ else if(e.touches.length===2){var a=e.touches[0],b=e.touches[1];tch={pinch:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),cx:(a.clientX+b.clientX)/2,cy:(a.clientY+b.clientY)/2,vb:vb.slice()};} },{passive:true});
+svg.addEventListener("touchmove",function(e){ if(!tch)return; e.preventDefault(); var r=svg.getBoundingClientRect();
+ if(e.touches.length===1&&tch.x!==undefined){var k=tch.vb[2]/r.width; if(Math.hypot(e.touches[0].clientX-tch.x,e.touches[0].clientY-tch.y)>8)tch.moved=true; if(!tch.moved)return; setVB([tch.vb[0]-(e.touches[0].clientX-tch.x)*k,tch.vb[1]-(e.touches[0].clientY-tch.y)*k,tch.vb[2],tch.vb[3]]);}
+ else if(e.touches.length===2&&tch.pinch){var a=e.touches[0],b=e.touches[1],d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),f=tch.pinch/d;
+  var ax=tch.vb[0]+(tch.cx-r.left)/r.width*tch.vb[2],ay=tch.vb[1]+(tch.cy-r.top)/r.height*tch.vb[3];
+  var w=Math.min(Math.max(tch.vb[2]*f,3),full[2]*2),ra=w/tch.vb[2]; setVB([ax-(ax-tch.vb[0])*ra,ay-(ay-tch.vb[1])*ra,w,tch.vb[3]*ra]);} },{passive:false});
+svg.addEventListener("touchend",function(e){ if(tch&&tch.x!==undefined&&!tch.moved&&e.changedTouches.length){ e.preventDefault(); tapBlock=true; tapAt(e.changedTouches[0].clientX,e.changedTouches[0].clientY); setTimeout(function(){tapBlock=false;},400);} tch=null;});
+svg.addEventListener("wheel",function(e){e.preventDefault();var r=svg.getBoundingClientRect(),f=e.deltaY>0?1.15:0.87;
+ var ax=vb[0]+(e.clientX-r.left)/r.width*vb[2],ay=vb[1]+(e.clientY-r.top)/r.height*vb[3];
+ var w=Math.min(Math.max(vb[2]*f,3),full[2]*2),ra=w/vb[2];
+ setVB([ax-(ax-vb[0])*ra,ay-(ay-vb[1])*ra,w,vb[3]*ra]);},{passive:false});
+setVB(full.slice());render();
+</script></body></html>
