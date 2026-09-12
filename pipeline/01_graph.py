@@ -21,6 +21,8 @@ if cfg['graph'].get('prebuilt_dir'):
     water = water_block(cfg, pj)
     if water: P['water'] = water; jdump(W, 'P.json', P); print('water:', len(water['lakes']), 'lake shapes', len(water['rivers']), 'river pieces')
     print('prebuilt graph copied:', len(P['nodes']), 'nodes', len(P['segments']), 'segments')
+    for n in P['nodes']:                                   # graph.entryTowns: prebuilt waypoint towns promoted to selectable start/end towns
+        if n['id'] in cfg['graph'].get('entryTowns', []): n['entry'] = 1
     vb = cfg.get('viaBase') or {}
     if vb:
         SEG = {x['id']: x for x in P['segments']}; SD = jload(W, 'seg_data.json', {}); PR = jload(W, 'proj.json'); pjv = Proj(PR); NB = {n['id']: n for n in P['nodes']}

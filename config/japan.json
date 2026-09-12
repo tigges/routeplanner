@@ -65,7 +65,19 @@
     "天竜川",
     "富士川"
    ]
-  }
+  },
+  "entryTowns": [
+   "nichinan",
+   "kushima",
+   "kanoya",
+   "wajima",
+   "suzu",
+   "uozu",
+   "hofu",
+   "noshiro",
+   "murakami",
+   "kashiwazaki"
+  ]
  },
  "nodes": {
   "bungotakada": {
@@ -109,6 +121,18 @@
    "lat": 35.2758,
    "lon": 136.2586,
    "type": "gateway"
+  },
+  "tsuchiura": {
+   "name": "Tsuchiura",
+   "lat": 36.0785,
+   "lon": 140.206,
+   "type": "gateway"
+  },
+  "itako": {
+   "name": "Itako",
+   "lat": 35.9465,
+   "lon": 140.5545,
+   "type": "gateway"
   }
  },
  "trunks": [
@@ -150,6 +174,42 @@
     "hikone",
     "otsu"
    ]
+  },
+  {
+   "variant": "rinrin",
+   "nodes": [
+    "tsukuba",
+    "tsuchiura",
+    "itako",
+    "tokyo"
+   ],
+   "via": {
+    "tsuchiura--itako": [
+     [
+      35.9727,
+      140.3037
+     ]
+    ]
+   }
+  },
+  {
+   "variant": "kasumigaura-north",
+   "nodes": [
+    "tsuchiura",
+    "itako"
+   ],
+   "via": {
+    "tsuchiura--itako": [
+     [
+      36.0963,
+      140.4036
+     ],
+     [
+      35.9856,
+      140.4867
+     ]
+    ]
+   }
   }
  ],
  "forks": {
@@ -161,6 +221,14 @@
   "makino": [
    "west",
    "east"
+  ],
+  "tsukuba": [
+   "pacific",
+   "rinrin"
+  ],
+  "tsuchiura": [
+   "rinrin",
+   "kasumigaura-north"
   ]
  },
  "viaBase": {
@@ -208,7 +276,9 @@
   "uozu": "Uozu to Himi",
   "usa": "Usa to Beppu",
   "uwajima": "Uwajima to Sukumo",
-  "makino": "At Makino"
+  "makino": "At Makino",
+  "tsukuba": "Tsukuba to Tokyo",
+  "tsuchiura": "Round Kasumigaura"
  },
  "optionNames": {
   "base": "Yotei line",
@@ -230,7 +300,9 @@
   "kunisaki": "Around Kunisaki peninsula",
   "ashizuri": "Around Cape Ashizuri",
   "east": "Biwa east shore: Nagahama, Hikone",
-  "west": "Biwa west shore"
+  "west": "Biwa west shore",
+  "rinrin": "Via Kasumigaura and Itako",
+  "kasumigaura-north": "North and east shore"
  },
  "defaultOptionNames": {
   "aomori": "Sea of Japan",
@@ -246,7 +318,9 @@
   "uozu": "Coast road",
   "usa": "Direct to Beppu",
   "uwajima": "Direct to Sukumo",
-  "makino": "Biwa west shore"
+  "makino": "Biwa west shore",
+  "tsukuba": "Direct to Tokyo",
+  "tsuchiura": "South shore"
  },
  "skippable": [],
  "neverSkip": [],

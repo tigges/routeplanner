@@ -272,14 +272,14 @@ function edgeView(s,rev){
  return {id:s.id,rev:!!rev,mode:"ride",moped:!!s.moped,frm:rev?s.to:s.frm,to:rev?s.frm:s.to,km:s.km,
    ascent:rev?s.descent:s.ascent,effort:rev?s.effortR:s.effort,cand:c,line:s.line};}
 
-var LEGS=null;                       // set while a multi-leg trip (a loop) is loaded: [{s,e,p},...] stitched together
+var LEGS=null; var EXPL={};          // EXPL: forks a trip leg picked explicitly, set while withPicks runs                       // set while a multi-leg trip (a loop) is loaded: [{s,e,p},...] stitched together
 function chain(a,b){
  if(LEGS&&!a&&!b){ var out=[]; for(var i=0;i<LEGS.length;i++){ var L=LEGS[i], c=withPicks(L.p,function(){return chain(L.s,L.e);}); if(!c.length) return []; out=out.concat(c); } return out; }
  a=a||document.getElementById("start").value; b=b||document.getElementById("end").value;
  if(a===b) return [];
  var rev=NODE[b].rank<NODE[a].rank;
  [a,b].forEach(function(n){ var req=NODE[n].requires; if(!req) return; (Array.isArray(req)?req:[req]).forEach(function(r){   // make the end points reachable: set the forks BEFORE them to the variant they sit on
-  for(var k in pick) if(RANK[k]<RANK[n]&&P.forks.some(function(f){return f.node===k&&f.options.indexOf(r)>=0;})) pick[k]=r; });});
+  for(var k in pick) if(!EXPL[k]&&RANK[k]<RANK[n]&&P.forks.some(function(f){return f.node===k&&f.options.indexOf(r)>=0;})) pick[k]=r; });});   // a fork a trip picked itself is left alone (a loop trip may pick the other shore)
  var r1=walk(a,b,rev); return r1.length?r1:walk(a,b,!rev);}   // rank suggests the direction; a branch that runs against the ranks still resolves the other way
 var IN={};P.segments.forEach(function(s){(IN[s.to]=IN[s.to]||[]).push(s);});
 var VFORK={};(function(){ var tos={}; P.segments.forEach(function(s){(tos[s.variant]=tos[s.variant]||{})[s.to]=1;});   // variant -> the fork where its trunk starts
@@ -763,7 +763,7 @@ svg.addEventListener("wheel",function(e){e.preventDefault();var r=svg.getBoundin
 var TRIPS=(CFG.trips||[]).map(function(t){ if(!t.id) t.id=(t.slug||"")+":"+(t.s||"")+":"+(t.e||""); return t; });
 var CURTRIP=null, PICKING=false, PKSEL=null;
 function toXY(lat,lon){ return [PJ.kx*lon+PJ.bx, PJ.ky*Math.log(Math.tan(Math.PI/4+lat*Math.PI/360))+PJ.by]; }
-function withPicks(p,fn){ var saved={}; for(var k in pick) saved[k]=pick[k]; P.forks.forEach(function(f){pick[f.node]=f.options[0];}); for(var k in (p||{})) if(FORK[k]) pick[k]=p[k]; var r=fn(); for(var k in saved) pick[k]=saved[k]; return r; }
+function withPicks(p,fn){ var saved={}; for(var k in pick) saved[k]=pick[k]; P.forks.forEach(function(f){pick[f.node]=f.options[0];}); EXPL={}; for(var k in (p||{})) if(FORK[k]){ pick[k]=p[k]; EXPL[k]=1; } var r=fn(); EXPL={}; for(var k in saved) pick[k]=saved[k]; return r; }
 function tripLegs(t){ return t.legs||[{s:t.s,e:t.e,p:t.p}]; }
 function tripHere(t){ return (!t.slug||t.slug===CFG.slug)&&tripLegs(t).every(function(L){return L.s&&L.e&&NODE[L.s]&&NODE[L.e];}); }
 function tripChain(t){ if(!tripHere(t)) return []; var out=[], legs=tripLegs(t); for(var i=0;i<legs.length;i++){ var L=legs[i], c=withPicks(L.p,function(){return chain(L.s,L.e);}); if(!c.length) return []; out=out.concat(c); } return out; }
