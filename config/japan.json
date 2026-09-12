@@ -9,20 +9,63 @@
  "workdir": "work/japan",
  "osm": {
   "extracts": [
-   "downloads/hokkaido-260907.osm.pbf",
-   "downloads/tohoku-260907.osm.pbf",
-   "downloads/kanto.osm.pbf",
-   "downloads/chubu.osm.pbf",
-   "downloads/kansai-260907.osm.pbf",
-   "downloads/chugoku-260907.osm.pbf",
-   "downloads/shikoku-260907.osm.pbf",
-   "downloads/kyushu-260907.osm.pbf"
+   "downloads/jp-hokkaido.osm.pbf",
+   "downloads/jp-tohoku.osm.pbf",
+   "downloads/jp-kanto.osm.pbf",
+   "downloads/jp-chubu.osm.pbf",
+   "downloads/jp-kansai.osm.pbf",
+   "downloads/jp-chugoku.osm.pbf",
+   "downloads/jp-shikoku.osm.pbf",
+   "downloads/jp-kyushu.osm.pbf"
   ],
-  "corridor_km": 2.0
+  "corridor_km": 2.0,
+  "mirror": {
+   "jp-hokkaido.osm.pbf": "asia/japan/hokkaido.osm.pbf",
+   "jp-tohoku.osm.pbf": "asia/japan/tohoku.osm.pbf",
+   "jp-kanto.osm.pbf": "asia/japan/kanto.osm.pbf",
+   "jp-chubu.osm.pbf": "asia/japan/chubu.osm.pbf",
+   "jp-kansai.osm.pbf": "asia/japan/kansai.osm.pbf",
+   "jp-chugoku.osm.pbf": "asia/japan/chugoku.osm.pbf",
+   "jp-shikoku.osm.pbf": "asia/japan/shikoku.osm.pbf",
+   "jp-kyushu.osm.pbf": "asia/japan/kyushu.osm.pbf"
+  }
  },
  "graph": {
   "prebuilt_dir": "examples/japan",
-  "note": "Japan's graph predates this pipeline and is shipped ready-made; for a new country leave 'prebuilt_dir' out and fill 'nodes' and 'trunks'."
+  "note": "Japan's graph predates this pipeline and is shipped ready-made; for a new country leave 'prebuilt_dir' out and fill 'nodes' and 'trunks'.",
+  "land_fill": false,
+  "water": {
+   "file": "config/japan_water.geojson",
+   "min_km2": 20,
+   "rivers": [
+    "Shinano River",
+    "Tone River",
+    "Ishikari River",
+    "Kitakami River",
+    "Kiso River",
+    "Yodo River",
+    "Chikugo River",
+    "Teshio River",
+    "Mogami River",
+    "Agano River",
+    "Tenryu River",
+    "Fuji River",
+    "Shinanogawa",
+    "Tonegawa",
+    "信濃川",
+    "利根川",
+    "石狩川",
+    "北上川",
+    "木曽川",
+    "淀川",
+    "筑後川",
+    "天塩川",
+    "最上川",
+    "阿賀野川",
+    "天竜川",
+    "富士川"
+   ]
+  }
  },
  "nodes": {
   "bungotakada": {

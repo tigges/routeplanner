@@ -18,6 +18,8 @@ if cfg['graph'].get('prebuilt_dir'):
         key = s['frm'] + '--' + s['to']
         line = rc[key]['line'] if key in rc else [list(pj.ll(*map(float, p.split(',')))) for p in s['line'].split()]
         json.dump(seg_geojson(s['id'], line), open(os.path.join(SEGDIR, seg_fn(s['id'])), 'w'))
+    water = water_block(cfg, pj)
+    if water: P['water'] = water; jdump(W, 'P.json', P); print('water:', len(water['lakes']), 'lake shapes', len(water['rivers']), 'river pieces')
     print('prebuilt graph copied:', len(P['nodes']), 'nodes', len(P['segments']), 'segments')
     vb = cfg.get('viaBase') or {}
     if vb:
@@ -155,22 +157,8 @@ if cfg['graph'].get('outline'):
         for r in rings(f):
             pts = decimate([(c[1], c[0]) for c in r], 0.5)
             if len(pts) > 2: coast.append(' '.join('%.1f,%.1f' % pj.xy(*p) for p in pts))
-# --- water (step 12): lakes as filled shapes, big rivers as lines --------------------------------
-water = None
-WATERF = (cfg['graph'].get('water') or {}).get('file')
-if WATERF and os.path.exists(WATERF):
-    wg = json.load(open(WATERF)); water = dict(lakes=[], rivers=[])
-    for f in wg['features']:
-        pr = f.get('properties') or {}; geo = f['geometry']
-        if pr.get('kind') == 'lake':
-            polys = geo['coordinates'] if geo['type'] == 'MultiPolygon' else [geo['coordinates']]
-            for poly in polys:
-                pts = decimate([(c[1], c[0]) for c in poly[0]], 0.3)
-                if len(pts) > 2: water['lakes'].append(dict(name=pr.get('name', ''), km2=pr.get('km2', 0), pts=' '.join('%.1f,%.1f' % pj.xy(*p) for p in pts)))
-        elif pr.get('kind') == 'river':
-            pts = decimate([(c[1], c[0]) for c in geo['coordinates']], 0.3)
-            if len(pts) > 1: water['rivers'].append(dict(name=pr.get('name', ''), pts=' '.join('%.1f,%.1f' % pj.xy(*p) for p in pts)))
-    print('water:', len(water['lakes']), 'lake shapes', len(water['rivers']), 'river pieces')
+water = water_block(cfg, pj)          # step 12's lakes and rivers, projected
+if water: print('water:', len(water['lakes']), 'lake shapes', len(water['rivers']), 'river pieces')
 P = dict(nodes=sorted(NODE.values(), key=lambda n: n['rank']), segments=segments, forks=[dict(node=n, options=o) for n, o in forks.items()], coast=coast)
 if water: P['water'] = water
 jdump(W, 'P.json', P); jdump(W, 'seg_data.json', SD, compact=True)

@@ -32,9 +32,10 @@ for pbf in cfg['osm']['extracts']:
             polys = gs.geoms if gs.geom_type == 'MultiPolygon' else [gs]
             lakes[name] = dict(name=name, local=t.get('name', ''), km2=round(km2, 1), centre=(c.y, c.x), geom=g,
                                rings=[[[round(y, 4), round(x, 4)] for x, y in p.exterior.coords] for p in polys]); n += 1
-        elif o.is_way() and t.get('waterway') == 'river' and t.get('name') in RIVERS:
+        elif o.is_way() and t.get('waterway') == 'river' and (t.get('name') in RIVERS or t.get('name:en') in RIVERS):
+            rn = t.get('name:en') if t.get('name:en') in RIVERS else t['name']
             pts = [(nd.lon, nd.lat) for nd in o.nodes if nd.location.valid()]
-            if len(pts) > 1: rivers.setdefault(t['name'], []).append(LineString(pts))
+            if len(pts) > 1: rivers.setdefault(rn, []).append(LineString(pts))
     print('  ', n, 'lakes so far', flush=True)
 feats = []
 if cfg['graph'].get('outline'):        # only lakes that touch the country: within 5 km of its outline (Lake Annecy is not a Swiss lake)

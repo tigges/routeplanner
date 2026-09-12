@@ -9,22 +9,56 @@
  "workdir": "work/spain",
  "osm": {
   "extracts": [
-   "downloads/cataluna-latest.osm.pbf",
-   "downloads/aragon-latest.osm.pbf",
-   "downloads/navarra-latest.osm.pbf",
-   "downloads/la-rioja-latest.osm.pbf",
-   "downloads/pais-vasco-latest.osm.pbf",
-   "downloads/cantabria-latest.osm.pbf",
-   "downloads/asturias-latest.osm.pbf",
-   "downloads/castilla-y-leon-latest.osm.pbf",
-   "downloads/galicia-latest.osm.pbf"
+   "downloads/es-catalunya.osm.pbf",
+   "downloads/es-aragon.osm.pbf",
+   "downloads/es-comunidad_foral_de_navarra.osm.pbf",
+   "downloads/es-la_rioja.osm.pbf",
+   "downloads/es-euskadi.osm.pbf",
+   "downloads/es-cantabria.osm.pbf",
+   "downloads/es-asturias.osm.pbf",
+   "downloads/es-castilla_y_leon.osm.pbf",
+   "downloads/es-galicia.osm.pbf"
   ],
   "corridor_km": 2.0,
-  "note": "Geofabrik europe/spain/<region>-latest.osm.pbf; download inside the sandbox with curl -L"
+  "note": "Geofabrik europe/spain/<region>-latest.osm.pbf; download inside the sandbox with curl -L",
+  "mirror": {
+   "es-catalunya.osm.pbf": "europe/spain/catalunya.osm.pbf",
+   "es-aragon.osm.pbf": "europe/spain/aragon.osm.pbf",
+   "es-comunidad_foral_de_navarra.osm.pbf": "europe/spain/comunidad_foral_de_navarra.osm.pbf",
+   "es-la_rioja.osm.pbf": "europe/spain/la_rioja.osm.pbf",
+   "es-euskadi.osm.pbf": "europe/spain/euskadi.osm.pbf",
+   "es-cantabria.osm.pbf": "europe/spain/cantabria.osm.pbf",
+   "es-asturias.osm.pbf": "europe/spain/asturias.osm.pbf",
+   "es-castilla_y_leon.osm.pbf": "europe/spain/castilla_y_leon.osm.pbf",
+   "es-galicia.osm.pbf": "europe/spain/galicia.osm.pbf"
+  }
  },
  "graph": {
   "map_width": 520,
-  "outline": "config/spain_outline.geojson"
+  "outline": "config/spain_outline.geojson",
+  "land_fill": true,
+  "water": {
+   "file": "config/spain_water.geojson",
+   "min_km2": 8,
+   "rivers": [
+    "Ebro",
+    "Duero",
+    "Douro",
+    "Miño",
+    "Sil",
+    "Tajo",
+    "Río Ebro",
+    "Río Duero",
+    "Río Miño",
+    "Río Sil",
+    "Río Tajo",
+    "Río Segre",
+    "Segre",
+    "Río Aragón",
+    "Pisuerga",
+    "Río Pisuerga"
+   ]
+  }
  },
  "nodes": {
   "capcreus": {
@@ -379,9 +413,22 @@
   "ponferrada": "O Cebreiro and Sarria"
  },
  "presets": [
-  {"name": "Main line", "picks": {}},
-  {"name": "Mountain", "picks": {"figueres": "pyrenees"}},
-  {"name": "Coastal", "picks": {"logrono": "norte"}}
+  {
+   "name": "Main line",
+   "picks": {}
+  },
+  {
+   "name": "Mountain",
+   "picks": {
+    "figueres": "pyrenees"
+   }
+  },
+  {
+   "name": "Coastal",
+   "picks": {
+    "logrono": "norte"
+   }
+  }
  ],
  "skippable": [],
  "vehicles": {

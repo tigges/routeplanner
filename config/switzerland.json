@@ -14,7 +14,15 @@
    "downloads/vorarlberg.osm.pbf",
    "downloads/haute_savoie.osm.pbf"
   ],
-  "corridor_km": 2.0
+  "corridor_km": 2.0,
+  "mirror": {
+   "switzerland.osm.pbf": "europe/switzerland.osm.pbf",
+   "vorarlberg.osm.pbf": "europe/austria/vorarlberg.osm.pbf",
+   "haute_savoie.osm.pbf": "europe/france/rhone_alpes/haute_savoie.osm.pbf"
+  },
+  "urls": {
+   "konstanz.osm.pbf": "https://download.bbbike.org/osm/bbbike/Konstanz/Konstanz.osm.pbf"
+  }
  },
  "graph": {
   "map_width": 520,
@@ -39,7 +47,8 @@
    "fallback": [
     "config/switzerland_lakes_fallback.geojson"
    ]
-  }
+  },
+  "land_fill": true
  },
  "nodes": {
   "geneva": {

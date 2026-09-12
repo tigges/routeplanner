@@ -439,7 +439,7 @@ function showCallout(x,y,text){
  gP.appendChild(r); gP.appendChild(t);}
 svg.addEventListener("click",function(e){ if(tapBlock){tapBlock=false;return;} if(PICKING) return; tapAt(e.clientX,e.clientY); });
 var tapBlock=false;
-var LAND=!!P.water;   // a closed border with a water layer (Switzerland) gets a land tone; a coastline made of pieces (Japan, Spain) stays a line
+var LAND=!!CFG.landFill;   // config graph.land_fill: a closed border gets a land tone; a coastline made of pieces (Japan) stays a line
 P.coast.forEach(function(s){var p=document.createElementNS(NS,LAND?"polygon":"polyline");
  p.setAttribute("points",s);p.setAttribute("fill",LAND?"#13242f":"none");p.setAttribute("stroke","#4a6a80");p.setAttribute("stroke-linejoin","round");   // colour does the work, not weight
  p.setAttribute("stroke-width","1");gC.appendChild(p);});

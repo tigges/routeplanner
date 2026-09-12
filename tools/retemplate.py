@@ -23,7 +23,7 @@ def grab(name):
     m = re.search(r'^var %s=(.*?);\s*(?://.*)?$' % name, src, re.M)
     return m.group(1) if m else '{}'
 TRIPS, NETWORKS = load_trips(cfg, sys.argv[1])
-page_cfg = dict(title=cfg['title'], slug=cfg['slug'], trips=TRIPS, networks=NETWORKS, lang=cfg['lang'], proj=json.loads(grab('CFG'))['proj'] if re.search(r'^var CFG=', src, re.M) else None,
+page_cfg = dict(title=cfg['title'], slug=cfg['slug'], landFill=bool(cfg.get('graph', {}).get('land_fill')), trips=TRIPS, networks=NETWORKS, lang=cfg['lang'], proj=json.loads(grab('CFG'))['proj'] if re.search(r'^var CFG=', src, re.M) else None,
                 forkLabels=cfg.get('forkLabels', {}), optionNames=cfg.get('optionNames', {}),
                 defaultOptionNames=cfg.get('defaultOptionNames', {}), skippable=cfg.get('skippable', []),
                 neverSkip=cfg.get('neverSkip', []), skipRule=cfg.get('skipRule'), vehicles=cfg['vehicles'],
@@ -31,6 +31,11 @@ page_cfg = dict(title=cfg['title'], slug=cfg['slug'], trips=TRIPS, networks=NETW
 if page_cfg['proj'] is None: raise SystemExit('no CFG in %s' % page)
 subs = {'CFG': json.dumps(page_cfg, ensure_ascii=False)}
 for n in NAMES: subs[n] = grab(n)
+sys.path.insert(0, os.path.join(root, 'pipeline'))
+from common import Proj, water_block                      # a country without work/ data still gets step 12's water: projected here into the lifted P
+water = water_block(cfg, Proj(page_cfg['proj']))
+if water:
+    P = json.loads(subs['P']); P['water'] = water; subs['P'] = json.dumps(P, ensure_ascii=False, separators=(',', ':')); print('water:', len(water['lakes']), 'lake shapes', len(water['rivers']), 'river pieces')
 subs['PRESETS'] = json.dumps(cfg.get('presets', []), ensure_ascii=False)
 out = tpl
 for k, v in subs.items():

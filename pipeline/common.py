@@ -114,3 +114,21 @@ def seg_geojson(sid, line):
     return {'type': 'Feature', 'properties': {'id': sid}, 'geometry': {'type': 'LineString', 'coordinates': [[p[1], p[0]] for p in line]}}
 def seg_fn(sid): return sid.replace('#', '__') + '.geojson'
 def seg_id(fn): return fn[:-8].replace('__', '#')
+
+
+def water_block(cfg, pj):
+    """P.water from graph.water.file (step 12), projected: lakes as filled shapes, big rivers as lines. None when there is no file."""
+    wf = (cfg.get('graph', {}).get('water') or {}).get('file')
+    if not wf or not os.path.exists(wf): return None
+    wg = json.load(open(wf)); water = dict(lakes=[], rivers=[])
+    for f in wg['features']:
+        pr = f.get('properties') or {}; geo = f['geometry']
+        if pr.get('kind') == 'lake':
+            polys = geo['coordinates'] if geo['type'] == 'MultiPolygon' else [geo['coordinates']]
+            for poly in polys:
+                pts = decimate([(c[1], c[0]) for c in poly[0]], 0.3)
+                if len(pts) > 2: water['lakes'].append(dict(name=pr.get('name', ''), km2=pr.get('km2', 0), pts=' '.join('%.1f,%.1f' % pj.xy(*q) for q in pts)))
+        elif pr.get('kind') == 'river':
+            pts = decimate([(c[1], c[0]) for c in geo['coordinates']], 0.3)
+            if len(pts) > 1: water['rivers'].append(dict(name=pr.get('name', ''), pts=' '.join('%.1f,%.1f' % pj.xy(*q) for q in pts)))
+    return water

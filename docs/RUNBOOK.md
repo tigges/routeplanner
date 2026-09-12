@@ -92,6 +92,8 @@ its size is roughly 8 MB per 100 segments with facilities, double that with mope
   template change: `python3 tools/retemplate.py config/<country>.json` for each.
 - `vehicles.moped.dropFacilities`: categories left out of the moped data at build time (default eat, wc; they fall back to the bicycle list). Saves ~3 MB on Japan.
 - Steps 02, 03 and 11 take `--extract <file>` to scan one OSM extract per run (time-limited sessions).
+- `tools/catchup.py config/<a>.json config/<b>.json` brings a country's page up to the current template and data layers in one go: downloads missing extracts (`osm.urls`, or `osm.mirror` paths on download.openstreetmap.fr), runs step 12, refreshes the graph (01 where the data is in work/ or examples/, else retemplate, which now injects the water into the lifted P), rebuilds, publishes, re-measures trips. Needs `pip install osmium shapely numpy scipy playwright` once. Then `git add docs config examples`, commit, push.
+- `graph.land_fill: true` paints the country in a land tone (only for a closed border like Switzerland or Spain; Japan's coast comes in pieces and stays a line).
 - Background jobs in the Claude sandbox are killed when a tool call ends unless started with `setsid nohup … &`.
 
 ## 4. Adding to an existing country
