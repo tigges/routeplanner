@@ -18,6 +18,10 @@ h1{font-size:17px;margin:18px 16px 3px;font-weight:600;letter-spacing:-.01em}
 .stats b{display:block;font-size:20px;color:var(--paper);font-weight:600}
 h2{font-size:11px;color:#6d8492;margin:0 16px 8px;font-weight:600}
 .fork{margin:0 16px 12px}
+#forkhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 16px 6px}
+#forksummary{font-size:13px;color:var(--paper);font-weight:600}
+#forktoggle{font-size:11.5px;color:#7fc4ff;cursor:pointer;border:1px solid var(--line);border-radius:5px;padding:2px 8px}
+#forkbody[hidden]{display:none}
 .fork .q{font-size:12.5px;margin-bottom:5px}
 .opts{display:flex;gap:5px;flex-wrap:wrap}
 .opt{border:1px solid var(--line);background:transparent;color:var(--dim);border-radius:6px;
@@ -64,29 +68,40 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 .cmp .g{color:#8fd3a1}.cmp .r{color:#e8a13f}
 .layers .opt.on{background:#15303f;color:var(--paper);border-color:#2b4d63}
 #hint{position:absolute;left:14px;bottom:12px;font-size:11px;color:#b9c6cf}
+#friendwrap{margin:2px 16px 14px}
+#strip{display:flex;height:16px;border-radius:3px;overflow:hidden;gap:1px;background:#0a141b}
+#strip div{min-width:1px}
+#friendleg{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;font-size:11px;color:var(--dim);align-items:center}
+#friendleg span{display:flex;align-items:center;gap:4px}
+#friendleg i{width:10px;height:10px;border-radius:2px;display:inline-block}
+#friendtog{cursor:pointer;border:1px solid var(--line);border-radius:5px;padding:2px 7px;color:var(--dim);margin-left:auto}
+#friendtog.on{background:#15303f;color:var(--paper);border-color:#2f5a72}
 #warn{margin:0 16px 12px;font-size:11.5px;color:#e8a13f}
 </style></head><body><div id="app">
 <div id="side">
 <h1 id="title"></h1>
 <p class="sub">Choose a route at each fork and a daily effort. Days are computed, not stored. Elevation on every segment; shops, beds, baths, taps and stations within 2 km on every segment, so any journey inherits them.</p>
 <div class="stats"><div><b id="sd"></b>days</div><div><b id="sk"></b>km</div><div><b id="sa"></b>m climbed</div></div>
+<div id="friendwrap"><div id="strip" title="each leg, width by distance, colour by how bike-friendly it is"></div>
+<div id="friendleg"><span><i style="background:#97C459"></i>signed / quiet</span><span><i style="background:#EF9F27"></i>minor / mixed</span><span><i style="background:#E24B4A"></i>busy road</span><span id="friendtog" title="colour the route line on the map the same way">colour the map line</span></div></div>
 <div class="sl"><div class="slrow"><span>From</span><span></span></div>
 <select id="start"></select>
 <div class="slrow" style="margin-top:8px"><span>To</span><span></span></div>
 <select id="end"></select></div>
+<h2>Route</h2><div id="forkwrap"><div id="forkhead"><span id="forksummary"></span><span id="forktoggle">edit</span></div>
+<div id="forkbody"><div id="signedbar" class="fork" hidden><div class="layers" style="margin:0"><button class="opt" id="signed"></button></div><div class="hintline" id="signednote"></div></div><div id="forks"></div></div></div>
 <div class="sl"><div class="slrow"><span id="efflabel">Daily effort</span><span id="slv"></span></div>
-<input type="range" id="eff" min="55" max="280" step="5" value="140"></div>
+<input type="range" id="eff" min="110" max="280" step="10" value="140"></div>
 <div class="sl"><div class="slrow"><span>Days I have</span><span id="dlv">no limit</span></div>
-<input type="range" id="dtar" min="0" max="120" step="1" value="0">
+<input type="range" id="dtar" min="0" max="60" step="1" value="0">
 <div class="hintline" id="vehnote"></div>
 <div class="hintline">Set a limit and the planner proposes train hops through the dull stretches until the days fit. Click a hop to keep or drop it.</div>
 <div class="layers" id="skips"></div></div>
 <div id="warn"></div>
-<h2>This route</h2><div class="layers" id="routebar"><button class="opt" id="favsave">Save as favourite</button><button class="opt" id="copylink">Copy link</button><button class="opt" id="copycsv">Copy day list (CSV)</button><button class="opt" id="copygpx">Copy GPX</button></div>
-<div id="favs"></div><div id="expnote" class="hintline"></div><textarea id="exp" hidden></textarea>
-<h2>Forks</h2><div id="signedbar" class="fork" hidden><div class="layers" style="margin:0"><button class="opt" id="signed"></button></div><div class="hintline" id="signednote"></div></div><div id="forks"></div>
-<h2>Show on map</h2><div class="layers" id="layers"><button class="opt" data-l="shop">Shops</button><button class="opt" data-l="stay">Beds</button><button class="opt" data-l="bath">Baths</button><button class="opt" data-l="rail">Stations</button><button class="opt" data-l="water">Water</button></div>
 <h2>Days</h2><div id="days"></div>
+<h2 style="margin-top:18px">Saved &amp; export</h2><div class="layers" id="routebar"><button class="opt" id="favsave">Save as favourite</button><button class="opt" id="copylink">Copy link</button><button class="opt" id="copycsv">Copy day list (CSV)</button><button class="opt" id="copygpx">Copy GPX</button></div>
+<div id="favs"></div><div id="expnote" class="hintline"></div><textarea id="exp" hidden></textarea>
+<h2>Show on map</h2><div class="layers" id="layers"><button class="opt" data-l="shop">Shops</button><button class="opt" data-l="stay">Beds</button><button class="opt" data-l="bath">Baths</button><button class="opt" data-l="rail">Stations</button><button class="opt" data-l="water">Water</button></div>
 </div>
 <div id="stage"><svg id="map" preserveAspectRatio="xMidYMid meet"></svg><div id="hint">Drag to pan, scroll to zoom · click a day to zoom to it · tap a dot for its name · zoom under ~60 km for road stations and sights</div><div id="topbtns"><button id="veh" title="switch vehicle">Bicycle</button><button id="lang"></button><button id="fit">Whole route</button></div></div></div>
 <script>
@@ -126,9 +141,6 @@ function applyVehicle(){
   }
  });
  EMIN=CFG.vehicles.minDay[VEH]; EMAX=CFG.vehicles.maxDay[VEH];
- var tr=(CFG.vehicles.targetRange||{})[VEH]||[CFG.vehicles.minDay[VEH],CFG.vehicles.maxDay[VEH]];   // slider ends, per vehicle
- var el=document.getElementById("eff"); el.min=tr[0]; el.max=tr[1];
- el.value=Math.min(tr[1],Math.max(tr[0],+el.value));
  document.getElementById("efflabel").textContent=VEH==="opium"?"Km per day":"Daily effort";
  document.getElementById("veh").textContent=VEHNAME[VEH];
  document.body.className=document.body.className.replace(/(ebike|opium)/g,"").trim(); if(VEH!=="bike") document.body.classList.add(VEH);
@@ -305,7 +317,6 @@ function drawLabels(){
   placed.push(d); m2++;
   var t=document.createElementNS(NS,"text"); t.setAttribute("x",d.x+7/ppu); t.setAttribute("y",d.y+4/ppu); t.setAttribute("font-size",fs3); t.setAttribute("fill","#b9c6cf");
   t.setAttribute("stroke","#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit"); t.textContent=nm; gT.appendChild(t);});}
-document.getElementById("eff").value=VEHDEF[VEH];   // each country/vehicle opens at its own default
 applyVehicle(); setLangBtn(); favRender();
 document.getElementById("favsave").addEventListener("click",function(){ var L=favList(); L.unshift({name:routeSummary(),code:stateCode()}); try{localStorage.setItem("favs",JSON.stringify(L.slice(0,30)));}catch(e){} favRender(); });
 document.getElementById("copylink").addEventListener("click",function(){ copyText(location.href.split("#")[0]+"#r="+stateCode(),"Link"); });
@@ -484,11 +495,29 @@ function zoomDay(d,el){
  var r=svg.getBoundingClientRect(),asp=r.width/r.height, w=Math.max(x1-x0,(y1-y0)*asp,6)*1.5, h=w/asp;
  var cx=(x0+x1)/2,cy=(y0+y1)/2; setVB([cx-w/2,cy-h/2,w,h]);}
 document.getElementById("fit").addEventListener("click",function(){zoomDay(null);});
+(function(){var ft=document.getElementById("friendtog");if(!ft)return;ft.classList.toggle("on",FRIEND);
+ ft.addEventListener("click",function(){FRIEND=!FRIEND;try{localStorage.setItem("friend",FRIEND?"1":"0");}catch(e){}ft.classList.toggle("on",FRIEND);render();});})();
+(function(){var body=document.getElementById("forkbody"),tog=document.getElementById("forktoggle");if(!body||!tog)return;
+ var open=true;try{open=localStorage.getItem("forkopen")!=="0";}catch(e){}
+ function set(o){body.hidden=!o;tog.textContent=o?"hide":"edit";try{localStorage.setItem("forkopen",o?"1":"0");}catch(e){}}
+ set(open);tog.addEventListener("click",function(){set(body.hidden);});})();
 function setLangBtn(){ document.getElementById("lang").textContent=LANG==="local"?"English names":CFG.lang.localLabel; }
 document.getElementById("veh").addEventListener("click",function(){ VEH={bike:"ebike",ebike:"opium",opium:"bike"}[VEH]; try{localStorage.setItem("veh",VEH);}catch(e){} applyVehicle(); document.getElementById("eff").value=VEHDEF[VEH]; render(); });
 document.getElementById("signed").addEventListener("click",function(){ SIGNED=!SIGNED; try{localStorage.setItem("signed",SIGNED?"1":"0");}catch(e){} applyVehicle(); render(); });
 document.getElementById("lang").addEventListener("click",function(){ LANG=LANG==="local"?"en":"ja"; try{localStorage.setItem("lang",LANG);}catch(e){} setLangBtn(); render(); });
 
+var FRIEND=true;try{if(localStorage.getItem("friend")==="0")FRIEND=false;}catch(e){}
+function friendBand(id){var sc=SC[id];if(!sc)return null;var r=sc.route_any||0,b=sc.busy||0;return (r>=0.55&&b<0.12)?"g":(b>=0.25?"r":"a");}
+var FRIENDCOL={g:"#97C459",a:"#EF9F27",r:"#E24B4A"};
+function friendCol(id){return FRIENDCOL[friendBand(id)]||"#f0713f";}
+function nodeName(id){return (typeof NODE!=="undefined"&&NODE[id]&&NODE[id].name)||id;}
+function drawStrip(ch){var box=document.getElementById("strip");if(!box)return;box.innerHTML="";
+ var legs=ch.filter(function(s){return s.mode==="ride"&&s.line});
+ legs.forEach(function(s){var band=friendBand(s.id),sc=SC[s.id]||{};
+  var d=document.createElement("div");d.style.flexGrow=Math.max(s.km,1);d.style.background=FRIENDCOL[band]||"#3a5566";
+  d.title=nodeName(s.frm)+" \u2192 "+nodeName(s.to)+" \u00b7 "+Math.round(s.km)+" km \u00b7 signed "+Math.round(100*(sc.route_any||0))+"% \u00b7 busy "+Math.round(100*(sc.busy||0))+"%";
+  box.appendChild(d);});}
+function forkSummary(){var v=[];(P.forks||[]).forEach(function(f){var p=pick[f.node]||f.options[0];if(p!==f.options[0])v.push(optName(f.node,p));});return v.length?"Main line \u00b7 "+v.join(" \u00b7 "):"Main line";}
 function render(){
  var ch=chain(),target=+document.getElementById("eff").value;
  if(!ch.length){document.getElementById("warn").textContent="No route between those two points with the current fork choices.";
@@ -506,6 +535,8 @@ function render(){
  document.getElementById("sd").textContent=ride.length;
  document.getElementById("sk").textContent=Math.round(km).toLocaleString();
  document.getElementById("sa").textContent=asc.toLocaleString();
+ drawStrip(ch);
+ var _fs=document.getElementById("forksummary");if(_fs)_fs.textContent=forkSummary();
  document.getElementById("slv").textContent=target+"  (~"+Math.round(km/ride.length)+" km/day)";
  document.getElementById("warn").textContent=r.warn;
  var nre=ch.filter(function(v){return v.moped}).length, kmre=ch.reduce(function(a,v){return a+(v.moped?v.km:0)},0);
@@ -529,7 +560,7 @@ function render(){
  P.segments.forEach(function(s){if(!s.line)return;
   var p=document.createElementNS(NS,"polyline");p.setAttribute("points",s.line);
   p.setAttribute("fill","none");p.setAttribute("stroke-linecap","round");p.setAttribute("stroke-linejoin","round");
-  if(inChain[s.id]){p.setAttribute("stroke","#f0713f");gR.appendChild(p);}
+  if(inChain[s.id]){p.setAttribute("stroke",FRIEND?friendCol(s.id):"#f0713f");gR.appendChild(p);}
   else{p.setAttribute("stroke","#2a4150");p.setAttribute("stroke-dasharray","4 4");gG.appendChild(p);}});
  ride.forEach(function(d){if(d.x===undefined)return;
   var c=document.createElementNS(NS,"circle");c.setAttribute("cx",d.x);c.setAttribute("cy",d.y);

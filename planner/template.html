@@ -18,6 +18,10 @@ h1{font-size:17px;margin:18px 16px 3px;font-weight:600;letter-spacing:-.01em}
 .stats b{display:block;font-size:20px;color:var(--paper);font-weight:600}
 h2{font-size:11px;color:#6d8492;margin:0 16px 8px;font-weight:600}
 .fork{margin:0 16px 12px}
+#forkhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 16px 6px}
+#forksummary{font-size:13px;color:var(--paper);font-weight:600}
+#forktoggle{font-size:11.5px;color:#7fc4ff;cursor:pointer;border:1px solid var(--line);border-radius:5px;padding:2px 8px}
+#forkbody[hidden]{display:none}
 .fork .q{font-size:12.5px;margin-bottom:5px}
 .opts{display:flex;gap:5px;flex-wrap:wrap}
 .opt{border:1px solid var(--line);background:transparent;color:var(--dim);border-radius:6px;
@@ -84,6 +88,8 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 <select id="start"></select>
 <div class="slrow" style="margin-top:8px"><span>To</span><span></span></div>
 <select id="end"></select></div>
+<h2>Route</h2><div id="forkwrap"><div id="forkhead"><span id="forksummary"></span><span id="forktoggle">edit</span></div>
+<div id="forkbody"><div id="signedbar" class="fork" hidden><div class="layers" style="margin:0"><button class="opt" id="signed"></button></div><div class="hintline" id="signednote"></div></div><div id="forks"></div></div></div>
 <div class="sl"><div class="slrow"><span id="efflabel">Daily effort</span><span id="slv"></span></div>
 <input type="range" id="eff" min="110" max="280" step="10" value="140"></div>
 <div class="sl"><div class="slrow"><span>Days I have</span><span id="dlv">no limit</span></div>
@@ -92,11 +98,10 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 <div class="hintline">Set a limit and the planner proposes train hops through the dull stretches until the days fit. Click a hop to keep or drop it.</div>
 <div class="layers" id="skips"></div></div>
 <div id="warn"></div>
-<h2>This route</h2><div class="layers" id="routebar"><button class="opt" id="favsave">Save as favourite</button><button class="opt" id="copylink">Copy link</button><button class="opt" id="copycsv">Copy day list (CSV)</button><button class="opt" id="copygpx">Copy GPX</button></div>
-<div id="favs"></div><div id="expnote" class="hintline"></div><textarea id="exp" hidden></textarea>
-<h2>Forks</h2><div id="signedbar" class="fork" hidden><div class="layers" style="margin:0"><button class="opt" id="signed"></button></div><div class="hintline" id="signednote"></div></div><div id="forks"></div>
-<h2>Show on map</h2><div class="layers" id="layers"><button class="opt" data-l="shop">Shops</button><button class="opt" data-l="stay">Beds</button><button class="opt" data-l="bath">Baths</button><button class="opt" data-l="rail">Stations</button><button class="opt" data-l="water">Water</button></div>
 <h2>Days</h2><div id="days"></div>
+<h2 style="margin-top:18px">Saved &amp; export</h2><div class="layers" id="routebar"><button class="opt" id="favsave">Save as favourite</button><button class="opt" id="copylink">Copy link</button><button class="opt" id="copycsv">Copy day list (CSV)</button><button class="opt" id="copygpx">Copy GPX</button></div>
+<div id="favs"></div><div id="expnote" class="hintline"></div><textarea id="exp" hidden></textarea>
+<h2>Show on map</h2><div class="layers" id="layers"><button class="opt" data-l="shop">Shops</button><button class="opt" data-l="stay">Beds</button><button class="opt" data-l="bath">Baths</button><button class="opt" data-l="rail">Stations</button><button class="opt" data-l="water">Water</button></div>
 </div>
 <div id="stage"><svg id="map" preserveAspectRatio="xMidYMid meet"></svg><div id="hint">Drag to pan, scroll to zoom · click a day to zoom to it · tap a dot for its name · zoom under ~60 km for road stations and sights</div><div id="topbtns"><button id="veh" title="switch vehicle">Bicycle</button><button id="lang"></button><button id="fit">Whole route</button></div></div></div>
 <script>
@@ -105,17 +110,6 @@ document.getElementById("title").textContent=CFG.title; document.title=CFG.title
 var P=/*@P@*/;
 var SD=/*@SD@*/;
 var SC=/*@SC@*/;
-var FRIEND=true;try{if(localStorage.getItem("friend")==="0")FRIEND=false;}catch(e){}
-function friendBand(id){var sc=SC[id];if(!sc)return null;var r=sc.route_any||0,b=sc.busy||0;return (r>=0.55&&b<0.12)?"g":(b>=0.25?"r":"a");}
-var FRIENDCOL={g:"#97C459",a:"#EF9F27",r:"#E24B4A"};
-function friendCol(id){return FRIENDCOL[friendBand(id)]||"#f0713f";}
-function nodeName(id){return (typeof NODE!=="undefined"&&NODE[id]&&NODE[id].name)||id;}
-function drawStrip(ch){var box=document.getElementById("strip");if(!box)return;box.innerHTML="";
- var legs=ch.filter(function(s){return s.mode==="ride"&&s.line});
- legs.forEach(function(s){var band=friendBand(s.id),sc=SC[s.id]||{};
-  var d=document.createElement("div");d.style.flexGrow=Math.max(s.km,1);d.style.background=FRIENDCOL[band]||"#3a5566";
-  d.title=nodeName(s.frm)+" \u2192 "+nodeName(s.to)+" \u00b7 "+Math.round(s.km)+" km \u00b7 signed "+Math.round(100*(sc.route_any||0))+"% \u00b7 busy "+Math.round(100*(sc.busy||0))+"%";
-  box.appendChild(d);});}
 var MSEG=/*@MSEG@*/;
 var MSD=/*@MSD@*/;
 var MSC=/*@MSC@*/;
@@ -503,11 +497,27 @@ function zoomDay(d,el){
 document.getElementById("fit").addEventListener("click",function(){zoomDay(null);});
 (function(){var ft=document.getElementById("friendtog");if(!ft)return;ft.classList.toggle("on",FRIEND);
  ft.addEventListener("click",function(){FRIEND=!FRIEND;try{localStorage.setItem("friend",FRIEND?"1":"0");}catch(e){}ft.classList.toggle("on",FRIEND);render();});})();
+(function(){var body=document.getElementById("forkbody"),tog=document.getElementById("forktoggle");if(!body||!tog)return;
+ var open=true;try{open=localStorage.getItem("forkopen")!=="0";}catch(e){}
+ function set(o){body.hidden=!o;tog.textContent=o?"hide":"edit";try{localStorage.setItem("forkopen",o?"1":"0");}catch(e){}}
+ set(open);tog.addEventListener("click",function(){set(body.hidden);});})();
 function setLangBtn(){ document.getElementById("lang").textContent=LANG==="local"?"English names":CFG.lang.localLabel; }
 document.getElementById("veh").addEventListener("click",function(){ VEH={bike:"ebike",ebike:"opium",opium:"bike"}[VEH]; try{localStorage.setItem("veh",VEH);}catch(e){} applyVehicle(); document.getElementById("eff").value=VEHDEF[VEH]; render(); });
 document.getElementById("signed").addEventListener("click",function(){ SIGNED=!SIGNED; try{localStorage.setItem("signed",SIGNED?"1":"0");}catch(e){} applyVehicle(); render(); });
 document.getElementById("lang").addEventListener("click",function(){ LANG=LANG==="local"?"en":"ja"; try{localStorage.setItem("lang",LANG);}catch(e){} setLangBtn(); render(); });
 
+var FRIEND=true;try{if(localStorage.getItem("friend")==="0")FRIEND=false;}catch(e){}
+function friendBand(id){var sc=SC[id];if(!sc)return null;var r=sc.route_any||0,b=sc.busy||0;return (r>=0.55&&b<0.12)?"g":(b>=0.25?"r":"a");}
+var FRIENDCOL={g:"#97C459",a:"#EF9F27",r:"#E24B4A"};
+function friendCol(id){return FRIENDCOL[friendBand(id)]||"#f0713f";}
+function nodeName(id){return (typeof NODE!=="undefined"&&NODE[id]&&NODE[id].name)||id;}
+function drawStrip(ch){var box=document.getElementById("strip");if(!box)return;box.innerHTML="";
+ var legs=ch.filter(function(s){return s.mode==="ride"&&s.line});
+ legs.forEach(function(s){var band=friendBand(s.id),sc=SC[s.id]||{};
+  var d=document.createElement("div");d.style.flexGrow=Math.max(s.km,1);d.style.background=FRIENDCOL[band]||"#3a5566";
+  d.title=nodeName(s.frm)+" \u2192 "+nodeName(s.to)+" \u00b7 "+Math.round(s.km)+" km \u00b7 signed "+Math.round(100*(sc.route_any||0))+"% \u00b7 busy "+Math.round(100*(sc.busy||0))+"%";
+  box.appendChild(d);});}
+function forkSummary(){var v=[];(P.forks||[]).forEach(function(f){var p=pick[f.node]||f.options[0];if(p!==f.options[0])v.push(optName(f.node,p));});return v.length?"Main line \u00b7 "+v.join(" \u00b7 "):"Main line";}
 function render(){
  var ch=chain(),target=+document.getElementById("eff").value;
  if(!ch.length){document.getElementById("warn").textContent="No route between those two points with the current fork choices.";
@@ -526,6 +536,7 @@ function render(){
  document.getElementById("sk").textContent=Math.round(km).toLocaleString();
  document.getElementById("sa").textContent=asc.toLocaleString();
  drawStrip(ch);
+ var _fs=document.getElementById("forksummary");if(_fs)_fs.textContent=forkSummary();
  document.getElementById("slv").textContent=target+"  (~"+Math.round(km/ride.length)+" km/day)";
  document.getElementById("warn").textContent=r.warn;
  var nre=ch.filter(function(v){return v.moped}).length, kmre=ch.reduce(function(a,v){return a+(v.moped?v.km:0)},0);
