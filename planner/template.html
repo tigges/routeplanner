@@ -98,6 +98,7 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 <div id="friendwrap"><div id="strip" title="each leg, width by distance, colour by how bike-friendly it is"></div>
 <div id="friendleg"><span><i style="background:#97C459"></i>signed / quiet</span><span><i style="background:#EF9F27"></i>minor / mixed</span><span><i style="background:#E24B4A"></i>busy road</span><span id="friendtog" title="colour the route line on the map the same way">colour the map line</span></div></div>
 <div id="segcard" hidden></div>
+<div class="sl" id="crossing" hidden><div class="slrow"><span>Crossing</span><span></span></div><div class="opts" id="crossopts"></div></div>
 <div class="sl"><div class="slrow"><span>From</span><span></span></div>
 <select id="start"></select>
 <div class="slrow" style="margin-top:8px"><span>To</span><span></span></div>
@@ -626,6 +627,18 @@ P.forks.forEach(function(f){var d=document.createElement("div");d.className="for
  f.options.forEach(function(o){h+='<button class="opt'+(o===f.options[0]?" on":"")+'" data-n="'+f.node+'" data-o="'+o+'"><span class="fdot" style="background:'+optDot(o)+'"></span>'+
   optName(f.node,o)+'</button>';});
  d.innerHTML=h+'</div><div class="cmp"></div>';fb.appendChild(d);});
+(function(){var CR=CFG.crossings||[],box=document.getElementById("crossing"),row=document.getElementById("crossopts");if(!box||CR.length<2)return;box.hidden=false;
+ function here(c){return (!c.slug||c.slug===CFG.slug)&&(!c.s||document.getElementById("start").value===c.s)&&(!c.e||document.getElementById("end").value===c.e);}
+ function mark(){row.querySelectorAll("button").forEach(function(b,i){b.classList.toggle("on",here(CR[i]));});}
+ CR.forEach(function(c){var b=document.createElement("button");b.className="opt";b.textContent=c.name+(c.sub?" \u00b7 "+c.sub:"");b.title=c.sub||"";
+  b.onclick=function(){
+   if(c.slug&&c.slug!==CFG.slug){var st={};if(c.s)st.s=c.s;if(c.e)st.e=c.e;if(c.p)st.p=c.p;
+    location.href="../"+c.slug+"/"+(Object.keys(st).length?"#r="+btoa(unescape(encodeURIComponent(JSON.stringify(st)))):"");return;}
+   if(c.s&&NODE[c.s])document.getElementById("start").value=c.s;if(c.e&&NODE[c.e])document.getElementById("end").value=c.e;
+   P.forks.forEach(function(f){pick[f.node]=f.options[0];});for(var k in c.p||{})if(FORK[k])pick[k]=c.p[k];
+   document.querySelectorAll(".fork button.opt").forEach(function(x){x.classList.toggle("on",pick[x.dataset.n]===x.dataset.o);});render();mark();};
+  row.appendChild(b);});
+ mark();["start","end"].forEach(function(id){document.getElementById(id).addEventListener("change",mark);});})();
 (function(){var pr=document.getElementById("presets");var PRESETS=/*@PRESETS@*/;if(!pr||!PRESETS||!PRESETS.length)return;pr.innerHTML='<div class="preslabel">Quick pick</div>';var row=document.createElement("div");row.className="opts";PRESETS.forEach(function(ps){var b=document.createElement("button");b.className="opt";b.textContent=ps.name;b.onclick=function(){P.forks.forEach(function(f){pick[f.node]=f.options[0];});var pk=ps.picks||{};for(var k in pk)pick[k]=pk[k];document.querySelectorAll(".fork button.opt").forEach(function(x){x.classList.toggle("on",pick[x.dataset.n]===x.dataset.o);});render();};row.appendChild(b);});pr.appendChild(row);})();
 fb.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
  pick[b.dataset.n]=b.dataset.o;

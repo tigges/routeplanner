@@ -16,7 +16,7 @@ def grab(name):
     """the value of `var NAME=<json>;` at the start of a line in the published page"""
     m = re.search(r'^var %s=(.*?);\s*(?://.*)?$' % name, src, re.M)
     return m.group(1) if m else '{}'
-page_cfg = dict(title=cfg['title'], lang=cfg['lang'], proj=json.loads(grab('CFG'))['proj'] if re.search(r'^var CFG=', src, re.M) else None,
+page_cfg = dict(title=cfg['title'], slug=cfg['slug'], crossings=cfg.get('crossings', []), lang=cfg['lang'], proj=json.loads(grab('CFG'))['proj'] if re.search(r'^var CFG=', src, re.M) else None,
                 forkLabels=cfg.get('forkLabels', {}), optionNames=cfg.get('optionNames', {}),
                 defaultOptionNames=cfg.get('defaultOptionNames', {}), skippable=cfg.get('skippable', []),
                 neverSkip=cfg.get('neverSkip', []), skipRule=cfg.get('skipRule'), vehicles=cfg['vehicles'],
@@ -24,6 +24,7 @@ page_cfg = dict(title=cfg['title'], lang=cfg['lang'], proj=json.loads(grab('CFG'
 if page_cfg['proj'] is None: raise SystemExit('no CFG in %s' % page)
 subs = {'CFG': json.dumps(page_cfg, ensure_ascii=False)}
 for n in NAMES: subs[n] = grab(n)
+subs['PRESETS'] = json.dumps(cfg.get('presets', []), ensure_ascii=False)
 out = tpl
 for k, v in subs.items():
     ph = '/*@%s@*/' % k; assert out.count(ph) == 1, k; out = out.replace(ph, v)

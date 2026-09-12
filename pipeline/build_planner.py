@@ -20,7 +20,7 @@ def trim_moped(txt, cfg):
     return json.dumps(d, ensure_ascii=False, separators=(',', ':'))
 proj = json.load(open(os.path.join(W, 'proj.json')))
 mf = json.load(open(os.path.join(W, 'motorfree.json'))) if os.path.exists(os.path.join(W, 'motorfree.json')) else {}
-page_cfg = dict(title=cfg['title'], lang=cfg['lang'], proj=proj, forkLabels=cfg.get('forkLabels', {}), optionNames=cfg.get('optionNames', {}),
+page_cfg = dict(title=cfg['title'], slug=cfg['slug'], crossings=cfg.get('crossings', []), lang=cfg['lang'], proj=proj, forkLabels=cfg.get('forkLabels', {}), optionNames=cfg.get('optionNames', {}),
                 defaultOptionNames=cfg.get('defaultOptionNames', {}), skippable=cfg.get('skippable', []), neverSkip=cfg.get('neverSkip', []), skipRule=cfg.get('skipRule'), vehicles=cfg['vehicles'],
                 signedRoutes={'label': cfg.get('signedRoutes', {}).get('label', 'Prefer signed cycle routes')})
 subs = {'CFG': json.dumps(page_cfg, ensure_ascii=False), 'P': load('P.json'), 'SD': load('seg_data.json'), 'SC': load('seg_scores.json'),
