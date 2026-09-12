@@ -410,6 +410,41 @@
    "name": "Nyon",
    "lat": 46.383,
    "lon": 6.239
+  },
+  "herisau": {
+   "name": "Herisau",
+   "lat": 47.3865,
+   "lon": 9.279
+  },
+  "einsiedeln": {
+   "name": "Einsiedeln",
+   "lat": 47.1275,
+   "lon": 8.744
+  },
+  "willisau": {
+   "name": "Willisau",
+   "lat": 47.1215,
+   "lon": 7.994
+  },
+  "burgdorf": {
+   "name": "Burgdorf",
+   "lat": 47.059,
+   "lon": 7.626
+  },
+  "langnau": {
+   "name": "Langnau im Emmental",
+   "lat": 46.94,
+   "lon": 7.787
+  },
+  "laupen": {
+   "name": "Laupen",
+   "lat": 46.9025,
+   "lon": 7.24
+  },
+  "romont": {
+   "name": "Romont",
+   "lat": 46.6975,
+   "lon": 6.921
   }
  },
  "trunks": [
@@ -749,6 +784,221 @@
     "biel",
     "neuchatel"
    ]
+  },
+  {
+   "variant": "herz-east",
+   "nodes": [
+    "rorschach",
+    "altstaetten",
+    "herisau",
+    "wattwil",
+    "rapperswil"
+   ],
+   "via": {
+    "rorschach--altstaetten": [
+     [
+      47.4703,
+      9.5749
+     ],
+     [
+      47.4346,
+      9.6025
+     ],
+     [
+      47.4021,
+      9.5243
+     ]
+    ],
+    "altstaetten--herisau": [
+     [
+      47.3227,
+      9.5133
+     ],
+     [
+      47.3465,
+      9.4005
+     ],
+     [
+      47.3735,
+      9.3534
+     ]
+    ],
+    "herisau--wattwil": [
+     [
+      47.3825,
+      9.186
+     ],
+     [
+      47.3986,
+      9.0824
+     ],
+     [
+      47.3328,
+      9.038
+     ]
+    ],
+    "wattwil--rapperswil": [
+     [
+      47.2615,
+      8.9803
+     ],
+     [
+      47.2816,
+      8.935
+     ],
+     [
+      47.2926,
+      8.8661
+     ]
+    ]
+   }
+  },
+  {
+   "variant": "herz-einsiedeln",
+   "nodes": [
+    "rapperswil",
+    "einsiedeln",
+    "zug"
+   ],
+   "via": {
+    "rapperswil--einsiedeln": [
+     [
+      47.22,
+      8.9677
+     ],
+     [
+      47.2037,
+      8.8893
+     ],
+     [
+      47.1902,
+      8.7765
+     ]
+    ],
+    "einsiedeln--zug": [
+     [
+      47.1277,
+      8.6478
+     ],
+     [
+      47.1639,
+      8.5719
+     ],
+     [
+      47.1442,
+      8.5557
+     ]
+    ]
+   }
+  },
+  {
+   "variant": "herz-mittel",
+   "nodes": [
+    "zug",
+    "willisau",
+    "burgdorf",
+    "langnau",
+    "thun"
+   ],
+   "via": {
+    "zug--willisau": [
+     [
+      47.1372,
+      8.358
+     ],
+     [
+      47.1444,
+      8.1901
+     ],
+     [
+      47.1143,
+      8.1373
+     ]
+    ],
+    "willisau--burgdorf": [
+     [
+      47.1464,
+      7.8604
+     ],
+     [
+      47.1484,
+      7.7419
+     ],
+     [
+      47.0412,
+      7.7278
+     ]
+    ],
+    "burgdorf--langnau": [
+     [
+      46.9702,
+      7.5798
+     ],
+     [
+      46.9235,
+      7.6512
+     ],
+     [
+      46.966,
+      7.7274
+     ]
+    ],
+    "langnau--thun": [
+     [
+      46.8481,
+      7.7309
+     ],
+     [
+      46.7838,
+      7.7598
+     ],
+     [
+      46.7443,
+      7.696
+     ]
+    ]
+   }
+  },
+  {
+   "variant": "herz-west",
+   "nodes": [
+    "thun",
+    "laupen",
+    "romont",
+    "lausanne"
+   ],
+   "via": {
+    "thun--laupen": [
+     [
+      46.7458,
+      7.5395
+     ],
+     [
+      46.8336,
+      7.4756
+     ],
+     [
+      46.891,
+      7.3853
+     ]
+    ],
+    "laupen--romont": [
+     [
+      46.8934,
+      7.1394
+     ],
+     [
+      46.7958,
+      7.0122
+     ]
+    ],
+    "romont--lausanne": [
+     [
+      46.668,
+      6.798
+     ]
+    ]
+   }
   }
  ],
  "ferries": [
@@ -804,7 +1054,8 @@
   "aarau": "At Aarau",
   "biel": "At Biel/Bienne",
   "thun": "At Thun",
-  "lachauxdefonds": "From La Chaux-de-Fonds"
+  "lachauxdefonds": "From La Chaux-de-Fonds",
+  "zug": "At Zug"
  },
  "optionNames": {
   "engadin": "Engadin and the Julier",
@@ -832,7 +1083,11 @@
   "aare-rhine": "Aare to the Rhine at Koblenz",
   "dreiseen": "Murten to Neuchâtel",
   "jura-south": "Jura crest to Nyon",
-  "bielersee": "Lake Biel shore to Neuchâtel"
+  "bielersee": "Lake Biel shore to Neuchâtel",
+  "herz-east": "Heart Route: Appenzell hills to Rapperswil",
+  "herz-einsiedeln": "Heart Route: Einsiedeln to Zug",
+  "herz-mittel": "Heart Route: Willisau, Emmental to Thun",
+  "herz-west": "Heart Route: Laupen, Romont to Lausanne"
  },
  "defaultOptionNames": {
   "zernez": "Flüela and Davos",
@@ -857,7 +1112,8 @@
   "aarau": "Olten and Solothurn",
   "biel": "Lake shore to Yverdon",
   "thun": "Bern",
-  "lachauxdefonds": "Neuchâtel"
+  "lachauxdefonds": "Neuchâtel",
+  "zug": "Luzern"
  },
  "skippable": [
   "andermatt--oberwald#alps",
@@ -925,7 +1181,13 @@
   ],
   "thun": [
    "aare-bern",
-   "panorama-west"
+   "panorama-west",
+   "herz-west"
+  ],
+  "wattwil": [
+   "toggenburg",
+   "ricken",
+   "herz-east"
   ]
  }
 }
