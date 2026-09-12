@@ -1,6 +1,6 @@
 {
  "slug": "spain",
- "title": "Across Spain",
+ "title": "Spain by bike",
  "lang": {
   "local": "es",
   "localLabel": "Nombres locales",
@@ -430,6 +430,9 @@
    }
   }
  ],
+ "trips": "spain-trips.json",
+ "pickerDefault": "top",
+ "routeWord": "famous routes",
  "skippable": [],
  "vehicles": {
   "names": {
