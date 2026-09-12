@@ -229,16 +229,5 @@
   "detour_km": 20,
   "rest_day_km": 60
  },
- "crossings": [
-  {
-   "name": "East–West",
-   "sub": "Müstair → Genève",
-   "slug": "switzerland"
-  },
-  {
-   "name": "North–South",
-   "sub": "Basel → Chiasso",
-   "slug": "switzerland-north-south"
-  }
- ]
+ "trips": "switzerland-trips.json"
 }

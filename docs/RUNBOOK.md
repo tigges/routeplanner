@@ -76,6 +76,14 @@ its size is roughly 8 MB per 100 segments with facilities, double that with mope
 - `tools/retemplate.py config/<country>.json` re-renders a published page with the current template for a country whose `work/` data
   is not in the repository (lifts the data blocks out of `docs/<slug>/index.html`, takes CFG from the config). Verify with
   `--verify` on a country you can build first — it must come out identical to a freshly built page.
+- `trips`: the "pick a trip" front door. A list, or the name of a file in `config/` holding `{"trips": [...]}` that several pages of one
+  country share (Switzerland: `switzerland-trips.json`). Each trip: `id`, `num` (the badge: a national route number, "E–W", …), `name`, `sub`,
+  `note`, `kind` (`crossing` draws dashed on the picker map), `tags` (filter chips), `slug` (the page it lives on), `s`/`e`/`p` (that page's
+  start, end and fork picks). Run `python3 tools/trips_geo.py config/<trips file>` after any page changes: it opens the published pages
+  headless and stores km, climb, effort and a lat/lon line under `geo`, which is what other pages use to draw and size a trip that is not
+  theirs. With two or more trips a page opens on the picker (all trips on one map plus cards); `#trip=<id>` opens a page straight on that trip;
+  `‹ Trips` in the planner goes back. Japan and Spain have no trips and open on the planner as before. Re-render every page after a
+  template change: `python3 tools/retemplate.py config/<country>.json` for each.
 - `vehicles.moped.dropFacilities`: categories left out of the moped data at build time (default eat, wc; they fall back to the bicycle list). Saves ~3 MB on Japan.
 - Steps 02, 03 and 11 take `--extract <file>` to scan one OSM extract per run (time-limited sessions).
 - Background jobs in the Claude sandbox are killed when a tool call ends unless started with `setsid nohup … &`.

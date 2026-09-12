@@ -6,6 +6,11 @@ Verify it first on a country you can build: `--verify <slug>` re-renders that co
 it with a freshly built planner.html.
 usage: python3 tools/retemplate.py config/<country>.json [--verify]"""
 import json, os, re, sys
+def load_trips(cfg, cfgpath):
+    """`trips` in the config: a list, or the name of a file in config/ holding {"trips": [...]} (shared by several pages)."""
+    t = cfg.get('trips')
+    if isinstance(t, str): t = json.load(open(os.path.join(os.path.dirname(os.path.abspath(cfgpath)), t), encoding='utf-8'))['trips']
+    return t or cfg.get('crossings', [])
 here = os.path.dirname(os.path.abspath(__file__)); root = os.path.join(here, '..')
 cfg = json.load(open(sys.argv[1])); slug = cfg['slug']
 page = os.path.join(root, 'docs', slug, 'index.html')
@@ -16,7 +21,7 @@ def grab(name):
     """the value of `var NAME=<json>;` at the start of a line in the published page"""
     m = re.search(r'^var %s=(.*?);\s*(?://.*)?$' % name, src, re.M)
     return m.group(1) if m else '{}'
-page_cfg = dict(title=cfg['title'], slug=cfg['slug'], crossings=cfg.get('crossings', []), lang=cfg['lang'], proj=json.loads(grab('CFG'))['proj'] if re.search(r'^var CFG=', src, re.M) else None,
+page_cfg = dict(title=cfg['title'], slug=cfg['slug'], trips=load_trips(cfg, sys.argv[1]), lang=cfg['lang'], proj=json.loads(grab('CFG'))['proj'] if re.search(r'^var CFG=', src, re.M) else None,
                 forkLabels=cfg.get('forkLabels', {}), optionNames=cfg.get('optionNames', {}),
                 defaultOptionNames=cfg.get('defaultOptionNames', {}), skippable=cfg.get('skippable', []),
                 neverSkip=cfg.get('neverSkip', []), skipRule=cfg.get('skipRule'), vehicles=cfg['vehicles'],
