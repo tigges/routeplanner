@@ -9,7 +9,10 @@
  "workdir": "work/switzerland",
  "osm": {
   "extracts": [
-   "downloads/switzerland.osm.pbf"
+   "downloads/switzerland.osm.pbf",
+   "downloads/konstanz.osm.pbf",
+   "downloads/vorarlberg.osm.pbf",
+   "downloads/haute_savoie.osm.pbf"
   ],
   "corridor_km": 2.0
  },
@@ -445,6 +448,41 @@
    "name": "Romont",
    "lat": 46.6975,
    "lon": 6.921
+  },
+  "bregenz": {
+   "name": "Bregenz",
+   "lat": 47.503,
+   "lon": 9.739
+  },
+  "lindau": {
+   "name": "Lindau",
+   "lat": 47.5445,
+   "lon": 9.682
+  },
+  "friedrichshafen": {
+   "name": "Friedrichshafen",
+   "lat": 47.6535,
+   "lon": 9.4775
+  },
+  "ueberlingen": {
+   "name": "Überlingen",
+   "lat": 47.766,
+   "lon": 9.162
+  },
+  "radolfzell": {
+   "name": "Radolfzell",
+   "lat": 47.7425,
+   "lon": 8.9705
+  },
+  "evian": {
+   "name": "Évian-les-Bains",
+   "lat": 46.399,
+   "lon": 6.589
+  },
+  "thonon": {
+   "name": "Thonon-les-Bains",
+   "lat": 46.372,
+   "lon": 6.481
   }
  },
  "trunks": [
@@ -999,6 +1037,27 @@
      ]
     ]
    }
+  },
+  {
+   "variant": "bodensee-nord",
+   "nodes": [
+    "rorschach",
+    "bregenz",
+    "lindau",
+    "friedrichshafen",
+    "ueberlingen",
+    "radolfzell",
+    "kreuzlingen"
+   ]
+  },
+  {
+   "variant": "leman-sud",
+   "nodes": [
+    "montreux",
+    "evian",
+    "thonon",
+    "geneva"
+   ]
   }
  ],
  "ferries": [
@@ -1055,7 +1114,8 @@
   "biel": "At Biel/Bienne",
   "thun": "At Thun",
   "lachauxdefonds": "From La Chaux-de-Fonds",
-  "zug": "At Zug"
+  "zug": "At Zug",
+  "montreux": "At Montreux"
  },
  "optionNames": {
   "engadin": "Engadin and the Julier",
@@ -1087,7 +1147,9 @@
   "herz-east": "Heart Route: Appenzell hills to Rapperswil",
   "herz-einsiedeln": "Heart Route: Einsiedeln to Zug",
   "herz-mittel": "Heart Route: Willisau, Emmental to Thun",
-  "herz-west": "Heart Route: Laupen, Romont to Lausanne"
+  "herz-west": "Heart Route: Laupen, Romont to Lausanne",
+  "bodensee-nord": "German shore: Bregenz, Lindau, Überlingen",
+  "leman-sud": "French shore: Évian, Thonon to Genève"
  },
  "defaultOptionNames": {
   "zernez": "Flüela and Davos",
@@ -1113,7 +1175,8 @@
   "biel": "Lake shore to Yverdon",
   "thun": "Bern",
   "lachauxdefonds": "Neuchâtel",
-  "zug": "Luzern"
+  "zug": "Luzern",
+  "montreux": "Lavaux to Lausanne"
  },
  "skippable": [
   "andermatt--oberwald#alps",

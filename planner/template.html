@@ -436,8 +436,8 @@ function showCallout(x,y,text){
 svg.addEventListener("click",function(e){ if(tapBlock){tapBlock=false;return;} if(PICKING) return; tapAt(e.clientX,e.clientY); });
 var tapBlock=false;
 P.coast.forEach(function(s){var p=document.createElementNS(NS,"polyline");
- p.setAttribute("points",s);p.setAttribute("fill","none");p.setAttribute("stroke","#1e2f3b");
- p.setAttribute("stroke-width","1");gC.appendChild(p);});
+ p.setAttribute("points",s);p.setAttribute("fill","none");p.setAttribute("stroke","#4f7089");   // border and big lakes: visible but behind the routes
+ p.setAttribute("stroke-width","1.8");gC.appendChild(p);});
 var xs=[],ys=[];P.segments.forEach(function(s){if(!s.line)return;
  s.line.split(" ").forEach(function(v){var a=v.split(",");xs.push(+a[0]);ys.push(+a[1]);});});
 var full=[Math.min.apply(null,xs)-120,Math.min.apply(null,ys)-60,
@@ -816,7 +816,7 @@ function coastBox(){ var xs=[],ys=[]; (P.coast||[]).forEach(function(c){ c.split
  var x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y0=Math.min.apply(null,ys),y1=Math.max.apply(null,ys); return [x0,y0,x1-x0,y1-y0]; }
 var CBOX=coastBox();
 function tripThumb(t){ var b=CBOX, k=Math.max(b[2]/78,b[3]/54), vb=[b[0]-4*k,b[1]-4*k,b[2]+8*k,b[3]+8*k];
- var h='<svg viewBox="'+vb.join(" ")+'" preserveAspectRatio="xMidYMid meet">'; (P.coast||[]).forEach(function(c){ h+='<polyline points="'+c+'" fill="none" stroke="#2e4452" stroke-width="'+(1.2*k)+'"/>'; });
+ var h='<svg viewBox="'+vb.join(" ")+'" preserveAspectRatio="xMidYMid meet">'; (P.coast||[]).forEach(function(c){ h+='<polyline points="'+c+'" fill="none" stroke="#3d5a70" stroke-width="'+(1.5*k)+'"/>'; });
  h+='<polyline points="'+tripPoints(t).map(function(p){return p[0].toFixed(1)+","+p[1].toFixed(1)}).join(" ")+'" fill="none" stroke="#f0713f" stroke-width="'+(2.6*k)+'" stroke-linejoin="round" stroke-linecap="round"/></svg>'; return h; }
 var PKFILTER="all";
 var DLEVEL=[[8,"easy"],[14,"moderate"],[20,"hard"],[1e9,"very hard"]];   // metres of climb per km, computed from the trip, never tagged
