@@ -91,6 +91,24 @@
    "lat": 32.7816,
    "lon": 132.9549,
    "type": "gateway"
+  },
+  "makino": {
+   "name": "Makino",
+   "lat": 35.4416,
+   "lon": 136.0409,
+   "type": "gateway"
+  },
+  "nagahama": {
+   "name": "Nagahama",
+   "lat": 35.383,
+   "lon": 136.2688,
+   "type": "gateway"
+  },
+  "hikone": {
+   "name": "Hikone",
+   "lat": 35.2758,
+   "lon": 136.2586,
+   "type": "gateway"
   }
  },
  "trunks": [
@@ -115,8 +133,36 @@
     "shikoku-south",
     "ashizuri"
    ]
+  },
+  {
+   "variant": "west",
+   "nodes": [
+    "tsuruga",
+    "makino",
+    "otsu"
+   ]
+  },
+  {
+   "variant": "east",
+   "nodes": [
+    "makino",
+    "nagahama",
+    "hikone",
+    "otsu"
+   ]
   }
  ],
+ "forks": {
+  "tsuruga": [
+   "west",
+   "direct",
+   "sanin"
+  ],
+  "makino": [
+   "west",
+   "east"
+  ]
+ },
  "viaBase": {
   "toyohashi--nagoya#pacific": [
    [
@@ -161,7 +207,8 @@
   "kesennuma": "Kesennuma to Sendai",
   "uozu": "Uozu to Himi",
   "usa": "Usa to Beppu",
-  "uwajima": "Uwajima to Sukumo"
+  "uwajima": "Uwajima to Sukumo",
+  "makino": "At Makino"
  },
  "optionNames": {
   "base": "Yotei line",
@@ -181,7 +228,9 @@
   "hiraizumi": "Via Hiraizumi",
   "toyama": "Via Toyama + Takaoka",
   "kunisaki": "Around Kunisaki peninsula",
-  "ashizuri": "Around Cape Ashizuri"
+  "ashizuri": "Around Cape Ashizuri",
+  "east": "Biwa east shore: Nagahama, Hikone",
+  "west": "Biwa west shore"
  },
  "defaultOptionNames": {
   "aomori": "Sea of Japan",
@@ -196,7 +245,8 @@
   "kesennuma": "Pacific coast",
   "uozu": "Coast road",
   "usa": "Direct to Beppu",
-  "uwajima": "Direct to Sukumo"
+  "uwajima": "Direct to Sukumo",
+  "makino": "Biwa west shore"
  },
  "skippable": [],
  "neverSkip": [],
