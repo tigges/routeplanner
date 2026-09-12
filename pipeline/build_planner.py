@@ -6,9 +6,10 @@ writes <workdir>/planner.html (standalone) and <workdir>/planner_pub.html (body 
 import json, os, sys
 def load_trips(cfg, cfgpath):
     """`trips` in the config: a list, or the name of a file in config/ holding {"trips": [...]} (shared by several pages)."""
-    t = cfg.get('trips')
-    if isinstance(t, str): t = json.load(open(os.path.join(os.path.dirname(os.path.abspath(cfgpath)), t), encoding='utf-8'))['trips']
-    return t or cfg.get('crossings', [])
+    t = cfg.get('trips'); nw = {}
+    if isinstance(t, str):
+        d = json.load(open(os.path.join(os.path.dirname(os.path.abspath(cfgpath)), t), encoding='utf-8')); t = d['trips']; nw = d.get('networks', {})
+    return t or cfg.get('crossings', []), nw
 cfg = json.load(open(sys.argv[1])); W = cfg['workdir']
 here = os.path.dirname(os.path.abspath(__file__)); tpl = open(os.path.join(here, '..', 'planner', 'template.html'), encoding='utf-8').read()
 def load(name, default='{}'):
@@ -25,7 +26,8 @@ def trim_moped(txt, cfg):
     return json.dumps(d, ensure_ascii=False, separators=(',', ':'))
 proj = json.load(open(os.path.join(W, 'proj.json')))
 mf = json.load(open(os.path.join(W, 'motorfree.json'))) if os.path.exists(os.path.join(W, 'motorfree.json')) else {}
-page_cfg = dict(title=cfg['title'], slug=cfg['slug'], trips=load_trips(cfg, sys.argv[1]), lang=cfg['lang'], proj=proj, forkLabels=cfg.get('forkLabels', {}), optionNames=cfg.get('optionNames', {}),
+TRIPS, NETWORKS = load_trips(cfg, sys.argv[1])
+page_cfg = dict(title=cfg['title'], slug=cfg['slug'], trips=TRIPS, networks=NETWORKS, lang=cfg['lang'], proj=proj, forkLabels=cfg.get('forkLabels', {}), optionNames=cfg.get('optionNames', {}),
                 defaultOptionNames=cfg.get('defaultOptionNames', {}), skippable=cfg.get('skippable', []), neverSkip=cfg.get('neverSkip', []), skipRule=cfg.get('skipRule'), vehicles=cfg['vehicles'],
                 signedRoutes={'label': cfg.get('signedRoutes', {}).get('label', 'Prefer signed cycle routes')})
 subs = {'CFG': json.dumps(page_cfg, ensure_ascii=False), 'P': load('P.json'), 'SD': load('seg_data.json'), 'SC': load('seg_scores.json'),

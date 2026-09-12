@@ -8,12 +8,8 @@ from playwright.sync_api import sync_playwright
 here = os.path.dirname(os.path.abspath(__file__)); root = os.path.abspath(os.path.join(here, '..'))
 path = sys.argv[1]; T = json.load(open(path, encoding='utf-8'))
 JS = r"""(t) => {
-  var s=t.s||document.getElementById('start').value, e=t.e||document.getElementById('end').value;
-  var saved={}; for(var k in pick) saved[k]=pick[k];
-  P.forks.forEach(function(f){pick[f.node]=f.options[0];}); for(var k in (t.p||{})) if(FORK[k]) pick[k]=t.p[k];
-  document.getElementById('start').value=s; document.getElementById('end').value=e;
-  var ch=chain(); for(var k in saved) pick[k]=saved[k];
-  if(!ch.length) return {error:'no chain from '+s+' to '+e};
+  var legs=t.legs||[{s:t.s,e:t.e,p:t.p}], ch=[];
+  for(var i=0;i<legs.length;i++){ var L=legs[i], c=withPicks(L.p,function(){return chain(L.s,L.e);}); if(!c.length) return {error:'no chain from '+L.s+' to '+L.e}; ch=ch.concat(c); }
   var km=0,asc=0,eff=0,pts=[];
   ch.forEach(function(v){ if(v.mode!=='ride'){return;} km+=v.km; asc+=v.ascent; eff+=v.effort;
     var p=v.line.split(' ').map(function(q){var a=q.split(','); return [+a[0],+a[1]];}); if(v.rev) p.reverse(); pts=pts.concat(p); });
@@ -32,10 +28,21 @@ with sync_playwright() as pw:
         slug = t['slug']
         if slug not in pages:
             pg = b.new_page(); pg.goto('file://' + os.path.join(root, 'docs', slug, 'index.html')); pg.wait_for_timeout(800); pages[slug] = pg
-        r = pages[slug].evaluate(JS, {k: t.get(k) for k in ('s', 'e', 'p')})
+        r = pages[slug].evaluate(JS, {k: t.get(k) for k in ('s', 'e', 'p', 'legs')})
         if 'error' in r: raise SystemExit('%s: %s' % (t['id'], r['error']))
         t['geo'] = r; print('%-4s %-22s %4d km %5d m  effort %4d  %3d points' % (t['id'], t['name'], r['km'], r['asc'], r['eff'], len(r['line'])))
+    T['networks'] = {}
+    for slug, pg in pages.items():          # every built leg of the page, simplified, so other pages can draw it as a ghost network
+        T['networks'][slug] = pg.evaluate(r"""() => P.segments.filter(function(s){return s.line}).map(function(s){
+          var pts=s.line.split(' ').map(function(q){var a=q.split(',');return [+a[0],+a[1]];});
+          function dp(a,tol){ if(a.length<3) return a; var dmax=0,idx=0,A=a[0],B=a[a.length-1];
+            for(var i=1;i<a.length-1;i++){ var x=a[i][0],y=a[i][1],dx=B[0]-A[0],dy=B[1]-A[1],L2=dx*dx+dy*dy,t=L2?((x-A[0])*dx+(y-A[1])*dy)/L2:0; t=Math.max(0,Math.min(1,t));
+              var d=Math.hypot(x-(A[0]+t*dx),y-(A[1]+t*dy)); if(d>dmax){dmax=d;idx=i;} }
+            if(dmax>tol){ var l=dp(a.slice(0,idx+1),tol), r=dp(a.slice(idx),tol); return l.slice(0,-1).concat(r); } return [A,B]; }
+          return dp(pts,0.6).map(function(p){var ll=toLL(p[0],p[1]); return [+ll[0].toFixed(3),+ll[1].toFixed(3)];}); })""")
+        print('network %-24s %3d legs' % (slug, len(T['networks'][slug])))
     b.close()
 body = ',\n  '.join(json.dumps(t, ensure_ascii=False, separators=(',', ':')) for t in T['trips'])   # one trip per line
-open(path, 'w', encoding='utf-8').write('{\n "_comment": %s,\n "trips": [\n  %s\n ]\n}\n' % (json.dumps(T.get('_comment', ''), ensure_ascii=False), body))
+nets = ',\n  '.join('%s: %s' % (json.dumps(k), json.dumps(v, separators=(',', ':'))) for k, v in T['networks'].items())
+open(path, 'w', encoding='utf-8').write('{\n "_comment": %s,\n "trips": [\n  %s\n ],\n "networks": {\n  %s\n }\n}\n' % (json.dumps(T.get('_comment', ''), ensure_ascii=False), body, nets))
 print('wrote', path)

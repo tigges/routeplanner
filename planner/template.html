@@ -256,25 +256,30 @@ function edgeView(s,rev){
  return {id:s.id,rev:!!rev,mode:"ride",moped:!!s.moped,frm:rev?s.to:s.frm,to:rev?s.frm:s.to,km:s.km,
    ascent:rev?s.descent:s.ascent,effort:rev?s.effortR:s.effort,cand:c,line:s.line};}
 
+var LEGS=null;                       // set while a multi-leg trip (a loop) is loaded: [{s,e,p},...] stitched together
 function chain(a,b){
+ if(LEGS&&!a&&!b){ var out=[]; for(var i=0;i<LEGS.length;i++){ var L=LEGS[i], c=withPicks(L.p,function(){return chain(L.s,L.e);}); if(!c.length) return []; out=out.concat(c); } return out; }
  a=a||document.getElementById("start").value; b=b||document.getElementById("end").value;
  if(a===b) return [];
  var rev=NODE[b].rank<NODE[a].rank;
- [NODE[a].requires,NODE[b].requires].forEach(function(req){ if(!req) return; (Array.isArray(req)?req:[req]).forEach(function(r){
-  for(var k in pick) if(P.forks.some(function(f){return f.node===k&&f.options.indexOf(r)>=0;})) pick[k]=r; });});
- var IN={};P.segments.forEach(function(s){(IN[s.to]=IN[s.to]||[]).push(s);});
- var out=[],cur=a,g=0,last=null;
- while(cur!==b&&g++<400){
-  var opts=(rev?IN[cur]:OUT[cur])||[],ch=null;
-  if(!rev&&FORK[cur]) for(var i=0;i<opts.length;i++) if(opts[i].variant===pick[cur]){ch=opts[i];break;}   // your choice at a fork wins
-  if(!ch&&last) for(var i=0;i<opts.length;i++) if(opts[i].variant===last){ch=opts[i];break;}
-  if(!ch) for(var i=0;i<opts.length;i++) if(opts[i].variant===pick[opts[i].frm]){ch=opts[i];break;}
-  if(!ch) for(var i=0;i<opts.length;i++) if(opts[i].variant==="base"){ch=opts[i];break;}
-  if(!ch&&opts.length===1) ch=opts[0];
-  if(!ch) break;
-  var v=edgeView(ch,rev); out.push(v); cur=v.to;
-  last=((pick[ch.frm]===ch.variant||last===ch.variant)&&ch.variant!=="base")?ch.variant:null;}
- return cur===b?out:[];}
+ [a,b].forEach(function(n){ var req=NODE[n].requires; if(!req) return; (Array.isArray(req)?req:[req]).forEach(function(r){   // make the end points reachable: set the forks BEFORE them to the variant they sit on
+  for(var k in pick) if(RANK[k]<RANK[n]&&P.forks.some(function(f){return f.node===k&&f.options.indexOf(r)>=0;})) pick[k]=r; });});
+ var r1=walk(a,b,rev); return r1.length?r1:walk(a,b,!rev);}   // rank suggests the direction; a branch that runs against the ranks still resolves the other way
+var IN={};P.segments.forEach(function(s){(IN[s.to]=IN[s.to]||[]).push(s);});
+function walk(a,b,rev){
+ // depth-first with backtracking: at each town try the edges in order of preference (your fork choice, the variant we are on,
+ // the variant picked at its own fork, the main line), and keep the first path that reaches b
+ var seen={}, out=[];
+ function order(cur,last){ var opts=(rev?IN[cur]:OUT[cur])||[], sc=function(o){ var v=o.variant;
+   return (!rev&&FORK[cur]&&v===pick[cur])?0:(last&&v===last)?1:(v===pick[o.frm])?2:(v==="base")?3:(opts.length===1)?4:5; };
+  return opts.slice().sort(function(x,y){return sc(x)-sc(y);}).filter(function(o){return sc(o)<5;}); }
+ function go(cur,last,depth){ if(cur===b) return true; if(seen[cur]||depth>400) return false; seen[cur]=1;
+  var opts=order(cur,last);
+  for(var i=0;i<opts.length;i++){ var ch=opts[i], v=edgeView(ch,rev); out.push(v);
+   var nl=((pick[ch.frm]===ch.variant||last===ch.variant)&&ch.variant!=="base")?ch.variant:null;
+   if(go(v.to,nl,depth+1)) return true; out.pop(); }
+  delete seen[cur]; return false; }
+ return go(a,null,0)?out:[];}
 
 function splitDays(ch,target){
  var legs=[],cur=[];
@@ -320,7 +325,7 @@ function applyCode(code){ try{ var st=JSON.parse(decodeURIComponent(escape(atob(
  if(st.l){LANG=st.l; try{localStorage.setItem("lang",LANG);}catch(e){} }
  if(st.v&&st.v!==VEH&&VEHNAME[st.v]){ VEH=st.v; try{localStorage.setItem("veh",VEH);}catch(e){} applyVehicle(); }
  if(!!st.g!==SIGNED){ SIGNED=!!st.g; try{localStorage.setItem("signed",SIGNED?"1":"0");}catch(e){} applyVehicle(); }
- CURTRIP=null; if(st.tr) TRIPS.forEach(function(t){ if(t.id===st.tr) CURTRIP=t; });
+ CURTRIP=null; LEGS=null; if(st.tr) TRIPS.forEach(function(t){ if(t.id===st.tr){ CURTRIP=t; if(t.legs&&tripHere(t)) LEGS=t.legs; } });
  document.querySelectorAll(".fork button.opt").forEach(function(b){ b.classList.toggle("on",pick[b.dataset.n]===b.dataset.o); });
  return true; }
 function routeSummary(){ var ride=LASTDAYS.filter(function(d){return d.mode==="ride"}); var vars=[]; for(var k in pick) if(pick[k]!==P.forks.filter(function(f){return f.node===k})[0].options[0]) vars.push(optName(k,pick[k]));
@@ -686,7 +691,7 @@ var ents=P.nodes.filter(function(n){return n.entry;}).sort(function(a,b){return 
 ["start","end"].forEach(function(w){var el=document.getElementById(w);
  ents.forEach(function(n){var o=document.createElement("option");o.value=n.id;o.textContent=n.name;el.appendChild(o);});
  el.value=(w==="start"?ents[0].id:ents[ents.length-1].id);
- el.addEventListener("change",render);});
+ el.addEventListener("change",function(){LEGS=null;render();});});
 var fb=document.getElementById("forks");
 P.forks.forEach(function(f){var d=document.createElement("div");d.className="fork";d.dataset.node=f.node;
  var h='<div class="q">'+(LABEL[f.node]||f.node)+'</div><div class="opts">';
@@ -695,7 +700,7 @@ P.forks.forEach(function(f){var d=document.createElement("div");d.className="for
  d.innerHTML=h+'</div><div class="cmp"></div>';fb.appendChild(d);});
 (function(){var pr=document.getElementById("presets");var PRESETS=/*@PRESETS@*/;if(!pr||!PRESETS||!PRESETS.length)return;pr.innerHTML='<div class="preslabel">Quick pick</div>';var row=document.createElement("div");row.className="opts";PRESETS.forEach(function(ps){var b=document.createElement("button");b.className="opt";b.textContent=ps.name;b.onclick=function(){P.forks.forEach(function(f){pick[f.node]=f.options[0];});var pk=ps.picks||{};for(var k in pk)pick[k]=pk[k];document.querySelectorAll(".fork button.opt").forEach(function(x){x.classList.toggle("on",pick[x.dataset.n]===x.dataset.o);});render();};row.appendChild(b);});pr.appendChild(row);})();
 fb.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
- pick[b.dataset.n]=b.dataset.o;
+ LEGS=null; pick[b.dataset.n]=b.dataset.o;
  b.parentNode.querySelectorAll("button").forEach(function(x){x.classList.remove("on")});
  b.classList.add("on");render();});
 document.getElementById("eff").addEventListener("input",render);
@@ -730,8 +735,9 @@ var TRIPS=(CFG.trips||[]).map(function(t){ if(!t.id) t.id=(t.slug||"")+":"+(t.s|
 var CURTRIP=null, PICKING=false, PKSEL=null;
 function toXY(lat,lon){ return [PJ.kx*lon+PJ.bx, PJ.ky*Math.log(Math.tan(Math.PI/4+lat*Math.PI/360))+PJ.by]; }
 function withPicks(p,fn){ var saved={}; for(var k in pick) saved[k]=pick[k]; P.forks.forEach(function(f){pick[f.node]=f.options[0];}); for(var k in (p||{})) if(FORK[k]) pick[k]=p[k]; var r=fn(); for(var k in saved) pick[k]=saved[k]; return r; }
-function tripHere(t){ return (!t.slug||t.slug===CFG.slug)&&t.s&&t.e&&NODE[t.s]&&NODE[t.e]; }
-function tripChain(t){ return tripHere(t)?withPicks(t.p,function(){return chain(t.s,t.e);}):[]; }
+function tripLegs(t){ return t.legs||[{s:t.s,e:t.e,p:t.p}]; }
+function tripHere(t){ return (!t.slug||t.slug===CFG.slug)&&tripLegs(t).every(function(L){return L.s&&L.e&&NODE[L.s]&&NODE[L.e];}); }
+function tripChain(t){ if(!tripHere(t)) return []; var out=[], legs=tripLegs(t); for(var i=0;i<legs.length;i++){ var L=legs[i], c=withPicks(L.p,function(){return chain(L.s,L.e);}); if(!c.length) return []; out=out.concat(c); } return out; }
 function tripStats(t){                       // km, climb, days at the current effort and vehicle; exact on this page, estimated from stored effort elsewhere
  var target=+document.getElementById("eff").value, ch=tripChain(t);
  if(ch.length){ var km=0,asc=0; ch.forEach(function(v){ if(v.mode==="ride"){km+=v.km;asc+=v.ascent;} });
@@ -751,7 +757,8 @@ function fitBox(pts,pad){ if(pts.length<2){setVB(full.slice());return;}
 function fitChain(){ var pts=[]; CH.forEach(function(v){ if(v.mode!=="ride"||!v.line)return; v.line.split(" ").forEach(function(q){var a=q.split(",");pts.push([+a[0],+a[1]]);}); }); fitBox(pts,1.25); }
 function tripTitle(){
  var s=document.getElementById("start").value,e=document.getElementById("end").value;
- if(CURTRIP&&!(tripHere(CURTRIP)&&CURTRIP.s===s&&CURTRIP.e===e)) CURTRIP=null;
+ if(CURTRIP&&!LEGS&&!(tripHere(CURTRIP)&&CURTRIP.s===s&&CURTRIP.e===e)) CURTRIP=null;
+ document.getElementById("fold-route").style.display=LEGS?"none":""; document.getElementById("plansum").style.display=LEGS?"none":"";
  var t=CURTRIP, badge=document.getElementById("tbadge");
  document.getElementById("ttext").textContent=t?t.name:CFG.title; badge.style.display=t&&t.num?"inline-flex":"none"; badge.textContent=t?t.num||"":"";
  var ts=document.getElementById("tsub"); ts.style.display=t?"block":"none"; ts.textContent=t?[t.sub,t.note].filter(Boolean).join(" · "):"";
@@ -759,7 +766,7 @@ function tripTitle(){
  document.getElementById("tripsback").hidden=TRIPS.length<2;
  document.title=(t?t.name+" · ":"")+CFG.title+" - journey planner"; }
 function dirRow(){
- var box=document.getElementById("dirrow"); box.innerHTML="";
+ var box=document.getElementById("dirrow"); box.innerHTML=""; if(LEGS) return;
  var s=document.getElementById("start").value,e=document.getElementById("end").value,target=+document.getElementById("eff").value;
  var fw=chain(s,e), bk=chain(e,s); if(!fw.length||!bk.length) return;
  function sum(ch){var a=0;ch.forEach(function(v){a+=v.ascent||0;});return Math.round(a);}
@@ -795,7 +802,7 @@ function tripThumb(t){ var b=CBOX, k=Math.max(b[2]/78,b[3]/54), vb=[b[0]-4*k,b[1
  h+='<polyline points="'+tripPoints(t).map(function(p){return p[0].toFixed(1)+","+p[1].toFixed(1)}).join(" ")+'" fill="none" stroke="#f0713f" stroke-width="'+(2.6*k)+'" stroke-linejoin="round" stroke-linecap="round"/></svg>'; return h; }
 var PKFILTER="all";
 function tripVisible(t,st){ if(PKFILTER==="all") return true; if(PKFILTER==="d3") return st&&st.days<=3; if(PKFILTER==="d46") return st&&st.days>=4&&st.days<=6; if(PKFILTER==="d7") return st&&st.days>=7; return (t.tags||[]).indexOf(PKFILTER)>=0; }
-function statText(st){ return st?(st.km.toLocaleString()+" km · "+st.asc.toLocaleString()+" m · "+(st.approx?"~":"")+st.days+" days"):""; }
+function statText(st){ return st?(st.km.toLocaleString()+" km · "+st.asc.toLocaleString()+" m · "+(st.approx?"~":"")+st.days+(st.days===1?" day":" days")):""; }
 function drawCards(){
  var box=document.getElementById("pickcards"); box.innerHTML="";
  var tags={}; TRIPS.forEach(function(t){(t.tags||[]).forEach(function(x){tags[x]=1;});});
@@ -817,20 +824,28 @@ function tripPop(t,x,y){ var st=tripStats(t), r=svg.getBoundingClientRect(),stg=
  pop.style.left=left+"px"; pop.style.top=top+"px"; }
 function drawPicker(){
  while(gPK.firstChild)gPK.removeChild(gPK.firstChild); if(!PICKING) return;
- var ppu=pxPerUnit(), rows=TRIPS.map(function(t){return {t:t,st:tripStats(t),pts:tripPoints(t)};}).filter(function(r){return tripVisible(r.t,r.st)&&r.pts.length>1;});
- rows.sort(function(a,b){return (a.t.id===PKSEL)-(b.t.id===PKSEL);});      // the highlighted one on top
- rows.forEach(function(r){ var t=r.t, hl=PKSEL===t.id, dim=PKSEL&&!hl;
+ var ppu=pxPerUnit(), NW=CFG.networks||{};
+ function ghost(points){ var p=document.createElementNS(NS,"polyline"); p.setAttribute("points",points); p.setAttribute("fill","none"); p.setAttribute("stroke","#223744"); p.setAttribute("stroke-width",1.3/ppu); p.setAttribute("stroke-dasharray",(4/ppu)+" "+(4/ppu)); p.setAttribute("pointer-events","none"); gPK.appendChild(p); }
+ P.segments.forEach(function(s){ if(s.line) ghost(s.line); });
+ Object.keys(NW).forEach(function(slug){ if(slug===CFG.slug) return; NW[slug].forEach(function(line){ ghost(line.map(function(ll){var q=toXY(ll[0],ll[1]);return q[0].toFixed(1)+","+q[1].toFixed(1);}).join(" ")); }); });
+ var rows=TRIPS.map(function(t){return {t:t,st:tripStats(t),pts:tripPoints(t)};}).filter(function(r){return tripVisible(r.t,r.st)&&r.pts.length>1;});
+ var major=function(t){return t.kind==="crossing"||t.kind==="route";};
+ rows.sort(function(a,b){return (major(a.t)-major(b.t))||((a.t.id===PKSEL)-(b.t.id===PKSEL));});      // numbered routes over sections, the highlighted one on top
+ var starts={}; rows.forEach(function(r){ var q=r.pts[0], k=Math.round(q[0])+","+Math.round(q[1]); (starts[k]=starts[k]||[]).push(r.t.id); });
+ rows.forEach(function(r){ var t=r.t, hl=PKSEL===t.id, dim=PKSEL&&!hl, mj=major(t);
   var p=document.createElementNS(NS,"polyline"); p.setAttribute("points",r.pts.map(function(q){return q[0].toFixed(1)+","+q[1].toFixed(1)}).join(" ")); p.setAttribute("fill","none"); p.setAttribute("class","pkline");
-  p.setAttribute("stroke",hl?"#f0713f":"#6f8ea3"); p.setAttribute("stroke-width",(hl?4:2.2)/ppu); p.setAttribute("stroke-linejoin","round"); p.setAttribute("stroke-linecap","round"); p.setAttribute("opacity",dim?".3":"1");
+  p.setAttribute("stroke",hl?"#f0713f":mj?"#9fbfd6":"#557386"); p.setAttribute("stroke-width",(hl?4:mj?2.6:1.8)/ppu); p.setAttribute("stroke-linejoin","round"); p.setAttribute("stroke-linecap","round"); p.setAttribute("opacity",dim?".3":"1");
   if(t.kind==="crossing"&&!hl) p.setAttribute("stroke-dasharray",(6/ppu)+" "+(4/ppu));
   gPK.appendChild(p);
   var hit=p.cloneNode(false); hit.setAttribute("stroke","transparent"); hit.setAttribute("stroke-width",16/ppu); hit.removeAttribute("stroke-dasharray"); hit.removeAttribute("opacity");
   hit.addEventListener("mouseenter",function(){pkSelect(t.id,true);}); hit.addEventListener("mouseleave",function(){pkSelect(null,false);}); hit.addEventListener("click",function(e){e.stopPropagation(); loadTrip(t);});
   gPK.appendChild(hit);
-  var q=r.pts[0], g=document.createElementNS(NS,"g"); g.setAttribute("class","pkbadge"); g.setAttribute("transform","translate("+q[0]+","+q[1]+") scale("+(1/ppu)+")"); g.setAttribute("opacity",dim?".35":"1");
-  var lab=t.num||"•", w=Math.max(20,lab.length*7+8);
-  var c=document.createElementNS(NS,"rect"); c.setAttribute("x",-w/2); c.setAttribute("y",-10); c.setAttribute("width",w); c.setAttribute("height",20); c.setAttribute("rx",10); c.setAttribute("fill",hl?"#f0713f":"#eef2f4"); c.setAttribute("stroke","#0a141b"); c.setAttribute("stroke-width","1.5"); g.appendChild(c);
-  var tx=document.createElementNS(NS,"text"); tx.setAttribute("y","4"); tx.setAttribute("text-anchor","middle"); tx.setAttribute("font-size","11"); tx.setAttribute("font-weight","700"); tx.setAttribute("fill",hl?"#fff":"#0a141b"); tx.setAttribute("font-family","inherit"); tx.textContent=lab; g.appendChild(tx);
+  var q=r.pts[0], sib=starts[Math.round(q[0])+","+Math.round(q[1])], ox=0, oy=0;
+  if(sib.length>1){ var ang=-Math.PI/2+sib.indexOf(t.id)*2*Math.PI/sib.length, rad=(sib.length>3?18:14)/ppu; ox=rad*Math.cos(ang); oy=rad*Math.sin(ang); }
+  var g=document.createElementNS(NS,"g"); g.setAttribute("class","pkbadge"); g.setAttribute("transform","translate("+(q[0]+ox)+","+(q[1]+oy)+") scale("+(1/ppu)+")"); g.setAttribute("opacity",dim?".35":"1");
+  var lab=t.num||"•", w=Math.max(mj?20:16,lab.length*7+8);
+  var bh=mj?20:16; var c=document.createElementNS(NS,"rect"); c.setAttribute("x",-w/2); c.setAttribute("y",-bh/2); c.setAttribute("width",w); c.setAttribute("height",bh); c.setAttribute("rx",bh/2); c.setAttribute("fill",hl?"#f0713f":mj?"#eef2f4":"#7f9cb0"); c.setAttribute("stroke","#0a141b"); c.setAttribute("stroke-width","1.5"); g.appendChild(c);
+  var tx=document.createElementNS(NS,"text"); tx.setAttribute("y",mj?"4":"3.5"); tx.setAttribute("text-anchor","middle"); tx.setAttribute("font-size",mj?"11":"9"); tx.setAttribute("font-weight","700"); tx.setAttribute("fill",hl?"#fff":"#0a141b"); tx.setAttribute("font-family","inherit"); tx.textContent=lab; g.appendChild(tx);
   g.addEventListener("mouseenter",function(){pkSelect(t.id,true);}); g.addEventListener("mouseleave",function(){pkSelect(null,false);}); g.addEventListener("click",function(e){e.stopPropagation(); loadTrip(t);});
   gPK.appendChild(g); }); }
 function showPicker(){ PICKING=true; PKSEL=null; document.body.classList.add("picking"); document.getElementById("pick").hidden=false;
@@ -843,8 +858,9 @@ function hidePicker(){ PICKING=false; PKSEL=null; document.body.classList.remove
 function loadTrip(t){
  if(t.slug&&t.slug!==CFG.slug){ location.href="../"+t.slug+"/#trip="+encodeURIComponent(t.id); return; }
  if(!tripHere(t)) return;
- document.getElementById("start").value=t.s; document.getElementById("end").value=t.e;
- P.forks.forEach(function(f){pick[f.node]=f.options[0];}); for(var k in (t.p||{})) if(FORK[k]) pick[k]=t.p[k];
+ var legs=tripLegs(t); LEGS=t.legs?legs:null;
+ document.getElementById("start").value=legs[0].s; document.getElementById("end").value=legs[legs.length-1].e;
+ P.forks.forEach(function(f){pick[f.node]=f.options[0];}); for(var k in (legs[0].p||{})) if(FORK[k]) pick[k]=legs[0].p[k];
  document.querySelectorAll(".fork button.opt").forEach(function(x){x.classList.toggle("on",pick[x.dataset.n]===x.dataset.o);});
  CURTRIP=t; hidePicker(); render(); fitChain(); }
 document.getElementById("tripsback").addEventListener("click",function(){ showPicker(); });
