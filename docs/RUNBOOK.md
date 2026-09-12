@@ -80,7 +80,8 @@ its size is roughly 8 MB per 100 segments with facilities, double that with mope
   country share (Switzerland: `switzerland-trips.json`). Each trip: `id`, `num` (the badge: a national route number, "E–W", …), `name`, `sub`,
   `note`, `kind` (`crossing` draws dashed on the picker map), `tags` (filter chips), `slug` (the page it lives on), `s`/`e`/`p` (that page's
   start, end and fork picks) — or `legs: [{s,e,p}, …]` for a trip stitched from several walks (a loop: Andermatt → Meiringen → Andermatt).
-  `kind` is `crossing` or `route` (numbered, drawn bold), `pass` or `section` (drawn muted, small badge). Run
+  `kind` is `crossing` or `route` (numbered, drawn bold), `pass` or `section` (drawn muted, small badge). `top` (a rank, 1–15) and `why`
+  (one line from the guides) add a Top-5/10/15 marker and the reason to the card and a "top" chip that orders the list by rank. Run
   `python3 tools/trips_geo.py config/<trips file>` after any page changes: it opens the published pages headless and stores km, climb,
   effort and a lat/lon line under `geo`, which is what other pages use to draw and size a trip that is not theirs, plus every page's built
   legs under `networks` (the faint dashed network under the trips).
