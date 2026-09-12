@@ -133,6 +133,30 @@
    "lat": 35.9465,
    "lon": 140.5545,
    "type": "gateway"
+  },
+  "motosuko": {
+   "name": "Lake Motosu",
+   "lat": 35.4627,
+   "lon": 138.6058,
+   "type": "gateway"
+  },
+  "kawaguchiko": {
+   "name": "Kawaguchiko",
+   "lat": 35.4984,
+   "lon": 138.7687,
+   "type": "gateway"
+  },
+  "yamanakako": {
+   "name": "Yamanakako",
+   "lat": 35.4076,
+   "lon": 138.876,
+   "type": "gateway"
+  },
+  "gotemba": {
+   "name": "Gotemba",
+   "lat": 35.3001,
+   "lon": 138.9338,
+   "type": "gateway"
   }
  },
  "trunks": [
@@ -210,6 +234,38 @@
      ]
     ]
    }
+  },
+  {
+   "variant": "highland",
+   "nodes": [
+    "kofu",
+    "motosuko",
+    "fujinomiya"
+   ]
+  },
+  {
+   "variant": "fuji",
+   "nodes": [
+    "kofu",
+    "kawaguchiko",
+    "yamanakako",
+    "gotemba",
+    "numazu"
+   ]
+  },
+  {
+   "variant": "fuji-lakes",
+   "nodes": [
+    "kawaguchiko",
+    "motosuko"
+   ]
+  },
+  {
+   "variant": "fuji-south",
+   "nodes": [
+    "gotemba",
+    "fujinomiya"
+   ]
   }
  ],
  "forks": {
@@ -229,6 +285,18 @@
   "tsuchiura": [
    "rinrin",
    "kasumigaura-north"
+  ],
+  "kofu": [
+   "highland",
+   "fuji"
+  ],
+  "kawaguchiko": [
+   "fuji",
+   "fuji-lakes"
+  ],
+  "gotemba": [
+   "fuji",
+   "fuji-south"
   ]
  },
  "viaBase": {
@@ -278,7 +346,10 @@
   "uwajima": "Uwajima to Sukumo",
   "makino": "At Makino",
   "tsukuba": "Tsukuba to Tokyo",
-  "tsuchiura": "Round Kasumigaura"
+  "tsuchiura": "Round Kasumigaura",
+  "kofu": "Kōfu to Numazu",
+  "kawaguchiko": "At Kawaguchiko",
+  "gotemba": "At Gotemba"
  },
  "optionNames": {
   "base": "Yotei line",
@@ -302,7 +373,10 @@
   "east": "Biwa east shore: Nagahama, Hikone",
   "west": "Biwa west shore",
   "rinrin": "Via Kasumigaura and Itako",
-  "kasumigaura-north": "North and east shore"
+  "kasumigaura-north": "North and east shore",
+  "fuji": "Via the Fuji Five Lakes",
+  "fuji-lakes": "West lakes to Motosu",
+  "fuji-south": "South foot to Fujinomiya"
  },
  "defaultOptionNames": {
   "aomori": "Sea of Japan",
@@ -320,7 +394,10 @@
   "uwajima": "Direct to Sukumo",
   "makino": "Biwa west shore",
   "tsukuba": "Direct to Tokyo",
-  "tsuchiura": "South shore"
+  "tsuchiura": "South shore",
+  "kofu": "Via Motosu and Fujinomiya",
+  "kawaguchiko": "On to Yamanakako",
+  "gotemba": "Down to Numazu"
  },
  "skippable": [],
  "neverSkip": [],
