@@ -1,6 +1,7 @@
 {
  "slug": "switzerland-north-south",
- "title": "Across Switzerland: North–South",
+ "title": "Switzerland by bike",
+ "hub": false,
  "lang": {
   "local": "de",
   "localLabel": "Lokale Namen",

@@ -96,14 +96,15 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 .foldhead h2{margin:0}.foldhead h2:before{content:"\25BE  ";font-size:10px}.fold.closed .foldhead h2:before{content:"\25B8  "}
 .fsum{font-size:11.5px;color:var(--dim);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}
 .fold.closed .foldbody{display:none}
-#planhead{display:flex;justify-content:space-between;align-items:center;margin:14px 16px 0;min-height:24px}
-#tripsback{font-size:12.5px;color:#7fc4ff;cursor:pointer}#tripsback[hidden]{display:none}
+#planhead{display:flex;justify-content:space-between;align-items:center;margin:14px 16px 0;min-height:24px}#planhead h1{margin:0}
+#tripbar{position:absolute;left:14px;top:12px;z-index:4;display:flex;align-items:center;gap:8px;max-width:calc(100% - 300px);padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:rgba(13,26,35,.92);font-size:12.5px;color:var(--dim);white-space:nowrap;overflow:hidden}
+#tripbar[hidden]{display:none}#tripbar b{color:var(--paper);font-weight:600}#tripbar #tbsub,#tripbar #tbnums{overflow:hidden;text-overflow:ellipsis}#tripbar #tbnums{font-variant-numeric:tabular-nums;color:#b9c6cf}
+#tripsback{color:#7fc4ff;cursor:pointer;padding-right:8px;border-right:1px solid var(--line)}
 #more{margin-left:auto;padding:1px 9px;font-size:14px;line-height:1.3}
 #morebox{margin:0 0 6px}#morebox[hidden]{display:none}
-#tbadge{display:none;vertical-align:middle;margin-right:7px}
+#tbadge{display:none}
 .badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:#eef2f4;color:#0a141b;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
 .badge.on{background:var(--route);color:#fff}
-#tsub{display:none}
 /* --- whole-trip profile --- */
 #profwrap{margin:0 16px 12px}#profwrap svg{display:block;width:100%;height:56px;border-radius:4px;background:#0a141b}
 #proflbl{display:flex;justify-content:space-between;font-size:10.5px;color:#8fa3b0;margin-top:3px}
@@ -133,21 +134,21 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
  #app{grid-template-columns:1fr;grid-template-rows:44vh 1fr;height:100vh}
  #stage{order:0;border-bottom:1px solid var(--line)}#side{order:1;border-right:0}
  #topbtns{max-width:75%}#hint{display:none}
+ #tripbar{top:auto;bottom:10px;left:10px;max-width:calc(100% - 20px)}#tripbar #tbsub{display:none}
  #layers{top:12px;right:auto;left:14px;flex-direction:column}
 }
 </style></head><body><div id="app">
 <div id="side">
 <div id="pick" hidden>
 <h1 id="ptitle"></h1>
+<p class="sub" id="pcount"></p>
 <p class="sub">Pick a trip on the map or from the list. Numbers are the signed national routes; hover a line to see it alone, click it to plan.</p>
 <h2>Show</h2><div class="layers" id="pickfilters"></div>
 <div id="pickhead"><h2>Trips &middot; <span id="pickcount"></span></h2><span class="fsum">shortest first</span></div>
 <div id="pickcards"></div>
 </div>
 <div id="plan">
-<div id="planhead"><span id="tripsback" hidden>&lsaquo; Trips</span><button class="opt" id="more" title="save, link, CSV, GPX">&ctdot;</button></div>
-<h1 id="title"><span id="tbadge" class="badge on"></span><span id="ttext"></span></h1>
-<p class="sub" id="tsub"></p>
+<div id="planhead"><h1 id="title"><span id="ttext"></span></h1><button class="opt" id="more" title="save, link, CSV, GPX">&ctdot;</button></div>
 <p class="sub" id="psub">Choose a route at each fork and a daily effort. Days are computed, not stored. Elevation on every segment; shops, beds, baths, taps and stations within 2 km on every segment, so any journey inherits them.</p>
 <div class="stats"><div><b id="sd"></b>days</div><div><b id="sk"></b>km</div><div><b id="sa"></b>m climbed</div><div id="srw"><b id="sr"></b>signed route</div></div>
 <div id="profwrap"><svg id="prof" viewBox="0 0 300 56" preserveAspectRatio="none"></svg><div id="proflbl"><span id="profhi"></span><span>coloured by day</span><span id="proflo"></span></div></div>
@@ -179,7 +180,7 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 </div></div>
 </div>
 </div>
-<div id="stage"><svg id="map" preserveAspectRatio="xMidYMid meet"></svg><div id="hint">Drag to pan, scroll to zoom &middot; click a day to zoom to it &middot; tap a dot for its name &middot; zoom under ~60 km for road stations and sights</div><div id="topbtns"><button id="veh" title="switch vehicle">Bicycle</button><button id="lang"></button><button id="fit">Whole trip</button></div>
+<div id="stage"><svg id="map" preserveAspectRatio="xMidYMid meet"></svg><div id="hint">Drag to pan, scroll to zoom &middot; click a day to zoom to it &middot; tap a dot for its name &middot; zoom under ~60 km for road stations and sights</div><div id="tripbar" hidden><span id="tripsback">&lsaquo; Trips</span><span id="tbadge" class="badge on"></span><b id="tbname"></b><span id="tbsub"></span><span id="tbnums"></span></div><div id="topbtns"><button id="veh" title="switch vehicle">Bicycle</button><button id="lang"></button><button id="fit">Whole trip</button></div>
 <div class="layers" id="layers">
 <button class="opt" data-l="shop" title="Shops"><svg viewBox="0 0 20 20"><path d="M3 7h14l-1.2 9.5H4.2z"/><path d="M7 7V5a3 3 0 0 1 6 0v2"/></svg></button>
 <button class="opt" data-l="stay" title="Beds"><svg viewBox="0 0 20 20"><path d="M2 15V8h16v7"/><path d="M2 12h16"/><path d="M4 8V5h5v3"/></svg></button>
@@ -190,6 +191,9 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 <script>
 var CFG=/*@CFG@*/;
 document.getElementById("ttext").textContent=CFG.title; document.getElementById("ptitle").textContent=CFG.title; document.title=CFG.title+" - journey planner";
+(function(){ var T=CFG.trips||[]; if(T.length<2) return; var n=function(k){return T.filter(function(t){return t.kind===k}).length;}, parts=[];
+ if(n("crossing")) parts.push(n("crossing")+(n("crossing")>1?" crossings":" crossing")); if(n("route")) parts.push(n("route")+" national routes"); if(n("section")) parts.push(n("section")+" multi-day sections"); if(n("pass")) parts.push(n("pass")+" pass days");
+ document.getElementById("pcount").textContent=T.length+" trips: "+parts.join(", ")+"."; })();
 var P=/*@P@*/;
 var SD=/*@SD@*/;
 var SC=/*@SC@*/;
@@ -759,12 +763,14 @@ function tripTitle(){
  var s=document.getElementById("start").value,e=document.getElementById("end").value;
  if(CURTRIP&&!LEGS&&!(tripHere(CURTRIP)&&CURTRIP.s===s&&CURTRIP.e===e)) CURTRIP=null;
  document.getElementById("fold-route").style.display=LEGS?"none":""; document.getElementById("plansum").style.display=LEGS?"none":"";
- var t=CURTRIP, badge=document.getElementById("tbadge");
- document.getElementById("ttext").textContent=t?t.name:CFG.title; badge.style.display=t&&t.num?"inline-flex":"none"; badge.textContent=t?t.num||"":"";
- var ts=document.getElementById("tsub"); ts.style.display=t?"block":"none"; ts.textContent=t?[t.sub,t.note].filter(Boolean).join(" · "):"";
- document.getElementById("psub").style.display=t?"none":"block";
- document.getElementById("tripsback").hidden=TRIPS.length<2;
- document.title=(t?t.name+" · ":"")+CFG.title+" - journey planner"; }
+ var t=CURTRIP, badge=document.getElementById("tbadge"), bar=document.getElementById("tripbar");
+ document.title=(t?t.name+" · ":"")+CFG.title+" - journey planner";
+ bar.hidden=TRIPS.length<2||PICKING; if(bar.hidden) return;
+ badge.style.display=t&&t.num?"inline-flex":"none"; badge.textContent=t?t.num||"":"";
+ document.getElementById("tbname").textContent=t?t.name:"Own route";
+ document.getElementById("tbsub").textContent=t?(t.sub||""):(NODE[s].name+" → "+NODE[e].name);
+ document.getElementById("tbnums").textContent="· "+document.getElementById("sk").textContent+" km · "+document.getElementById("sa").textContent+" m · "+document.getElementById("sd").textContent+" days";
+ bar.title=t?[t.sub,t.note].filter(Boolean).join(" · "):""; }
 function dirRow(){
  var box=document.getElementById("dirrow"); box.innerHTML=""; if(LEGS) return;
  var s=document.getElementById("start").value,e=document.getElementById("end").value,target=+document.getElementById("eff").value;
@@ -848,7 +854,7 @@ function drawPicker(){
   var tx=document.createElementNS(NS,"text"); tx.setAttribute("y",mj?"4":"3.5"); tx.setAttribute("text-anchor","middle"); tx.setAttribute("font-size",mj?"11":"9"); tx.setAttribute("font-weight","700"); tx.setAttribute("fill",hl?"#fff":"#0a141b"); tx.setAttribute("font-family","inherit"); tx.textContent=lab; g.appendChild(tx);
   g.addEventListener("mouseenter",function(){pkSelect(t.id,true);}); g.addEventListener("mouseleave",function(){pkSelect(null,false);}); g.addEventListener("click",function(e){e.stopPropagation(); loadTrip(t);});
   gPK.appendChild(g); }); }
-function showPicker(){ PICKING=true; PKSEL=null; document.body.classList.add("picking"); document.getElementById("pick").hidden=false;
+function showPicker(){ PICKING=true; PKSEL=null; document.getElementById("side").scrollTop=0; document.getElementById("tripbar").hidden=true; document.body.classList.add("picking"); document.getElementById("pick").hidden=false;
  PLANNER_GROUPS.forEach(function(g){g.style.display="none";}); document.getElementById("layers").style.display="none"; document.getElementById("fit").style.display="none"; hidePop();
  document.getElementById("hint").textContent="Hover a line to see it alone · click it (or its card) to plan that trip";
  drawCards(); var pts=[]; TRIPS.forEach(function(t){pts=pts.concat(tripPoints(t));}); (P.coast||[]).forEach(function(c){ c.split(" ").forEach(function(q){var a=q.split(",");pts.push([+a[0],+a[1]]);}); }); fitBox(pts,1.08); drawPicker(); }
@@ -862,7 +868,7 @@ function loadTrip(t){
  document.getElementById("start").value=legs[0].s; document.getElementById("end").value=legs[legs.length-1].e;
  P.forks.forEach(function(f){pick[f.node]=f.options[0];}); for(var k in (legs[0].p||{})) if(FORK[k]) pick[k]=legs[0].p[k];
  document.querySelectorAll(".fork button.opt").forEach(function(x){x.classList.toggle("on",pick[x.dataset.n]===x.dataset.o);});
- CURTRIP=t; hidePicker(); render(); fitChain(); }
+ CURTRIP=t; hidePicker(); render(); fitChain(); document.getElementById("side").scrollTop=0; }
 document.getElementById("tripsback").addEventListener("click",function(){ showPicker(); });
 svg.addEventListener("click",function(){ if(PICKING) pkSelect(null,false); });
 function startUp(){

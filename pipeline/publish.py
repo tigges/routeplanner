@@ -1,14 +1,16 @@
 """Publish a country's planner to the GitHub Pages folder.
-usage: python3 pipeline/publish.py config/<country>.json
+usage: python3 pipeline/publish.py config/<country>.json [--hub-only]
 copies <workdir>/planner.html to docs/<slug>/index.html and rebuilds docs/index.html (the hub page) from docs/countries.json.
 Then: git add docs && git commit -m "publish <slug>" && git push  ->  https://<user>.github.io/routeplanner/<slug>/"""
 import json, os, sys, shutil, datetime
 here = os.path.dirname(os.path.abspath(__file__)); root = os.path.join(here, '..'); docs = os.path.join(root, 'docs')
 cfg = json.load(open(sys.argv[1])); slug = cfg['slug']
-os.makedirs(os.path.join(docs, slug), exist_ok=True)
-shutil.copy(os.path.join(root, cfg['workdir'], 'planner.html'), os.path.join(docs, slug, 'index.html'))
+if '--hub-only' not in sys.argv:
+    os.makedirs(os.path.join(docs, slug), exist_ok=True)
+    shutil.copy(os.path.join(root, cfg['workdir'], 'planner.html'), os.path.join(docs, slug, 'index.html'))
 lst = os.path.join(docs, 'countries.json'); C = json.load(open(lst)) if os.path.exists(lst) else []
-C = [c for c in C if c['slug'] != slug] + [dict(slug=slug, title=cfg['title'], published=datetime.date.today().isoformat())]
+C = [c for c in C if c['slug'] != slug]
+if cfg.get('hub', True): C += [dict(slug=slug, title=cfg['title'], published=datetime.date.today().isoformat())]   # "hub": false keeps a page off the hub (a second page of the same country)
 C.sort(key=lambda c: c['title']); json.dump(C, open(lst, 'w'), indent=1)
 rows = ''.join('<li><a href="%s/">%s</a> <span>published %s</span></li>' % (c['slug'], c['title'], c['published']) for c in C)
 open(os.path.join(docs, 'index.html'), 'w', encoding='utf-8').write('''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">

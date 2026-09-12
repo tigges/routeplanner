@@ -83,7 +83,9 @@ its size is roughly 8 MB per 100 segments with facilities, double that with mope
   `kind` is `crossing` or `route` (numbered, drawn bold), `pass` or `section` (drawn muted, small badge). Run
   `python3 tools/trips_geo.py config/<trips file>` after any page changes: it opens the published pages headless and stores km, climb,
   effort and a lat/lon line under `geo`, which is what other pages use to draw and size a trip that is not theirs, plus every page's built
-  legs under `networks` (the faint dashed network under the trips). With two or more trips a page opens on the picker (all trips on one map plus cards); `#trip=<id>` opens a page straight on that trip;
+  legs under `networks` (the faint dashed network under the trips).
+  A country with several pages: give the extra pages `"hub": false` so only one entry appears on the hub (`publish.py --hub-only` rebuilds the
+  hub without copying a page). With trips, the sidebar heading stays the page title and the loaded trip is named in a strip on the map. With two or more trips a page opens on the picker (all trips on one map plus cards); `#trip=<id>` opens a page straight on that trip;
   `‹ Trips` in the planner goes back. Japan and Spain have no trips and open on the planner as before. Re-render every page after a
   template change: `python3 tools/retemplate.py config/<country>.json` for each.
 - `vehicles.moped.dropFacilities`: categories left out of the moped data at build time (default eat, wc; they fall back to the bicycle list). Saves ~3 MB on Japan.
