@@ -378,6 +378,11 @@
   "logrono": "Rioja, Burgos and the Meseta",
   "ponferrada": "O Cebreiro and Sarria"
  },
+ "presets": [
+  {"name": "Main line", "picks": {}},
+  {"name": "Mountain", "picks": {"figueres": "pyrenees"}},
+  {"name": "Coastal", "picks": {"logrono": "norte"}}
+ ],
  "skippable": [],
  "vehicles": {
   "names": {
