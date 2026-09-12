@@ -39,23 +39,25 @@ if cfg['graph'].get('prebuilt_dir'):
             print('viaBase rerouted', sid, '->', r['km'], 'km')
         jdump(W, 'P.json', P); jdump(W, 'seg_data.json', SD, compact=True)
     # --- extend it with the trunks in the config (fork town … rejoin town; new inner towns need lat/lon in nodes) ---
-    ext = [t for t in cfg.get('trunks', []) if t['variant'] != 'base']
+    have0 = {s['id'] for s in P['segments']}
+    ext = [t for t in cfg.get('trunks', []) if t['variant'] != 'base' or any(a + '--' + b not in have0 for a, b in zip(t['nodes'], t['nodes'][1:]))]   # a base trunk is allowed here when it inserts new legs (a town added on the main line)
     if not ext: sys.exit()
     NODE = {n['id']: n for n in P['nodes']}; NODES = cfg.get('nodes', {}); SD = jload(W, 'seg_data.json', {}); PR = jload(W, 'proj.json')
-    have = {s['id'] for s in P['segments']}; forks = {f['node']: f['options'] for f in P['forks']}
+    have = have0; forks = {f['node']: f['options'] for f in P['forks']}
     def ll(nid):
         if nid in NODES and 'lat' in NODES[nid]: return (NODES[nid]['lat'], NODES[nid]['lon'])
         n = NODE[nid]; return pj.ll(n['x'], n['y'])
     for t in ext:
         v = t['variant']; ns = t['nodes']; a0, b0 = ns[0], ns[-1]
-        inner = [n for n in ns[1:-1] if n not in NODE]
+        inner = [n for n in ns[1:] if n not in NODE]         # new inner towns, and the end town too when a spur ends at a new town
         ra = NODE[a0]['rank']; rb = NODE[b0]['rank'] if b0 in NODE else ra + 1
         for i, nid in enumerate(inner, 1):
             x, y = pj.xy(*ll(nid)); n = NODES[nid]
-            NODE[nid] = dict(id=nid, name=n['name'], type=n.get('type', 'gateway'), x=round(x, 1), y=round(y, 1), rank=round(ra + (rb - ra) * i / (len(inner) + 1), 3), entry=1 if n.get('entry', True) else 0, requires=[v])
+            NODE[nid] = dict(id=nid, name=n['name'], type=n.get('type', 'gateway'), x=round(x, 1), y=round(y, 1), rank=round(ra + (rb - ra) * i / (len(inner) + 1), 3), entry=1 if n.get('entry', True) else 0)
+            if v != 'base': NODE[nid]['requires'] = [v]
         for a, b in zip(ns, ns[1:]):
-            sid = a + '--' + b + '#' + v
-            if sid in have: continue
+            sid = a + '--' + b + ('' if v == 'base' else '#' + v)
+            if sid in have or any(f['from'] == a and f['to'] == b and f.get('variant') == v for f in cfg.get('ferries', [])): continue   # a ferry leg is added below, not routed
             via = (t.get('via') or {}).get(a + '--' + b, [])
             r = route(W, sid if via else a + '--' + b, ll(a), ll(b), via=via)
             seg, sd = make_segment(PR, sid, a, b, v, r); P['segments'].append(seg); SD[sid] = sd; have.add(sid)
@@ -65,6 +67,7 @@ if cfg['graph'].get('prebuilt_dir'):
                 sid = f['from'] + '--' + f['to'] + '#' + v
                 if sid not in have:
                     P['segments'].append(dict(id=sid, frm=f['from'], to=f['to'], variant=v, mode='ferry', km=f['km'], ascent=0, note=f.get('note', ''), effort=0, descent=0, effortR=0, line='', cand=[])); have.add(sid)
+        if v == 'base' or t.get('spur'): continue          # a base insertion is no fork; a spur (a loop only trips use) gets no fork button either
         if a0 not in forks:
             outs = [s for s in P['segments'] if s['frm'] == a0 and s['variant'] != v]
             forks[a0] = ['base' if any(s['variant'] == 'base' for s in outs) else outs[0]['variant']] if outs else ['base']

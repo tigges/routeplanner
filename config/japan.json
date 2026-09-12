@@ -175,6 +175,42 @@
    "lat": 32.7147,
    "lon": 131.3066,
    "type": "gateway"
+  },
+  "akashi": {
+   "name": "Akashi",
+   "lat": 34.6491,
+   "lon": 134.9927,
+   "type": "gateway"
+  },
+  "iwaya": {
+   "name": "Iwaya",
+   "lat": 34.591,
+   "lon": 135.0199,
+   "type": "gateway"
+  },
+  "sumoto": {
+   "name": "Sumoto",
+   "lat": 34.343,
+   "lon": 134.896,
+   "type": "gateway"
+  },
+  "fukura": {
+   "name": "Fukura",
+   "lat": 34.2562,
+   "lon": 134.7204,
+   "type": "gateway"
+  },
+  "nara": {
+   "name": "Nara",
+   "lat": 34.6808,
+   "lon": 135.8189,
+   "type": "gateway"
+  },
+  "gojo": {
+   "name": "Gojō",
+   "lat": 34.3558,
+   "lon": 135.6988,
+   "type": "gateway"
   }
  },
  "trunks": [
@@ -302,6 +338,66 @@
      ]
     ]
    }
+  },
+  {
+   "variant": "base",
+   "nodes": [
+    "kobe",
+    "akashi",
+    "himeji"
+   ]
+  },
+  {
+   "variant": "awaji",
+   "nodes": [
+    "akashi",
+    "iwaya"
+   ],
+   "spur": true
+  },
+  {
+   "variant": "awaji-east",
+   "nodes": [
+    "iwaya",
+    "sumoto",
+    "fukura"
+   ],
+   "via": {
+    "sumoto--fukura": [
+     [
+      34.2674,
+      134.9325
+     ],
+     [
+      34.215,
+      134.845
+     ]
+    ]
+   }
+  },
+  {
+   "variant": "awaji-west",
+   "nodes": [
+    "iwaya",
+    "fukura"
+   ],
+   "via": {
+    "iwaya--fukura": [
+     [
+      34.4083,
+      134.7889
+     ]
+    ]
+   }
+  },
+  {
+   "variant": "keinawa",
+   "nodes": [
+    "kyoto",
+    "nara",
+    "gojo",
+    "wakayama"
+   ]
   }
  ],
  "forks": {
@@ -337,6 +433,14 @@
   "beppu": [
    "base",
    "aso"
+  ],
+  "iwaya": [
+   "awaji-east",
+   "awaji-west"
+  ],
+  "kyoto": [
+   "base",
+   "keinawa"
   ]
  },
  "viaBase": {
@@ -367,7 +471,15 @@
    "akita--nikaho"
   ]
  },
- "ferries": [],
+ "ferries": [
+  {
+   "from": "akashi",
+   "to": "iwaya",
+   "km": 4,
+   "variant": "awaji",
+   "note": "Jenova Line ferry Akashi → Iwaya, 13 min, bikes welcome"
+  }
+ ],
  "forkLabels": {
   "aomori": "Aomori onward",
   "otaru": "Otaru to Suttsu",
@@ -390,7 +502,9 @@
   "kofu": "Kōfu to Numazu",
   "kawaguchiko": "At Kawaguchiko",
   "gotemba": "At Gotemba",
-  "beppu": "Beppu to Nobeoka"
+  "beppu": "Beppu to Nobeoka",
+  "iwaya": "Round Awaji",
+  "kyoto": "Kyoto onward"
  },
  "optionNames": {
   "base": "Yotei line",
@@ -418,7 +532,9 @@
   "fuji": "Via the Fuji Five Lakes",
   "fuji-lakes": "West lakes to Motosu",
   "fuji-south": "South foot to Fujinomiya",
-  "aso": "Yamanami Highway: Yufuin, Kujū, Aso, Takachiho"
+  "aso": "Yamanami Highway: Yufuin, Kujū, Aso, Takachiho",
+  "awaji-west": "West coast: Goshiki",
+  "keinawa": "Via Nara and the Kii valley to Wakayama"
  },
  "defaultOptionNames": {
   "aomori": "Sea of Japan",
@@ -440,7 +556,9 @@
   "kofu": "Via Motosu and Fujinomiya",
   "kawaguchiko": "On to Yamanakako",
   "gotemba": "Down to Numazu",
-  "beppu": "Coast via Usuki"
+  "beppu": "Coast via Usuki",
+  "iwaya": "East coast: Sumoto and the southern cliffs",
+  "kyoto": "Osaka"
  },
  "skippable": [],
  "neverSkip": [],
