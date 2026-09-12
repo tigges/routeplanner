@@ -439,9 +439,10 @@ function showCallout(x,y,text){
  gP.appendChild(r); gP.appendChild(t);}
 svg.addEventListener("click",function(e){ if(tapBlock){tapBlock=false;return;} if(PICKING) return; tapAt(e.clientX,e.clientY); });
 var tapBlock=false;
-P.coast.forEach(function(s){var p=document.createElementNS(NS,"polygon");            // the country: a faint land tone inside a clear border
- p.setAttribute("points",s);p.setAttribute("fill","#101f2a");p.setAttribute("stroke","#6d8fa6");p.setAttribute("stroke-linejoin","round");
- p.setAttribute("stroke-width","2");gC.appendChild(p);});
+var LAND=!!P.water;   // a closed border with a water layer (Switzerland) gets a land tone; a coastline made of pieces (Japan, Spain) stays a line
+P.coast.forEach(function(s){var p=document.createElementNS(NS,LAND?"polygon":"polyline");
+ p.setAttribute("points",s);p.setAttribute("fill",LAND?"#13242f":"none");p.setAttribute("stroke","#4a6a80");p.setAttribute("stroke-linejoin","round");   // colour does the work, not weight
+ p.setAttribute("stroke-width","1");gC.appendChild(p);});
 (P.water?P.water.lakes:[]).forEach(function(l){var p=document.createElementNS(NS,"polygon");     // lakes and big rivers (step 12), under the routes
  p.setAttribute("points",l.pts);p.setAttribute("fill","#1b3f55");p.setAttribute("stroke","#35678a");p.setAttribute("stroke-width",".6");p.setAttribute("class","lake");gW.appendChild(p);});
 (P.water?P.water.rivers:[]).forEach(function(r){var p=document.createElementNS(NS,"polyline");
@@ -453,7 +454,7 @@ var full=[Math.min.apply(null,xs)-120,Math.min.apply(null,ys)-60,
 var vb=full.slice();
 function setVB(b){vb=b;svg.setAttribute("viewBox",b.join(" "));
  var k=vb[2]/full[2];
- gC.querySelectorAll("polygon").forEach(function(p){p.setAttribute("stroke-width",Math.max(.5,2*k))});
+ gC.querySelectorAll("polygon,polyline").forEach(function(p){p.setAttribute("stroke-width",Math.max(.3,1*k))});
  gW.querySelectorAll(".lake").forEach(function(p){p.setAttribute("stroke-width",Math.max(.2,.6*k))}); gW.querySelectorAll(".river").forEach(function(p){p.setAttribute("stroke-width",Math.max(.4,1.2*k))});
  gG.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",Math.max(.5,1.6*k))});
  gR.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",Math.max(.9,2.6*k))});
@@ -461,7 +462,7 @@ function setVB(b){vb=b;svg.setAttribute("viewBox",b.join(" "));
  gS.querySelectorAll("circle").forEach(function(c){c.setAttribute("r",Math.max(1,2.6*k))});
  sizeDots(); drawLabels(); while(gP.firstChild)gP.removeChild(gP.firstChild); hidePop(); if(PICKING) drawPicker();
  gH.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",4.5*k)});
- gC.querySelectorAll("polygon").forEach(function(p){p.setAttribute("stroke-width",2*k)});
+ gC.querySelectorAll("polygon,polyline").forEach(function(p){p.setAttribute("stroke-width",1*k)});
  gG.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",1.6*k)});
  gR.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",2.6*k)});
  gS.querySelectorAll("circle").forEach(function(c){c.setAttribute("r",2.6*k)});}
@@ -828,7 +829,7 @@ function coastBox(){ var xs=[],ys=[]; (P.coast||[]).forEach(function(c){ c.split
  var x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y0=Math.min.apply(null,ys),y1=Math.max.apply(null,ys); return [x0,y0,x1-x0,y1-y0]; }
 var CBOX=coastBox();
 function tripThumb(t){ var b=CBOX, k=Math.max(b[2]/78,b[3]/54), vb=[b[0]-4*k,b[1]-4*k,b[2]+8*k,b[3]+8*k];
- var h='<svg viewBox="'+vb.join(" ")+'" preserveAspectRatio="xMidYMid meet">'; (P.coast||[]).forEach(function(c){ h+='<polygon points="'+c+'" fill="#101f2a" stroke="#4f7089" stroke-width="'+(1.5*k)+'"/>'; });
+ var h='<svg viewBox="'+vb.join(" ")+'" preserveAspectRatio="xMidYMid meet">'; (P.coast||[]).forEach(function(c){ h+='<'+(LAND?'polygon':'polyline')+' points="'+c+'" fill="'+(LAND?'#13242f':'none')+'" stroke="#3d5a70" stroke-width="'+(1.2*k)+'"/>'; });
  h+='<polyline points="'+tripPoints(t).map(function(p){return p[0].toFixed(1)+","+p[1].toFixed(1)}).join(" ")+'" fill="none" stroke="#f0713f" stroke-width="'+(2.6*k)+'" stroke-linejoin="round" stroke-linecap="round"/></svg>'; return h; }
 var PKFILTER="all";
 var DLEVEL=[[8,"easy"],[14,"moderate"],[20,"hard"],[1e9,"very hard"]];   // metres of climb per km, computed from the trip, never tagged
