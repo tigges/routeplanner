@@ -9,7 +9,7 @@
  "workdir": "work/switzerland",
  "osm": {
   "extracts": [
-   "downloads/switzerland-260909.osm.pbf"
+   "downloads/switzerland.osm.pbf"
   ],
   "corridor_km": 2.0
  },
@@ -298,6 +298,118 @@
    "lat": 46.6285,
    "lon": 10.445,
    "type": "terminus"
+  },
+  "rorschach": {
+   "name": "Rorschach",
+   "lat": 47.4778,
+   "lon": 9.4945
+  },
+  "romanshorn": {
+   "name": "Romanshorn",
+   "lat": 47.5654,
+   "lon": 9.3787
+  },
+  "appenzell": {
+   "name": "Appenzell",
+   "lat": 47.329,
+   "lon": 9.4085
+  },
+  "gersau": {
+   "name": "Gersau",
+   "lat": 46.994,
+   "lon": 8.525
+  },
+  "beckenried": {
+   "name": "Beckenried",
+   "lat": 46.9685,
+   "lon": 8.4775
+  },
+  "stans": {
+   "name": "Stans",
+   "lat": 46.958,
+   "lon": 8.364
+  },
+  "sarnen": {
+   "name": "Sarnen",
+   "lat": 46.8963,
+   "lon": 8.246
+  },
+  "soerenberg": {
+   "name": "Sörenberg",
+   "lat": 46.8213,
+   "lon": 8.0325
+  },
+  "thun": {
+   "name": "Thun",
+   "lat": 46.755,
+   "lon": 7.63,
+   "type": "fork"
+  },
+  "fribourg": {
+   "name": "Fribourg",
+   "lat": 46.803,
+   "lon": 7.151
+  },
+  "bulle": {
+   "name": "Bulle",
+   "lat": 46.6185,
+   "lon": 7.0575
+  },
+  "baden": {
+   "name": "Baden",
+   "lat": 47.4765,
+   "lon": 8.3072
+  },
+  "aarau": {
+   "name": "Aarau",
+   "lat": 47.3913,
+   "lon": 8.0512
+  },
+  "olten": {
+   "name": "Olten",
+   "lat": 47.3518,
+   "lon": 7.9077
+  },
+  "solothurn": {
+   "name": "Solothurn",
+   "lat": 47.2037,
+   "lon": 7.5432
+  },
+  "biel": {
+   "name": "Biel/Bienne",
+   "lat": 47.133,
+   "lon": 7.243,
+   "type": "fork"
+  },
+  "brugg": {
+   "name": "Brugg",
+   "lat": 47.481,
+   "lon": 8.209
+  },
+  "koblenz": {
+   "name": "Koblenz",
+   "lat": 47.6085,
+   "lon": 8.2375
+  },
+  "murten": {
+   "name": "Murten",
+   "lat": 46.929,
+   "lon": 7.116
+  },
+  "saintecroix": {
+   "name": "Sainte-Croix",
+   "lat": 46.8225,
+   "lon": 6.505
+  },
+  "vallorbe": {
+   "name": "Vallorbe",
+   "lat": 46.7125,
+   "lon": 6.379
+  },
+  "nyon": {
+   "name": "Nyon",
+   "lat": 46.383,
+   "lon": 6.239
   }
  },
  "trunks": [
@@ -450,6 +562,193 @@
     "kandersteg",
     "spiez"
    ]
+  },
+  {
+   "variant": "bodensee",
+   "nodes": [
+    "altstaetten",
+    "rorschach",
+    "romanshorn",
+    "kreuzlingen"
+   ]
+  },
+  {
+   "variant": "thurgau",
+   "nodes": [
+    "romanshorn",
+    "wil"
+   ]
+  },
+  {
+   "variant": "panorama-east",
+   "nodes": [
+    "rorschach",
+    "appenzell",
+    "wattwil"
+   ],
+   "via": {
+    "rorschach--appenzell": [
+     [
+      47.443,
+      9.53
+     ]
+    ]
+   }
+  },
+  {
+   "variant": "ricken",
+   "nodes": [
+    "wattwil",
+    "glarus"
+   ],
+   "via": {
+    "wattwil--glarus": [
+     [
+      47.263,
+      9.05
+     ]
+    ]
+   }
+  },
+  {
+   "variant": "aare-bern",
+   "nodes": [
+    "spiez",
+    "thun",
+    "bern"
+   ]
+  },
+  {
+   "variant": "panorama-west",
+   "nodes": [
+    "fluelen",
+    "brunnen",
+    "gersau",
+    "beckenried",
+    "stans",
+    "sarnen",
+    "soerenberg",
+    "thun",
+    "fribourg",
+    "bulle",
+    "aigle"
+   ],
+   "via": {
+    "soerenberg--thun": [
+     [
+      46.805,
+      7.929
+     ],
+     [
+      46.826,
+      7.86
+     ]
+    ],
+    "thun--fribourg": [
+     [
+      46.818,
+      7.343
+     ]
+    ]
+   }
+  },
+  {
+   "variant": "mittelland",
+   "nodes": [
+    "winterthur",
+    "baden",
+    "aarau",
+    "olten",
+    "solothurn",
+    "biel",
+    "yverdon"
+   ],
+   "via": {
+    "biel--yverdon": [
+     [
+      47.005,
+      7.105
+     ],
+     [
+      46.849,
+      6.846
+     ]
+    ]
+   }
+  },
+  {
+   "variant": "limmat",
+   "nodes": [
+    "zurich",
+    "baden"
+   ]
+  },
+  {
+   "variant": "aare-biel",
+   "nodes": [
+    "bern",
+    "biel"
+   ],
+   "via": {
+    "bern--biel": [
+     [
+      47.044,
+      7.276
+     ]
+    ]
+   }
+  },
+  {
+   "variant": "aare-rhine",
+   "nodes": [
+    "aarau",
+    "brugg",
+    "koblenz",
+    "laufenburg"
+   ]
+  },
+  {
+   "variant": "dreiseen",
+   "nodes": [
+    "biel",
+    "murten",
+    "neuchatel"
+   ]
+  },
+  {
+   "variant": "jura-south",
+   "nodes": [
+    "lachauxdefonds",
+    "saintecroix",
+    "vallorbe",
+    "nyon",
+    "geneva"
+   ],
+   "via": {
+    "lachauxdefonds--saintecroix": [
+     [
+      46.904,
+      6.582
+     ]
+    ],
+    "vallorbe--nyon": [
+     [
+      46.5845,
+      6.213
+     ],
+     [
+      46.487,
+      6.209
+     ]
+    ]
+   }
+  },
+  {
+   "variant": "bielersee",
+   "nodes": [
+    "biel",
+    "neuchatel"
+   ]
   }
  ],
  "ferries": [
@@ -466,6 +765,20 @@
    "km": 12,
    "variant": "gotthard",
    "note": "boat (Lake Lucerne)"
+  },
+  {
+   "from": "fluelen",
+   "to": "brunnen",
+   "km": 12,
+   "variant": "panorama-west",
+   "note": "boat (Lake Lucerne)"
+  },
+  {
+   "from": "gersau",
+   "to": "beckenried",
+   "km": 5,
+   "variant": "panorama-west",
+   "note": "car ferry (Gersau–Beckenried)"
   }
  ],
  "forkLabels": {
@@ -478,7 +791,20 @@
   "andermatt": "From Andermatt",
   "oberwald": "At Oberwald",
   "brig": "At Brig",
-  "lucerne": "After Luzern"
+  "lucerne": "After Luzern",
+  "altstaetten": "At Altstätten",
+  "romanshorn": "At Romanshorn",
+  "rorschach": "At Rorschach",
+  "wattwil": "At Wattwil",
+  "spiez": "At Spiez",
+  "fluelen": "At Flüelen",
+  "winterthur": "At Winterthur",
+  "zurich": "From Zürich",
+  "bern": "From Bern",
+  "aarau": "At Aarau",
+  "biel": "At Biel/Bienne",
+  "thun": "At Thun",
+  "lachauxdefonds": "From La Chaux-de-Fonds"
  },
  "optionNames": {
   "engadin": "Engadin and the Julier",
@@ -493,7 +819,20 @@
   "susten": "Susten pass to Meiringen",
   "grimsel": "Grimsel pass to Meiringen",
   "loetschberg": "Lötschberg car train to Spiez",
-  "lakes": "Pre-Alps: Interlaken, Gstaad, Montreux"
+  "lakes": "Pre-Alps: Interlaken, Gstaad, Montreux",
+  "bodensee": "Rhine to Lake Constance",
+  "thurgau": "Thurgau to Wil",
+  "panorama-east": "Appenzell hills to Wattwil",
+  "ricken": "Ricken to Glarus",
+  "aare-bern": "Thun and Bern",
+  "panorama-west": "Boat, Glaubenbielen, Fribourg to Aigle",
+  "mittelland": "Mittelland: Baden, Aarau, Solothurn, Biel",
+  "limmat": "Limmat to Baden",
+  "aare-biel": "Aare to Biel/Bienne",
+  "aare-rhine": "Aare to the Rhine at Koblenz",
+  "dreiseen": "Murten to Neuchâtel",
+  "jura-south": "Jura crest to Nyon",
+  "bielersee": "Lake Biel shore to Neuchâtel"
  },
  "defaultOptionNames": {
   "zernez": "Flüela and Davos",
@@ -505,7 +844,20 @@
   "andermatt": "Furka and the Rhone",
   "oberwald": "Rhone valley to Brig",
   "brig": "Rhone valley to Sion",
-  "lucerne": "Mittelland via Bern"
+  "lucerne": "Mittelland via Bern",
+  "altstaetten": "St. Gallen",
+  "romanshorn": "Lake Constance to Kreuzlingen",
+  "rorschach": "Romanshorn",
+  "wattwil": "Rapperswil",
+  "spiez": "Simmental to Gstaad",
+  "fluelen": "Reuss valley to Andermatt",
+  "winterthur": "Zürich",
+  "zurich": "Zug and Luzern",
+  "bern": "Neuchâtel",
+  "aarau": "Olten and Solothurn",
+  "biel": "Lake shore to Yverdon",
+  "thun": "Bern",
+  "lachauxdefonds": "Neuchâtel"
  },
  "skippable": [
   "andermatt--oberwald#alps",
@@ -564,5 +916,16 @@
   "detour_km": 20,
   "rest_day_km": 60
  },
- "trips": "switzerland-trips.json"
+ "trips": "switzerland-trips.json",
+ "forks": {
+  "biel": [
+   "mittelland",
+   "dreiseen",
+   "bielersee"
+  ],
+  "thun": [
+   "aare-bern",
+   "panorama-west"
+  ]
+ }
 }

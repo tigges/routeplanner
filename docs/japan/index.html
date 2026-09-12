@@ -275,12 +275,16 @@ function chain(a,b){
   for(var k in pick) if(RANK[k]<RANK[n]&&P.forks.some(function(f){return f.node===k&&f.options.indexOf(r)>=0;})) pick[k]=r; });});
  var r1=walk(a,b,rev); return r1.length?r1:walk(a,b,!rev);}   // rank suggests the direction; a branch that runs against the ranks still resolves the other way
 var IN={};P.segments.forEach(function(s){(IN[s.to]=IN[s.to]||[]).push(s);});
+var VFORK={};(function(){ var tos={}; P.segments.forEach(function(s){(tos[s.variant]=tos[s.variant]||{})[s.to]=1;});   // variant -> the fork where its trunk starts
+ P.segments.forEach(function(s){ if(s.variant!=="base"&&!tos[s.variant][s.frm]&&FORK[s.frm]) VFORK[s.variant]=s.frm; }); })();
 function walk(a,b,rev){
  // depth-first with backtracking: at each town try the edges in order of preference (your fork choice, the variant we are on,
  // the variant picked at its own fork, the main line), and keep the first path that reaches b
+ // walking against the arrows, an edge counts as picked when its trunk is on at the fork where the trunk starts (and at any fork it passes)
  var seen={}, out=[];
+ function on(o){ var v=o.variant, st=VFORK[v]; return v!=="base"&&(!st||pick[st]===v)&&(!FORK[o.frm]||pick[o.frm]===v); }
  function order(cur,last){ var opts=(rev?IN[cur]:OUT[cur])||[], sc=function(o){ var v=o.variant;
-   return (!rev&&FORK[cur]&&v===pick[cur])?0:(last&&v===last)?1:(v===pick[o.frm])?2:(v==="base")?3:(opts.length===1)?4:5; };
+   return (!rev&&FORK[cur]&&v===pick[cur])?0:(last&&v===last)?1:(rev?on(o):v===pick[o.frm])?2:(v==="base")?3:(opts.length===1)?4:5; };
   return opts.slice().sort(function(x,y){return sc(x)-sc(y);}).filter(function(o){return sc(o)<5;}); }
  function go(cur,last,depth){ if(cur===b) return true; if(seen[cur]||depth>400) return false; seen[cur]=1;
   var opts=order(cur,last);
@@ -307,8 +311,9 @@ function splitDays(ch,target){
     if(e<EMIN||e>EMAX)continue;
     var c=dp[j]+Math.pow((e-target)/target,2)*100-Math.min(C[i].beds,6)*1.2-(C[i].node?14:0);
     if(c<dp[i]){dp[i]=c;bp[i]=j;}}}
-  if(dp[n-1]===Infinity){warn="No valid split at this effort - try a higher target.";
-   days.push({mode:"ride",frm:L[0].frm,to:L[L.length-1].to,km:bk,eff:base,x:C[n-1].x,y:C[n-1].y});return;}
+  if(dp[n-1]===Infinity){if(base>=EMIN)warn="No valid split at this effort - try a higher target.";   // a short ride between two boats is simply one short day
+   var nmN=function(id){return NODE[id]?NODE[id].name:id;};
+   days.push({mode:"ride",frm:nmN(L[0].frm),to:nmN(L[L.length-1].to),km:bk,eff:base,x:C[n-1].x,y:C[n-1].y});return;}
   var path=[],i=n-1;while(i>0){path.push(C[i]);i=bp[i];}path.push(C[0]);path.reverse();
   function nm(c){return c.node?(NODE[c.node]?NODE[c.node].name:c.node):(c.label||("km"+Math.round(c.km)));}
   for(var k=1;k<path.length;k++) days.push({mode:"ride",frm:nm(path[k-1]),
