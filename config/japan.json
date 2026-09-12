@@ -211,6 +211,42 @@
    "lat": 34.3558,
    "lon": 135.6988,
    "type": "gateway"
+  },
+  "choshi": {
+   "name": "Chōshi",
+   "lat": 35.7294,
+   "lon": 140.8273,
+   "type": "gateway"
+  },
+  "ichinomiya": {
+   "name": "Ichinomiya",
+   "lat": 35.3737,
+   "lon": 140.365,
+   "type": "gateway"
+  },
+  "katsuura": {
+   "name": "Katsuura",
+   "lat": 35.1531,
+   "lon": 140.3129,
+   "type": "gateway"
+  },
+  "tateyama": {
+   "name": "Tateyama",
+   "lat": 34.9959,
+   "lon": 139.8619,
+   "type": "gateway"
+  },
+  "kanaya": {
+   "name": "Kanaya",
+   "lat": 35.1681,
+   "lon": 139.8224,
+   "type": "gateway"
+  },
+  "kurihama": {
+   "name": "Kurihama",
+   "lat": 35.2327,
+   "lon": 139.7011,
+   "type": "gateway"
   }
  },
  "trunks": [
@@ -398,6 +434,27 @@
     "gojo",
     "wakayama"
    ]
+  },
+  {
+   "variant": "boso",
+   "nodes": [
+    "mito",
+    "choshi",
+    "ichinomiya",
+    "katsuura",
+    "tateyama",
+    "kanaya",
+    "kurihama",
+    "kamakura"
+   ],
+   "via": {
+    "mito--choshi": [
+     [
+      36.3151,
+      140.5629
+     ]
+    ]
+   }
   }
  ],
  "forks": {
@@ -441,6 +498,10 @@
   "kyoto": [
    "base",
    "keinawa"
+  ],
+  "mito": [
+   "pacific",
+   "boso"
   ]
  },
  "viaBase": {
@@ -478,6 +539,13 @@
    "km": 4,
    "variant": "awaji",
    "note": "Jenova Line ferry Akashi → Iwaya, 13 min, bikes welcome"
+  },
+  {
+   "from": "kanaya",
+   "to": "kurihama",
+   "km": 12,
+   "variant": "boso",
+   "note": "Tokyo-Wan Ferry Kanaya → Kurihama, 40 min"
   }
  ],
  "forkLabels": {
@@ -504,7 +572,8 @@
   "gotemba": "At Gotemba",
   "beppu": "Beppu to Nobeoka",
   "iwaya": "Round Awaji",
-  "kyoto": "Kyoto onward"
+  "kyoto": "Kyoto onward",
+  "mito": "Mito to Kamakura"
  },
  "optionNames": {
   "base": "Yotei line",
@@ -534,7 +603,8 @@
   "fuji-south": "South foot to Fujinomiya",
   "aso": "Yamanami Highway: Yufuin, Kujū, Aso, Takachiho",
   "awaji-west": "West coast: Goshiki",
-  "keinawa": "Via Nara and the Kii valley to Wakayama"
+  "keinawa": "Via Nara and the Kii valley to Wakayama",
+  "boso": "Chōshi and the Bōsō coast, Tokyo Bay ferry"
  },
  "defaultOptionNames": {
   "aomori": "Sea of Japan",
@@ -558,7 +628,8 @@
   "gotemba": "Down to Numazu",
   "beppu": "Coast via Usuki",
   "iwaya": "East coast: Sumoto and the southern cliffs",
-  "kyoto": "Osaka"
+  "kyoto": "Osaka",
+  "mito": "Inland via Tsukuba and Tokyo"
  },
  "skippable": [],
  "neverSkip": [],

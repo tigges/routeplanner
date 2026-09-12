@@ -727,9 +727,9 @@ P.forks.forEach(function(f){var d=document.createElement("div");d.className="for
  f.options.forEach(function(o){h+='<button class="opt'+(o===f.options[0]?" on":"")+'" data-n="'+f.node+'" data-o="'+o+'"><span class="fdot" style="background:'+optDot(o)+'"></span>'+
   optName(f.node,o)+'</button>';});
  d.innerHTML=h+'</div><div class="cmp"></div>';fb.appendChild(d);});
-(function(){var pr=document.getElementById("presets");var PRESETS=[];if(!pr||!PRESETS||!PRESETS.length)return;pr.innerHTML='<div class="preslabel">Quick pick</div>';var row=document.createElement("div");row.className="opts";PRESETS.forEach(function(ps){var b=document.createElement("button");b.className="opt";b.textContent=ps.name;b.onclick=function(){P.forks.forEach(function(f){pick[f.node]=f.options[0];});var pk=ps.picks||{};for(var k in pk)pick[k]=pk[k];document.querySelectorAll(".fork button.opt").forEach(function(x){x.classList.toggle("on",pick[x.dataset.n]===x.dataset.o);});render();};row.appendChild(b);});pr.appendChild(row);})();
+(function(){var pr=document.getElementById("presets");var PRESETS=[];if(!pr||!PRESETS||!PRESETS.length)return;pr.innerHTML='<div class="preslabel">Quick pick</div>';var row=document.createElement("div");row.className="opts";PRESETS.forEach(function(ps){var b=document.createElement("button");b.className="opt";b.textContent=ps.name;b.onclick=function(){P.forks.forEach(function(f){pick[f.node]=f.options[0];});var pk=ps.picks||{};EXPL={};for(var k in pk){pick[k]=pk[k];EXPL[k]=1;}document.querySelectorAll(".fork button.opt").forEach(function(x){x.classList.toggle("on",pick[x.dataset.n]===x.dataset.o);});render();};row.appendChild(b);});pr.appendChild(row);})();
 fb.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
- LEGS=null; pick[b.dataset.n]=b.dataset.o;
+ LEGS=null; pick[b.dataset.n]=b.dataset.o; EXPL[b.dataset.n]=1;
  b.parentNode.querySelectorAll("button").forEach(function(x){x.classList.remove("on")});
  b.classList.add("on");render();});
 document.getElementById("eff").addEventListener("input",render);
@@ -763,7 +763,7 @@ svg.addEventListener("wheel",function(e){e.preventDefault();var r=svg.getBoundin
 var TRIPS=(CFG.trips||[]).map(function(t){ if(!t.id) t.id=(t.slug||"")+":"+(t.s||"")+":"+(t.e||""); return t; });
 var CURTRIP=null, PICKING=false, PKSEL=null;
 function toXY(lat,lon){ return [PJ.kx*lon+PJ.bx, PJ.ky*Math.log(Math.tan(Math.PI/4+lat*Math.PI/360))+PJ.by]; }
-function withPicks(p,fn){ var saved={}; for(var k in pick) saved[k]=pick[k]; P.forks.forEach(function(f){pick[f.node]=f.options[0];}); EXPL={}; for(var k in (p||{})) if(FORK[k]){ pick[k]=p[k]; EXPL[k]=1; } var r=fn(); EXPL={}; for(var k in saved) pick[k]=saved[k]; return r; }
+function withPicks(p,fn){ var saved={}; for(var k in pick) saved[k]=pick[k]; P.forks.forEach(function(f){pick[f.node]=f.options[0];}); var savedE=EXPL; EXPL={}; for(var k in (p||{})) if(FORK[k]){ pick[k]=p[k]; EXPL[k]=1; } var r=fn(); EXPL=savedE; for(var k in saved) pick[k]=saved[k]; return r; }
 function tripLegs(t){ return t.legs||[{s:t.s,e:t.e,p:t.p}]; }
 function tripHere(t){ return (!t.slug||t.slug===CFG.slug)&&tripLegs(t).every(function(L){return L.s&&L.e&&NODE[L.s]&&NODE[L.e];}); }
 function tripChain(t){ if(!tripHere(t)) return []; var out=[], legs=tripLegs(t); for(var i=0;i<legs.length;i++){ var L=legs[i], c=withPicks(L.p,function(){return chain(L.s,L.e);}); if(!c.length) return []; out=out.concat(c); } return out; }
@@ -909,7 +909,7 @@ function loadTrip(t){
  if(!tripHere(t)) return;
  var legs=tripLegs(t); LEGS=t.legs?legs:null;
  document.getElementById("start").value=legs[0].s; document.getElementById("end").value=legs[legs.length-1].e;
- P.forks.forEach(function(f){pick[f.node]=f.options[0];}); for(var k in (legs[0].p||{})) if(FORK[k]) pick[k]=legs[0].p[k];
+ P.forks.forEach(function(f){pick[f.node]=f.options[0];}); EXPL={}; for(var k in (legs[0].p||{})) if(FORK[k]){ pick[k]=legs[0].p[k]; EXPL[k]=1; }   // the trip's own picks are explicit: not overridden to reach its end town
  document.querySelectorAll(".fork button.opt").forEach(function(x){x.classList.toggle("on",pick[x.dataset.n]===x.dataset.o);});
  if(PICKING&&!POPPING){ try{ history.pushState({trip:t.id},"","#trip="+encodeURIComponent(t.id)); }catch(e){} }   // a new history entry, so the browser's back button returns to the picker
  CURTRIP=t; hidePicker(); render(); fitChain(); document.getElementById("side").scrollTop=0; }
