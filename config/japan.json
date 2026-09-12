@@ -1,6 +1,6 @@
 {
  "slug": "japan",
- "title": "Across Japan",
+ "title": "Japan by bike",
  "lang": {
   "local": "ja",
   "localLabel": "日本語",
@@ -255,5 +255,8 @@
   "detour_km": 25,
   "rest_day_km": 80
  },
+ "trips": "japan-trips.json",
+ "pickerDefault": "top",
+ "routeWord": "famous routes",
  "by": "CT"
 }

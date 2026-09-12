@@ -202,7 +202,7 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 var CFG=/*@CFG@*/;
 document.getElementById("ttext").textContent=CFG.title; document.getElementById("ptitle").innerHTML=CFG.title+(CFG.by?' <span class="by">by '+CFG.by+'</span>':""); document.title=CFG.title+" - journey planner";
 (function(){ var T=CFG.trips||[]; if(T.length<2) return; var n=function(k){return T.filter(function(t){return t.kind===k}).length;}, parts=[];
- if(n("crossing")) parts.push(n("crossing")+(n("crossing")>1?" crossings":" crossing")); if(n("route")) parts.push(n("route")+" national routes"); if(n("section")) parts.push(n("section")+" sections"); if(n("pass")) parts.push(n("pass")+" pass days");
+ if(n("crossing")) parts.push(n("crossing")+(n("crossing")>1?" crossings":" crossing")); if(n("route")) parts.push(n("route")+" "+(CFG.routeWord||"national routes")); if(n("section")) parts.push(n("section")+" sections"); if(n("pass")) parts.push(n("pass")+" pass days");
  document.getElementById("pcount").textContent=T.length+" trips · "+parts.join(" · "); })();
 var P=/*@P@*/;
 var SD=/*@SD@*/;
