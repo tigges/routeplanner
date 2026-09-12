@@ -228,6 +228,8 @@ function applyVehicle(){
   }
  });
  EMIN=CFG.vehicles.minDay[VEH]; EMAX=CFG.vehicles.maxDay[VEH];
+ var ef=document.getElementById("eff"), tr=(CFG.vehicles.targetRange||{})[VEH]||[EMIN,EMAX];   // the slider's ends per vehicle (config), step 5
+ ef.min=tr[0]; ef.max=tr[1]; ef.step=5; if(!ef.dataset.set){ ef.value=VEHDEF[VEH]; ef.dataset.set=1; } if(+ef.value<tr[0]) ef.value=tr[0]; if(+ef.value>tr[1]) ef.value=tr[1];
  document.getElementById("efflabel").textContent=VEH==="opium"?"Km per day":"Daily effort";
  document.getElementById("veh").textContent=VEHNAME[VEH];
  document.body.className=document.body.className.replace(/(ebike|opium)/g,"").trim(); if(VEH!=="bike") document.body.classList.add(VEH);
@@ -627,7 +629,7 @@ function render(){
  var applied=applySkips(ch,dtar,target); ch=applied.chain;
  var r=splitDays(ch,target),days=r.days;
  var ride=days.filter(function(d){return d.mode==="ride"}); LASTDAYS=days;
- try{ history.replaceState(null,"","#r="+stateCode()); }catch(e){}
+ if(!PICKING){ try{ history.replaceState(null,"","#r="+stateCode()); }catch(e){} }
  var km=ch.reduce(function(a,s){return a+(s.mode==="ride"?s.km:0)},0);
  var asc=ch.reduce(function(a,s){return a+s.ascent},0);
  document.getElementById("sd").textContent=ride.length;
@@ -854,7 +856,7 @@ function drawPicker(){
   var tx=document.createElementNS(NS,"text"); tx.setAttribute("y",mj?"4":"3.5"); tx.setAttribute("text-anchor","middle"); tx.setAttribute("font-size",mj?"11":"9"); tx.setAttribute("font-weight","700"); tx.setAttribute("fill",hl?"#fff":"#0a141b"); tx.setAttribute("font-family","inherit"); tx.textContent=lab; g.appendChild(tx);
   g.addEventListener("mouseenter",function(){pkSelect(t.id,true);}); g.addEventListener("mouseleave",function(){pkSelect(null,false);}); g.addEventListener("click",function(e){e.stopPropagation(); loadTrip(t);});
   gPK.appendChild(g); }); }
-function showPicker(){ PICKING=true; PKSEL=null; document.getElementById("side").scrollTop=0; document.getElementById("tripbar").hidden=true; document.body.classList.add("picking"); document.getElementById("pick").hidden=false;
+function showPicker(){ PICKING=true; PKSEL=null; try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} document.getElementById("side").scrollTop=0; document.getElementById("tripbar").hidden=true; document.body.classList.add("picking"); document.getElementById("pick").hidden=false;
  PLANNER_GROUPS.forEach(function(g){g.style.display="none";}); document.getElementById("layers").style.display="none"; document.getElementById("fit").style.display="none"; hidePop();
  document.getElementById("hint").textContent="Hover a line to see it alone · click it (or its card) to plan that trip";
  drawCards(); var pts=[]; TRIPS.forEach(function(t){pts=pts.concat(tripPoints(t));}); (P.coast||[]).forEach(function(c){ c.split(" ").forEach(function(q){var a=q.split(",");pts.push([+a[0],+a[1]]);}); }); fitBox(pts,1.08); drawPicker(); }

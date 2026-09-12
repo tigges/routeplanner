@@ -185,7 +185,7 @@
    "opium": "S-pedelec (45 km/h)"
   },
   "defaultTarget": {
-   "bike": 120,
+   "bike": 100,
    "ebike": 110,
    "opium": 180
   },
