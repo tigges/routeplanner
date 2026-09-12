@@ -254,5 +254,6 @@
   "population_min": 30000,
   "detour_km": 25,
   "rest_day_km": 80
- }
+ },
+ "by": "CT"
 }

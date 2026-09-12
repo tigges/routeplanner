@@ -230,5 +230,7 @@
   "detour_km": 20,
   "rest_day_km": 60
  },
- "trips": "switzerland-trips.json"
+ "trips": "switzerland-trips.json",
+ "by": "CT",
+ "pickerDefault": "top"
 }

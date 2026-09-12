@@ -23,7 +23,7 @@ def grab(name):
     m = re.search(r'^var %s=(.*?);\s*(?://.*)?$' % name, src, re.M)
     return m.group(1) if m else '{}'
 TRIPS, NETWORKS = load_trips(cfg, sys.argv[1])
-page_cfg = dict(title=cfg['title'], slug=cfg['slug'], landFill=bool(cfg.get('graph', {}).get('land_fill')), trips=TRIPS, networks=NETWORKS, lang=cfg['lang'], proj=json.loads(grab('CFG'))['proj'] if re.search(r'^var CFG=', src, re.M) else None,
+page_cfg = dict(title=cfg['title'], slug=cfg['slug'], by=cfg.get('by', ''), pickerDefault=cfg.get('pickerDefault', 'all'), landFill=bool(cfg.get('graph', {}).get('land_fill')), trips=TRIPS, networks=NETWORKS, lang=cfg['lang'], proj=json.loads(grab('CFG'))['proj'] if re.search(r'^var CFG=', src, re.M) else None,
                 forkLabels=cfg.get('forkLabels', {}), optionNames=cfg.get('optionNames', {}),
                 defaultOptionNames=cfg.get('defaultOptionNames', {}), skippable=cfg.get('skippable', []),
                 neverSkip=cfg.get('neverSkip', []), skipRule=cfg.get('skipRule'), vehicles=cfg['vehicles'],

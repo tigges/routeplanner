@@ -11,7 +11,8 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--paper);
 #side{overflow-y:auto;background:var(--panel);border-right:1px solid var(--line)}
 #stage{position:relative;overflow:hidden}
 svg{display:block;width:100%;height:100%;cursor:grab}svg.drag{cursor:grabbing}
-h1{font-size:17px;margin:18px 16px 3px;font-weight:600;letter-spacing:-.01em}
+h1{font-size:17px;margin:18px 16px 3px;font-weight:600;letter-spacing:-.01em}h1 .by{font-size:12px;font-weight:500;color:#8fa3b0;letter-spacing:0;margin-left:4px}
+#pick .sub{margin:8px 16px 0;line-height:1.45}#pick .pickhint{margin-top:12px;color:#8fa3b0}#pick h2{margin-top:22px}#pickhead{margin-top:16px}#pickfilters{margin-bottom:4px}
 .sub{margin:0 16px 14px;font-size:12px;color:var(--dim);line-height:1.5}
 .stats{display:flex;gap:14px;margin:0 16px 16px}
 .stats div{font-size:11px;color:var(--dim)}
@@ -69,7 +70,7 @@ h2{font-size:11px;color:#6d8492;margin:0 16px 8px;font-weight:600}
 #favs div span{flex:1;cursor:pointer}#favs div b{color:#7fc4ff;cursor:pointer;font-weight:500}#favs div i{color:#b9c6cf;cursor:pointer;font-style:normal}
 #exp{width:calc(100% - 32px);margin:6px 16px;height:120px;font-size:11px;background:#0d1a22;color:#c9d6de;border:1px solid var(--line);border-radius:6px}
 #topbtns{position:absolute;right:14px;top:12px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:60%}
-#pop{display:none;position:absolute;z-index:5;max-width:260px;background:#15303f;border:1px solid #4d7a99;border-radius:8px;padding:8px 10px;font-size:12.5px;color:#eef2f4;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+#pop{display:none;position:absolute;z-index:5;max-width:260px;cursor:pointer;background:#15303f;border:1px solid #4d7a99;border-radius:8px;padding:8px 10px;font-size:12.5px;color:#eef2f4;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 #pop .ja{color:#c9d6de;margin-top:2px}#pop .sub{color:#8fa3b0;margin-top:3px;font-size:11.5px}#pop .links{margin-top:6px;display:flex;gap:10px;flex-wrap:wrap}#pop a{color:#7fc4ff;text-decoration:none;font-size:11.5px}
 #veh{font-size:11.5px;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--dim);cursor:pointer;font-family:inherit}
 body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8;border-color:#7fd1a8}
@@ -149,7 +150,7 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 <div id="pick" hidden>
 <h1 id="ptitle"></h1>
 <p class="sub" id="pcount"></p>
-<p class="sub">Pick a trip on the map or from the list. Numbers are the signed national routes; hover a line to see it alone, click it to plan.</p>
+<p class="sub pickhint">Pick a trip on the map or from the list.</p>
 <h2>Show</h2><div class="layers" id="pickfilters"></div>
 <div id="pickhead"><h2>Trips &middot; <span id="pickcount"></span></h2><span class="fsum">shortest first</span></div>
 <div id="pickcards"></div>
@@ -199,10 +200,10 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 </div></div></div>
 <script>
 var CFG=/*@CFG@*/;
-document.getElementById("ttext").textContent=CFG.title; document.getElementById("ptitle").textContent=CFG.title; document.title=CFG.title+" - journey planner";
+document.getElementById("ttext").textContent=CFG.title; document.getElementById("ptitle").innerHTML=CFG.title+(CFG.by?' <span class="by">by '+CFG.by+'</span>':""); document.title=CFG.title+" - journey planner";
 (function(){ var T=CFG.trips||[]; if(T.length<2) return; var n=function(k){return T.filter(function(t){return t.kind===k}).length;}, parts=[];
- if(n("crossing")) parts.push(n("crossing")+(n("crossing")>1?" crossings":" crossing")); if(n("route")) parts.push(n("route")+" national routes"); if(n("section")) parts.push(n("section")+" multi-day sections"); if(n("pass")) parts.push(n("pass")+" pass days");
- document.getElementById("pcount").textContent=T.length+" trips: "+parts.join(", ")+"."; })();
+ if(n("crossing")) parts.push(n("crossing")+(n("crossing")>1?" crossings":" crossing")); if(n("route")) parts.push(n("route")+" national routes"); if(n("section")) parts.push(n("section")+" sections"); if(n("pass")) parts.push(n("pass")+" pass days");
+ document.getElementById("pcount").textContent=T.length+" trips · "+parts.join(" · "); })();
 var P=/*@P@*/;
 var SD=/*@SD@*/;
 var SC=/*@SC@*/;
@@ -377,6 +378,8 @@ try{ LANG=localStorage.getItem("lang")||"en"; }catch(e){}
 function nm(e,i){ var ja=e[i+1]; return LANG==="local"&&ja?ja:e[i]; }          // e[i]=English form, e[i+1]=local-language form (if different)
 function toLL(x,y){ var lon=(x-PJ.bx)/PJ.kx, m=(y-PJ.by)/PJ.ky; return [180/Math.PI*(2*Math.atan(Math.exp(m))-Math.PI/2), lon]; }
 var pop=document.createElement("div"); pop.id="pop"; document.getElementById("stage").appendChild(pop);
+pop.addEventListener("mouseenter",function(){ if(PICKING&&PKCLEAR){clearTimeout(PKCLEAR);PKCLEAR=null;} }); pop.addEventListener("mouseleave",function(){ if(PICKING) pkLeave(); });
+pop.addEventListener("click",function(e){ if(!PICKING||!PKSEL) return; e.stopPropagation(); var t=TRIPS.filter(function(x){return x.id===PKSEL})[0]; if(t) loadTrip(t); });
 var GENERIC=/^(Toilets|Drinking water|Water tap|Convenience store|Supermarket|Bakery|Hotel|Guest house|Hostel|Campsite|Caravan site|Station|Laundry|Bike shop|Repair stand|Bath house|Hot spring|Spa|Motel|Apartment)$/;
 function showPop(x,y,en,ja,sub,place){
  var r=svg.getBoundingClientRect(),st=document.getElementById("stage").getBoundingClientRect(),ppu=pxPerUnit();
@@ -790,7 +793,7 @@ function tripTitle(){
  var back=document.getElementById("alltrips"); back.hidden=!many; document.getElementById("alltripstxt").textContent="All "+TRIPS.length+" trips";
  document.getElementById("psub").hidden=many;                       // the picker carries the introduction when there are trips
  var h=document.getElementById("ttext"), sub=document.getElementById("tsub");
- if(!many){ h.textContent=CFG.title; sub.hidden=true; }
+ if(!many){ h.innerHTML=CFG.title+(CFG.by?' <span class="by">by '+CFG.by+'</span>':""); sub.hidden=true; }
  else if(t){ var st=tripStats(t); h.innerHTML=(t.num?'<span class="badge on">'+t.num+'</span>':'')+'<span>'+t.name+'</span>'+diffPill(st)+(t.top?'<span class="top">'+topLabel(t)+'</span>':'');
   sub.textContent=[t.sub,t.note].filter(Boolean).join(" · "); sub.hidden=!sub.textContent; }
  else { h.textContent="Own route"; sub.textContent=NODE[s].name+" → "+NODE[e].name; sub.hidden=false; }
@@ -831,7 +834,7 @@ var CBOX=coastBox();
 function tripThumb(t){ var b=CBOX, k=Math.max(b[2]/78,b[3]/54), vb=[b[0]-4*k,b[1]-4*k,b[2]+8*k,b[3]+8*k];
  var h='<svg viewBox="'+vb.join(" ")+'" preserveAspectRatio="xMidYMid meet">'; (P.coast||[]).forEach(function(c){ h+='<'+(LAND?'polygon':'polyline')+' points="'+c+'" fill="'+(LAND?'#13242f':'none')+'" stroke="#3d5a70" stroke-width="'+(1.2*k)+'"/>'; });
  h+='<polyline points="'+tripPoints(t).map(function(p){return p[0].toFixed(1)+","+p[1].toFixed(1)}).join(" ")+'" fill="none" stroke="#f0713f" stroke-width="'+(2.6*k)+'" stroke-linejoin="round" stroke-linecap="round"/></svg>'; return h; }
-var PKFILTER="all";
+var PKFILTER=CFG.pickerDefault||"all";
 var DLEVEL=[[8,"easy"],[14,"moderate"],[20,"hard"],[1e9,"very hard"]];   // metres of climb per km, computed from the trip, never tagged
 function diffLevel(st){ if(!st||!st.km) return -1; var r=st.asc/st.km; for(var i=0;i<DLEVEL.length;i++) if(r<DLEVEL[i][0]) return i; return 3; }
 function diffPill(st){ var l=diffLevel(st); return l<0?"":'<span class="dl dl'+l+'">'+DLEVEL[l][1]+'</span>'; }
@@ -851,8 +854,16 @@ function drawCards(){
   d.innerHTML=tripThumb(t)+'<div class="tb"><div class="tn"><span class="badge'+(PKSEL===t.id?" on":"")+'">'+(t.num||"•")+'</span><span>'+t.name+'</span><span class="pills">'+diffPill(r.st)+(t.top?'<span class="top">'+topLabel(t)+'</span>':'')+'</span></div><div class="ts">'+(t.sub||"")+'</div>'+(t.why?'<div class="tw">'+t.why+'</div>':'')+'<div class="tm">'+statText(r.st)+((t.tags||[]).length?' <i>· '+t.tags.join(", ")+'</i>':'')+'</div></div>';
   d.onclick=function(){ loadTrip(t); }; d.onmouseenter=function(){ pkSelect(t.id,false); }; d.onmouseleave=function(){ pkSelect(null,false); };
   box.appendChild(d); }); }
-function pkSelect(id,card){ PKSEL=id; drawPicker(); document.querySelectorAll(".tcard").forEach(function(c){ c.classList.toggle("hl",c.dataset.id===id); c.querySelector(".badge").classList.toggle("on",c.dataset.id===id); });
- if(card&&id){ var t=TRIPS.filter(function(x){return x.id===id})[0], pts=tripPoints(t); if(pts.length){ var m=pts[0]; tripPop(t,m[0],m[1]); } } else hidePop(); }
+var PKEL={}, PKCLEAR=null;                    // the picker's map elements by trip id; hover restyles them in place (a rebuild would swallow the click)
+function pkSelect(id,card){ if(PKCLEAR){clearTimeout(PKCLEAR);PKCLEAR=null;} var same=PKSEL===id; PKSEL=id; restylePicker(); document.querySelectorAll(".tcard").forEach(function(c){ c.classList.toggle("hl",c.dataset.id===id); c.querySelector(".badge").classList.toggle("on",c.dataset.id===id); });
+ if(card&&id){ if(same&&pop.style.display==="block") return; var t=TRIPS.filter(function(x){return x.id===id})[0], pts=tripPoints(t); if(pts.length){ var m=pts[0]; tripPop(t,m[0],m[1]); } } else hidePop(); }
+function pkLeave(){ if(PKCLEAR) clearTimeout(PKCLEAR); PKCLEAR=setTimeout(function(){ PKCLEAR=null; pkSelect(null,false); },220); }   // a moment's grace to reach the popup
+function restylePicker(){ var ppu=pxPerUnit();
+ Object.keys(PKEL).forEach(function(id){ var e=PKEL[id], hl=PKSEL===id, dim=PKSEL&&!hl, mj=e.mj;
+  e.line.setAttribute("stroke",hl?"#f0713f":mj?"#9fbfd6":"#557386"); e.line.setAttribute("stroke-width",(hl?4:mj?2.6:1.8)/ppu); e.line.setAttribute("opacity",dim?".3":"1");
+  if(e.crossing){ if(hl) e.line.removeAttribute("stroke-dasharray"); else e.line.setAttribute("stroke-dasharray",(6/ppu)+" "+(4/ppu)); }
+  e.badge.setAttribute("opacity",dim?".35":"1"); e.rect.setAttribute("fill",hl?"#f0713f":mj?"#eef2f4":"#7f9cb0"); e.text.setAttribute("fill",hl?"#fff":"#0a141b");
+  if(hl){ gPK.appendChild(e.line); gPK.appendChild(e.hit); gPK.appendChild(e.badge); } }); }
 function tripPop(t,x,y){ var st=tripStats(t), r=svg.getBoundingClientRect(),stg=document.getElementById("stage").getBoundingClientRect(),ppu=pxPerUnit();
  var px=(x-vb[0])*ppu+(r.left-stg.left), py=(y-vb[1])*ppu+(r.top-stg.top);
  pop.innerHTML='<b>'+(t.num?t.num+" · ":"")+t.name+'</b>'+(t.sub?'<div class="ja">'+t.sub+'</div>':'')+'<div class="sub">'+statText(st)+diffPill(st)+(t.note?" · "+t.note:"")+'</div>'+(t.why?'<div class="why">'+(t.top?topLabel(t)+" · ":"")+t.why+'</div>':'')+'<div class="cta">'+(tripHere(t)?"click to plan it ›":"opens the "+(t.slug||"")+" page ›")+'</div>';
@@ -864,9 +875,9 @@ function drawPicker(){
  function ghost(points){ var p=document.createElementNS(NS,"polyline"); p.setAttribute("points",points); p.setAttribute("fill","none"); p.setAttribute("stroke","#223744"); p.setAttribute("stroke-width",1.3/ppu); p.setAttribute("stroke-dasharray",(4/ppu)+" "+(4/ppu)); p.setAttribute("pointer-events","none"); gPK.appendChild(p); }
  P.segments.forEach(function(s){ if(s.line) ghost(s.line); });
  Object.keys(NW).forEach(function(slug){ if(slug===CFG.slug) return; NW[slug].forEach(function(line){ ghost(line.map(function(ll){var q=toXY(ll[0],ll[1]);return q[0].toFixed(1)+","+q[1].toFixed(1);}).join(" ")); }); });
- var rows=TRIPS.map(function(t){return {t:t,st:tripStats(t),pts:tripPoints(t)};}).filter(function(r){return tripVisible(r.t,r.st)&&r.pts.length>1;});
+ PKEL={}; var rows=TRIPS.map(function(t){return {t:t,st:tripStats(t),pts:tripPoints(t)};}).filter(function(r){return tripVisible(r.t,r.st)&&r.pts.length>1;});
  var major=function(t){return t.kind==="crossing"||t.kind==="route";};
- rows.sort(function(a,b){return (major(a.t)-major(b.t))||((a.t.id===PKSEL)-(b.t.id===PKSEL));});      // numbered routes over sections, the highlighted one on top
+ rows.sort(function(a,b){return (major(a.t)-major(b.t));});      // numbered routes over sections; restylePicker lifts the highlighted one
  var starts={}; rows.forEach(function(r){ var q=r.pts[0], k=Math.round(q[0])+","+Math.round(q[1]); (starts[k]=starts[k]||[]).push(r.t.id); });
  rows.forEach(function(r){ var t=r.t, hl=PKSEL===t.id, dim=PKSEL&&!hl, mj=major(t);
   var p=document.createElementNS(NS,"polyline"); p.setAttribute("points",r.pts.map(function(q){return q[0].toFixed(1)+","+q[1].toFixed(1)}).join(" ")); p.setAttribute("fill","none"); p.setAttribute("class","pkline");
@@ -874,7 +885,7 @@ function drawPicker(){
   if(t.kind==="crossing"&&!hl) p.setAttribute("stroke-dasharray",(6/ppu)+" "+(4/ppu));
   gPK.appendChild(p);
   var hit=p.cloneNode(false); hit.setAttribute("stroke","transparent"); hit.setAttribute("stroke-width",16/ppu); hit.removeAttribute("stroke-dasharray"); hit.removeAttribute("opacity");
-  hit.addEventListener("mouseenter",function(){pkSelect(t.id,true);}); hit.addEventListener("mouseleave",function(){pkSelect(null,false);}); hit.addEventListener("click",function(e){e.stopPropagation(); loadTrip(t);});
+  hit.addEventListener("mouseenter",function(){pkSelect(t.id,true);}); hit.addEventListener("mouseleave",pkLeave); hit.addEventListener("click",function(e){e.stopPropagation(); loadTrip(t);});
   gPK.appendChild(hit);
   var q=r.pts[0], sib=starts[Math.round(q[0])+","+Math.round(q[1])], ox=0, oy=0;
   if(sib.length>1){ var ang=-Math.PI/2+sib.indexOf(t.id)*2*Math.PI/sib.length, rad=(sib.length>3?18:14)/ppu; ox=rad*Math.cos(ang); oy=rad*Math.sin(ang); }
@@ -882,8 +893,8 @@ function drawPicker(){
   var lab=t.num||"•", w=Math.max(mj?20:16,lab.length*7+8);
   var bh=mj?20:16; var c=document.createElementNS(NS,"rect"); c.setAttribute("x",-w/2); c.setAttribute("y",-bh/2); c.setAttribute("width",w); c.setAttribute("height",bh); c.setAttribute("rx",bh/2); c.setAttribute("fill",hl?"#f0713f":mj?"#eef2f4":"#7f9cb0"); c.setAttribute("stroke","#0a141b"); c.setAttribute("stroke-width","1.5"); g.appendChild(c);
   var tx=document.createElementNS(NS,"text"); tx.setAttribute("y",mj?"4":"3.5"); tx.setAttribute("text-anchor","middle"); tx.setAttribute("font-size",mj?"11":"9"); tx.setAttribute("font-weight","700"); tx.setAttribute("fill",hl?"#fff":"#0a141b"); tx.setAttribute("font-family","inherit"); tx.textContent=lab; g.appendChild(tx);
-  g.addEventListener("mouseenter",function(){pkSelect(t.id,true);}); g.addEventListener("mouseleave",function(){pkSelect(null,false);}); g.addEventListener("click",function(e){e.stopPropagation(); loadTrip(t);});
-  gPK.appendChild(g); }); }
+  g.addEventListener("mouseenter",function(){pkSelect(t.id,true);}); g.addEventListener("mouseleave",pkLeave); g.addEventListener("click",function(e){e.stopPropagation(); loadTrip(t);});
+  gPK.appendChild(g); PKEL[t.id]={line:p,hit:hit,badge:g,rect:c,text:tx,mj:mj,crossing:t.kind==="crossing"}; }); restylePicker(); }
 function showPicker(keep){ PICKING=true; PKSEL=keep||null; try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} document.getElementById("side").scrollTop=0; document.getElementById("tripbar").hidden=true; document.body.classList.add("picking"); document.getElementById("pick").hidden=false;
  PLANNER_GROUPS.forEach(function(g){g.style.display="none";}); document.getElementById("layers").style.display="none"; document.getElementById("fit").style.display="none"; hidePop();
  document.getElementById("hint").textContent="Hover a line to see it alone · click it (or its card) to plan that trip";
