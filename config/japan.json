@@ -157,6 +157,24 @@
    "lat": 35.3001,
    "lon": 138.9338,
    "type": "gateway"
+  },
+  "yufuin": {
+   "name": "Yufuin",
+   "lat": 33.2625,
+   "lon": 131.355,
+   "type": "gateway"
+  },
+  "aso": {
+   "name": "Aso",
+   "lat": 32.9374,
+   "lon": 131.0801,
+   "type": "gateway"
+  },
+  "takachiho": {
+   "name": "Takachiho",
+   "lat": 32.7147,
+   "lon": 131.3066,
+   "type": "gateway"
   }
  },
  "trunks": [
@@ -266,6 +284,24 @@
     "gotemba",
     "fujinomiya"
    ]
+  },
+  {
+   "variant": "aso",
+   "nodes": [
+    "beppu",
+    "yufuin",
+    "aso",
+    "takachiho",
+    "nobeoka"
+   ],
+   "via": {
+    "yufuin--aso": [
+     [
+      33.0958,
+      131.2073
+     ]
+    ]
+   }
   }
  ],
  "forks": {
@@ -297,6 +333,10 @@
   "gotemba": [
    "fuji",
    "fuji-south"
+  ],
+  "beppu": [
+   "base",
+   "aso"
   ]
  },
  "viaBase": {
@@ -349,7 +389,8 @@
   "tsuchiura": "Round Kasumigaura",
   "kofu": "Kōfu to Numazu",
   "kawaguchiko": "At Kawaguchiko",
-  "gotemba": "At Gotemba"
+  "gotemba": "At Gotemba",
+  "beppu": "Beppu to Nobeoka"
  },
  "optionNames": {
   "base": "Yotei line",
@@ -376,7 +417,8 @@
   "kasumigaura-north": "North and east shore",
   "fuji": "Via the Fuji Five Lakes",
   "fuji-lakes": "West lakes to Motosu",
-  "fuji-south": "South foot to Fujinomiya"
+  "fuji-south": "South foot to Fujinomiya",
+  "aso": "Yamanami Highway: Yufuin, Kujū, Aso, Takachiho"
  },
  "defaultOptionNames": {
   "aomori": "Sea of Japan",
@@ -397,7 +439,8 @@
   "tsuchiura": "South shore",
   "kofu": "Via Motosu and Fujinomiya",
   "kawaguchiko": "On to Yamanakako",
-  "gotemba": "Down to Numazu"
+  "gotemba": "Down to Numazu",
+  "beppu": "Coast via Usuki"
  },
  "skippable": [],
  "neverSkip": [],
