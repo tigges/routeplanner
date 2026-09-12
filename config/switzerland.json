@@ -1,553 +1,567 @@
 {
-  "slug": "switzerland",
-  "title": "Across Switzerland",
-  "lang": {
-    "local": "de",
-    "localLabel": "Lokale Namen",
-    "romanise": null
-  },
-  "workdir": "work/switzerland",
-  "osm": {
-    "extracts": [
-      "downloads/switzerland-260909.osm.pbf"
-    ],
-    "corridor_km": 2.0
-  },
-  "graph": {
-    "map_width": 520,
-    "outline": "config/switzerland_outline.geojson"
-  },
-  "nodes": {
-    "geneva": {
-      "name": "Genève",
-      "lat": 46.2102,
-      "lon": 6.1424,
-      "type": "terminus"
-    },
-    "lausanne": {
-      "name": "Lausanne",
-      "lat": 46.517,
-      "lon": 6.6291,
-      "type": "gateway"
-    },
-    "yverdon": {
-      "name": "Yverdon-les-Bains",
-      "lat": 46.7815,
-      "lon": 6.641
-    },
-    "neuchatel": {
-      "name": "Neuchâtel",
-      "lat": 46.9967,
-      "lon": 6.9357
-    },
-    "bern": {
-      "name": "Bern",
-      "lat": 46.9489,
-      "lon": 7.4394,
-      "type": "gateway"
-    },
-    "lucerne": {
-      "name": "Luzern",
-      "lat": 47.0502,
-      "lon": 8.3103,
-      "type": "gateway"
-    },
-    "zug": {
-      "name": "Zug",
-      "lat": 47.1731,
-      "lon": 8.5152
-    },
-    "zurich": {
-      "name": "Zürich",
-      "lat": 47.3769,
-      "lon": 8.5417,
-      "type": "gateway"
-    },
-    "winterthur": {
-      "name": "Winterthur",
-      "lat": 47.4993,
-      "lon": 8.7247
-    },
-    "wil": {
-      "name": "Wil SG",
-      "lat": 47.4614,
-      "lon": 9.044
-    },
-    "stgallen": {
-      "name": "St. Gallen",
-      "lat": 47.4232,
-      "lon": 9.3699,
-      "type": "gateway"
-    },
-    "montreux": {
-      "name": "Montreux",
-      "lat": 46.4334,
-      "lon": 6.9115
-    },
-    "aigle": {
-      "name": "Aigle",
-      "lat": 46.3165,
-      "lon": 6.97
-    },
-    "chateaudoex": {
-      "name": "Château-d'Œx",
-      "lat": 46.4755,
-      "lon": 7.1307
-    },
-    "gstaad": {
-      "name": "Gstaad",
-      "lat": 46.472,
-      "lon": 7.2865
-    },
-    "zweisimmen": {
-      "name": "Zweisimmen",
-      "lat": 46.5548,
-      "lon": 7.3745
-    },
-    "spiez": {
-      "name": "Spiez",
-      "lat": 46.6858,
-      "lon": 7.6795
-    },
-    "interlaken": {
-      "name": "Interlaken",
-      "lat": 46.6903,
-      "lon": 7.8632
-    },
-    "meiringen": {
-      "name": "Meiringen",
-      "lat": 46.7266,
-      "lon": 8.188
-    },
-    "martigny": {
-      "name": "Martigny",
-      "lat": 46.1013,
-      "lon": 7.079
-    },
-    "sion": {
-      "name": "Sion",
-      "lat": 46.2278,
-      "lon": 7.36
-    },
-    "brig": {
-      "name": "Brig",
-      "lat": 46.3188,
-      "lon": 7.988
-    },
-    "oberwald": {
-      "name": "Oberwald",
-      "lat": 46.5347,
-      "lon": 8.351
-    },
-    "andermatt": {
-      "name": "Andermatt",
-      "lat": 46.635,
-      "lon": 8.5945
-    },
-    "disentis": {
-      "name": "Disentis/Mustér",
-      "lat": 46.7035,
-      "lon": 8.852
-    },
-    "chur": {
-      "name": "Chur",
-      "lat": 46.8535,
-      "lon": 9.529,
-      "type": "gateway"
-    },
-    "sargans": {
-      "name": "Sargans",
-      "lat": 47.047,
-      "lon": 9.444
-    },
-    "altstaetten": {
-      "name": "Altstätten",
-      "lat": 47.3775,
-      "lon": 9.543
-    },
-    "lachauxdefonds": {
-      "name": "La Chaux-de-Fonds",
-      "lat": 47.102,
-      "lon": 6.8265
-    },
-    "delemont": {
-      "name": "Delémont",
-      "lat": 47.3618,
-      "lon": 7.345
-    },
-    "basel": {
-      "name": "Basel",
-      "lat": 47.5478,
-      "lon": 7.5896,
-      "type": "gateway"
-    },
-    "laufenburg": {
-      "name": "Laufenburg",
-      "lat": 47.5605,
-      "lon": 8.0625
-    },
-    "schaffhausen": {
-      "name": "Schaffhausen",
-      "lat": 47.6985,
-      "lon": 8.6335
-    },
-    "kreuzlingen": {
-      "name": "Kreuzlingen",
-      "lat": 47.651,
-      "lon": 9.1745
-    },
-    "schwyz": {
-      "name": "Schwyz",
-      "lat": 47.0205,
-      "lon": 8.6535
-    },
-    "rapperswil": {
-      "name": "Rapperswil",
-      "lat": 47.2255,
-      "lon": 8.819
-    },
-    "wattwil": {
-      "name": "Wattwil",
-      "lat": 47.2995,
-      "lon": 9.087
-    },
-    "kandersteg": {
-      "name": "Kandersteg",
-      "lat": 46.496,
-      "lon": 7.674
-    },
-    "goppenstein": {
-      "name": "Goppenstein",
-      "lat": 46.3665,
-      "lon": 7.759
-    },
-    "fluelen": {
-      "name": "Flüelen",
-      "lat": 46.904,
-      "lon": 8.625
-    },
-    "brunnen": {
-      "name": "Brunnen",
-      "lat": 46.995,
-      "lon": 8.606
-    },
-    "wassen": {
-      "name": "Wassen",
-      "lat": 46.7065,
-      "lon": 8.5995
-    },
-    "airolo": {
-      "name": "Airolo",
-      "lat": 46.5275,
-      "lon": 8.607
-    },
-    "bellinzona": {
-      "name": "Bellinzona",
-      "lat": 46.195,
-      "lon": 9.0295,
-      "type": "gateway"
-    },
-    "sanbernardino": {
-      "name": "San Bernardino",
-      "lat": 46.463,
-      "lon": 9.187
-    },
-    "thusis": {
-      "name": "Thusis",
-      "lat": 46.697,
-      "lon": 9.44
-    },
-    "tiefencastel": {
-      "name": "Tiefencastel",
-      "lat": 46.66,
-      "lon": 9.579
-    },
-    "stmoritz": {
-      "name": "St. Moritz",
-      "lat": 46.4975,
-      "lon": 9.844
-    },
-    "zernez": {
-      "name": "Zernez",
-      "lat": 46.699,
-      "lon": 10.093
-    },
-    "davos": {
-      "name": "Davos",
-      "lat": 46.793,
-      "lon": 9.823
-    },
-    "linthal": {
-      "name": "Linthal",
-      "lat": 46.921,
-      "lon": 8.999
-    },
-    "glarus": {
-      "name": "Glarus",
-      "lat": 47.0395,
-      "lon": 9.066
-    },
-    "sustenpass": {
-      "name": "Sustenpass",
-      "lat": 46.729,
-      "lon": 8.4459,
-      "entry": false
-    },
-    "muestair": {
-      "name": "Müstair",
-      "lat": 46.6285,
-      "lon": 10.445,
-      "type": "terminus"
-    }
-  },
-  "trunks": [
-    {
-      "variant": "base",
-      "nodes": [
-        "muestair",
-        "zernez",
-        "davos",
-        "chur",
-        "sargans",
-        "rapperswil",
-        "zurich",
-        "zug",
-        "lucerne",
-        "bern",
-        "neuchatel",
-        "yverdon",
-        "lausanne",
-        "geneva"
-      ]
-    },
-    {
-      "variant": "engadin",
-      "nodes": [
-        "zernez",
-        "stmoritz",
-        "tiefencastel",
-        "chur"
-      ]
-    },
-    {
-      "variant": "north",
-      "nodes": [
-        "sargans",
-        "altstaetten",
-        "stgallen",
-        "wil",
-        "winterthur",
-        "zurich"
-      ]
-    },
-    {
-      "variant": "jura",
-      "nodes": [
-        "stgallen",
-        "kreuzlingen",
-        "schaffhausen",
-        "laufenburg",
-        "basel",
-        "delemont",
-        "lachauxdefonds",
-        "neuchatel"
-      ]
-    },
-    {
-      "variant": "toggenburg",
-      "nodes": [
-        "stgallen",
-        "wattwil",
-        "rapperswil"
-      ]
-    },
-    {
-      "variant": "east",
-      "nodes": [
-        "rapperswil",
-        "schwyz",
-        "lucerne"
-      ]
-    },
-    {
-      "variant": "lakes",
-      "nodes": [
-        "lucerne",
-        "meiringen",
-        "interlaken",
-        "spiez",
-        "zweisimmen",
-        "gstaad",
-        "chateaudoex",
-        "aigle",
-        "montreux",
-        "lausanne"
-      ]
-    },
-    {
-      "variant": "alps",
-      "nodes": [
-        "chur",
-        "disentis",
-        "andermatt",
-        "oberwald",
-        "brig",
-        "sion",
-        "martigny",
-        "aigle"
-      ]
-    },
-    {
-      "variant": "ticino",
-      "nodes": [
-        "chur",
-        "thusis",
-        "sanbernardino",
-        "bellinzona",
-        "airolo",
-        "andermatt"
-      ]
-    },
-    {
-      "variant": "gotthard",
-      "nodes": [
-        "schwyz",
-        "brunnen",
-        "fluelen",
-        "andermatt"
-      ]
-    },
-    {
-      "variant": "klausen",
-      "nodes": [
-        "rapperswil",
-        "glarus",
-        "linthal",
-        "fluelen"
-      ]
-    },
-    {
-      "variant": "susten",
-      "nodes": [
-        "andermatt",
-        "wassen",
-        "sustenpass",
-        "meiringen"
-      ]
-    },
-    {
-      "variant": "grimsel",
-      "nodes": [
-        "oberwald",
-        "meiringen"
-      ]
-    },
-    {
-      "variant": "loetschberg",
-      "nodes": [
-        "brig",
-        "goppenstein",
-        "kandersteg",
-        "spiez"
-      ]
-    }
+ "slug": "switzerland",
+ "title": "Across Switzerland",
+ "lang": {
+  "local": "de",
+  "localLabel": "Lokale Namen",
+  "romanise": null
+ },
+ "workdir": "work/switzerland",
+ "osm": {
+  "extracts": [
+   "downloads/switzerland-260909.osm.pbf"
   ],
-  "ferries": [
-    {
-      "from": "goppenstein",
-      "to": "kandersteg",
-      "km": 14,
-      "variant": "loetschberg",
-      "note": "car train (Lötschberg)"
-    },
-    {
-      "from": "brunnen",
-      "to": "fluelen",
-      "km": 12,
-      "variant": "gotthard",
-      "note": "boat (Lake Lucerne)"
-    }
-  ],
-  "forkLabels": {
-    "zernez": "At Zernez",
-    "chur": "From Chur",
-    "sargans": "At Sargans",
-    "stgallen": "From St. Gallen",
-    "rapperswil": "From Rapperswil",
-    "schwyz": "At Schwyz",
-    "andermatt": "From Andermatt",
-    "oberwald": "At Oberwald",
-    "brig": "At Brig",
-    "lucerne": "After Luzern"
+  "corridor_km": 2.0
+ },
+ "graph": {
+  "map_width": 520,
+  "outline": "config/switzerland_outline.geojson"
+ },
+ "nodes": {
+  "geneva": {
+   "name": "Genève",
+   "lat": 46.2102,
+   "lon": 6.1424,
+   "type": "terminus"
   },
-  "optionNames": {
-    "engadin": "Engadin and the Julier",
-    "alps": "Oberalp, Furka, Rhone valley",
-    "ticino": "San Bernardino, Ticino, Gotthard",
-    "north": "St. Gallen and Winterthur",
-    "jura": "Rhine, Basel and the Jura",
-    "toggenburg": "Toggenburg to Rapperswil",
-    "east": "Schwyz to Luzern",
-    "klausen": "Klausen pass to Flüelen",
-    "gotthard": "Boat and Gotthard to Andermatt",
-    "susten": "Susten pass to Meiringen",
-    "grimsel": "Grimsel pass to Meiringen",
-    "loetschberg": "Lötschberg car train to Spiez",
-    "lakes": "Pre-Alps: Interlaken, Gstaad, Montreux"
+  "lausanne": {
+   "name": "Lausanne",
+   "lat": 46.517,
+   "lon": 6.6291,
+   "type": "gateway"
   },
-  "defaultOptionNames": {
-    "zernez": "Flüela and Davos",
-    "chur": "Rhine to Sargans",
-    "sargans": "Walensee to Rapperswil",
-    "stgallen": "Wil and Winterthur",
-    "rapperswil": "Zürich and Zug",
-    "schwyz": "Luzern",
-    "andermatt": "Furka and the Rhone",
-    "oberwald": "Rhone valley to Brig",
-    "brig": "Rhone valley to Sion",
-    "lucerne": "Mittelland via Bern"
+  "yverdon": {
+   "name": "Yverdon-les-Bains",
+   "lat": 46.7815,
+   "lon": 6.641
   },
-  "skippable": [
-    "andermatt--oberwald#alps",
-    "brig--sion#alps",
-    "airolo--andermatt#ticino"
-  ],
-  "vehicles": {
-    "names": {
-      "bike": "Bicycle",
-      "ebike": "E-bike (pedelec)",
-      "opium": "S-pedelec (45 km/h)"
-    },
-    "defaultTarget": {
-      "bike": 120,
-      "ebike": 110,
-      "opium": 180
-    },
-    "minDay": {
-      "bike": 60,
-      "ebike": 50,
-      "opium": 70
-    },
-    "maxDay": {
-      "bike": 300,
-      "ebike": 160,
-      "opium": 280
-    },
-    "moped": {
-      "enabled": true,
-      "reroute_if_motorfree_share_at_least": 0.05,
-      "keep_bicycle_line": []
-    }
+  "neuchatel": {
+   "name": "Neuchâtel",
+   "lat": 46.9967,
+   "lon": 6.9357
   },
-  "sights": {
-    "exclude_kinds": [
-      "memorial",
-      "artwork"
-    ]
+  "bern": {
+   "name": "Bern",
+   "lat": 46.9489,
+   "lon": 7.4394,
+   "type": "gateway"
   },
-  "cities": {
-    "population_min": 20000,
-    "detour_km": 20,
-    "rest_day_km": 60
+  "lucerne": {
+   "name": "Luzern",
+   "lat": 47.0502,
+   "lon": 8.3103,
+   "type": "gateway"
+  },
+  "zug": {
+   "name": "Zug",
+   "lat": 47.1731,
+   "lon": 8.5152
+  },
+  "zurich": {
+   "name": "Zürich",
+   "lat": 47.3769,
+   "lon": 8.5417,
+   "type": "gateway"
+  },
+  "winterthur": {
+   "name": "Winterthur",
+   "lat": 47.4993,
+   "lon": 8.7247
+  },
+  "wil": {
+   "name": "Wil SG",
+   "lat": 47.4614,
+   "lon": 9.044
+  },
+  "stgallen": {
+   "name": "St. Gallen",
+   "lat": 47.4232,
+   "lon": 9.3699,
+   "type": "gateway"
+  },
+  "montreux": {
+   "name": "Montreux",
+   "lat": 46.4334,
+   "lon": 6.9115
+  },
+  "aigle": {
+   "name": "Aigle",
+   "lat": 46.3165,
+   "lon": 6.97
+  },
+  "chateaudoex": {
+   "name": "Château-d'Œx",
+   "lat": 46.4755,
+   "lon": 7.1307
+  },
+  "gstaad": {
+   "name": "Gstaad",
+   "lat": 46.472,
+   "lon": 7.2865
+  },
+  "zweisimmen": {
+   "name": "Zweisimmen",
+   "lat": 46.5548,
+   "lon": 7.3745
+  },
+  "spiez": {
+   "name": "Spiez",
+   "lat": 46.6858,
+   "lon": 7.6795
+  },
+  "interlaken": {
+   "name": "Interlaken",
+   "lat": 46.6903,
+   "lon": 7.8632
+  },
+  "meiringen": {
+   "name": "Meiringen",
+   "lat": 46.7266,
+   "lon": 8.188
+  },
+  "martigny": {
+   "name": "Martigny",
+   "lat": 46.1013,
+   "lon": 7.079
+  },
+  "sion": {
+   "name": "Sion",
+   "lat": 46.2278,
+   "lon": 7.36
+  },
+  "brig": {
+   "name": "Brig",
+   "lat": 46.3188,
+   "lon": 7.988
+  },
+  "oberwald": {
+   "name": "Oberwald",
+   "lat": 46.5347,
+   "lon": 8.351
+  },
+  "andermatt": {
+   "name": "Andermatt",
+   "lat": 46.635,
+   "lon": 8.5945
+  },
+  "disentis": {
+   "name": "Disentis/Mustér",
+   "lat": 46.7035,
+   "lon": 8.852
+  },
+  "chur": {
+   "name": "Chur",
+   "lat": 46.8535,
+   "lon": 9.529,
+   "type": "gateway"
+  },
+  "sargans": {
+   "name": "Sargans",
+   "lat": 47.047,
+   "lon": 9.444
+  },
+  "altstaetten": {
+   "name": "Altstätten",
+   "lat": 47.3775,
+   "lon": 9.543
+  },
+  "lachauxdefonds": {
+   "name": "La Chaux-de-Fonds",
+   "lat": 47.102,
+   "lon": 6.8265
+  },
+  "delemont": {
+   "name": "Delémont",
+   "lat": 47.3618,
+   "lon": 7.345
+  },
+  "basel": {
+   "name": "Basel",
+   "lat": 47.5478,
+   "lon": 7.5896,
+   "type": "gateway"
+  },
+  "laufenburg": {
+   "name": "Laufenburg",
+   "lat": 47.5605,
+   "lon": 8.0625
+  },
+  "schaffhausen": {
+   "name": "Schaffhausen",
+   "lat": 47.6985,
+   "lon": 8.6335
+  },
+  "kreuzlingen": {
+   "name": "Kreuzlingen",
+   "lat": 47.651,
+   "lon": 9.1745
+  },
+  "schwyz": {
+   "name": "Schwyz",
+   "lat": 47.0205,
+   "lon": 8.6535
+  },
+  "rapperswil": {
+   "name": "Rapperswil",
+   "lat": 47.2255,
+   "lon": 8.819
+  },
+  "wattwil": {
+   "name": "Wattwil",
+   "lat": 47.2995,
+   "lon": 9.087
+  },
+  "kandersteg": {
+   "name": "Kandersteg",
+   "lat": 46.496,
+   "lon": 7.674
+  },
+  "goppenstein": {
+   "name": "Goppenstein",
+   "lat": 46.3665,
+   "lon": 7.759
+  },
+  "fluelen": {
+   "name": "Flüelen",
+   "lat": 46.904,
+   "lon": 8.625
+  },
+  "brunnen": {
+   "name": "Brunnen",
+   "lat": 46.995,
+   "lon": 8.606
+  },
+  "wassen": {
+   "name": "Wassen",
+   "lat": 46.7065,
+   "lon": 8.5995
+  },
+  "airolo": {
+   "name": "Airolo",
+   "lat": 46.5275,
+   "lon": 8.607
+  },
+  "bellinzona": {
+   "name": "Bellinzona",
+   "lat": 46.195,
+   "lon": 9.0295,
+   "type": "gateway"
+  },
+  "sanbernardino": {
+   "name": "San Bernardino",
+   "lat": 46.463,
+   "lon": 9.187
+  },
+  "thusis": {
+   "name": "Thusis",
+   "lat": 46.697,
+   "lon": 9.44
+  },
+  "tiefencastel": {
+   "name": "Tiefencastel",
+   "lat": 46.66,
+   "lon": 9.579
+  },
+  "stmoritz": {
+   "name": "St. Moritz",
+   "lat": 46.4975,
+   "lon": 9.844
+  },
+  "zernez": {
+   "name": "Zernez",
+   "lat": 46.699,
+   "lon": 10.093
+  },
+  "davos": {
+   "name": "Davos",
+   "lat": 46.793,
+   "lon": 9.823
+  },
+  "linthal": {
+   "name": "Linthal",
+   "lat": 46.921,
+   "lon": 8.999
+  },
+  "glarus": {
+   "name": "Glarus",
+   "lat": 47.0395,
+   "lon": 9.066
+  },
+  "sustenpass": {
+   "name": "Sustenpass",
+   "lat": 46.729,
+   "lon": 8.4459,
+   "entry": false
+  },
+  "muestair": {
+   "name": "Müstair",
+   "lat": 46.6285,
+   "lon": 10.445,
+   "type": "terminus"
   }
+ },
+ "trunks": [
+  {
+   "variant": "base",
+   "nodes": [
+    "muestair",
+    "zernez",
+    "davos",
+    "chur",
+    "sargans",
+    "rapperswil",
+    "zurich",
+    "zug",
+    "lucerne",
+    "bern",
+    "neuchatel",
+    "yverdon",
+    "lausanne",
+    "geneva"
+   ]
+  },
+  {
+   "variant": "engadin",
+   "nodes": [
+    "zernez",
+    "stmoritz",
+    "tiefencastel",
+    "chur"
+   ]
+  },
+  {
+   "variant": "north",
+   "nodes": [
+    "sargans",
+    "altstaetten",
+    "stgallen",
+    "wil",
+    "winterthur",
+    "zurich"
+   ]
+  },
+  {
+   "variant": "jura",
+   "nodes": [
+    "stgallen",
+    "kreuzlingen",
+    "schaffhausen",
+    "laufenburg",
+    "basel",
+    "delemont",
+    "lachauxdefonds",
+    "neuchatel"
+   ]
+  },
+  {
+   "variant": "toggenburg",
+   "nodes": [
+    "stgallen",
+    "wattwil",
+    "rapperswil"
+   ]
+  },
+  {
+   "variant": "east",
+   "nodes": [
+    "rapperswil",
+    "schwyz",
+    "lucerne"
+   ]
+  },
+  {
+   "variant": "lakes",
+   "nodes": [
+    "lucerne",
+    "meiringen",
+    "interlaken",
+    "spiez",
+    "zweisimmen",
+    "gstaad",
+    "chateaudoex",
+    "aigle",
+    "montreux",
+    "lausanne"
+   ]
+  },
+  {
+   "variant": "alps",
+   "nodes": [
+    "chur",
+    "disentis",
+    "andermatt",
+    "oberwald",
+    "brig",
+    "sion",
+    "martigny",
+    "aigle"
+   ]
+  },
+  {
+   "variant": "ticino",
+   "nodes": [
+    "chur",
+    "thusis",
+    "sanbernardino",
+    "bellinzona",
+    "airolo",
+    "andermatt"
+   ]
+  },
+  {
+   "variant": "gotthard",
+   "nodes": [
+    "schwyz",
+    "brunnen",
+    "fluelen",
+    "andermatt"
+   ]
+  },
+  {
+   "variant": "klausen",
+   "nodes": [
+    "rapperswil",
+    "glarus",
+    "linthal",
+    "fluelen"
+   ]
+  },
+  {
+   "variant": "susten",
+   "nodes": [
+    "andermatt",
+    "wassen",
+    "sustenpass",
+    "meiringen"
+   ]
+  },
+  {
+   "variant": "grimsel",
+   "nodes": [
+    "oberwald",
+    "meiringen"
+   ]
+  },
+  {
+   "variant": "loetschberg",
+   "nodes": [
+    "brig",
+    "goppenstein",
+    "kandersteg",
+    "spiez"
+   ]
+  }
+ ],
+ "ferries": [
+  {
+   "from": "goppenstein",
+   "to": "kandersteg",
+   "km": 14,
+   "variant": "loetschberg",
+   "note": "car train (Lötschberg)"
+  },
+  {
+   "from": "brunnen",
+   "to": "fluelen",
+   "km": 12,
+   "variant": "gotthard",
+   "note": "boat (Lake Lucerne)"
+  }
+ ],
+ "forkLabels": {
+  "zernez": "At Zernez",
+  "chur": "From Chur",
+  "sargans": "At Sargans",
+  "stgallen": "From St. Gallen",
+  "rapperswil": "From Rapperswil",
+  "schwyz": "At Schwyz",
+  "andermatt": "From Andermatt",
+  "oberwald": "At Oberwald",
+  "brig": "At Brig",
+  "lucerne": "After Luzern"
+ },
+ "optionNames": {
+  "engadin": "Engadin and the Julier",
+  "alps": "Oberalp, Furka, Rhone valley",
+  "ticino": "San Bernardino, Ticino, Gotthard",
+  "north": "St. Gallen and Winterthur",
+  "jura": "Rhine, Basel and the Jura",
+  "toggenburg": "Toggenburg to Rapperswil",
+  "east": "Schwyz to Luzern",
+  "klausen": "Klausen pass to Flüelen",
+  "gotthard": "Boat and Gotthard to Andermatt",
+  "susten": "Susten pass to Meiringen",
+  "grimsel": "Grimsel pass to Meiringen",
+  "loetschberg": "Lötschberg car train to Spiez",
+  "lakes": "Pre-Alps: Interlaken, Gstaad, Montreux"
+ },
+ "defaultOptionNames": {
+  "zernez": "Flüela and Davos",
+  "chur": "Rhine to Sargans",
+  "sargans": "Walensee to Rapperswil",
+  "stgallen": "Wil and Winterthur",
+  "rapperswil": "Zürich and Zug",
+  "schwyz": "Luzern",
+  "andermatt": "Furka and the Rhone",
+  "oberwald": "Rhone valley to Brig",
+  "brig": "Rhone valley to Sion",
+  "lucerne": "Mittelland via Bern"
+ },
+ "skippable": [
+  "andermatt--oberwald#alps",
+  "brig--sion#alps",
+  "airolo--andermatt#ticino"
+ ],
+ "vehicles": {
+  "names": {
+   "bike": "Bicycle",
+   "ebike": "E-bike (pedelec)",
+   "opium": "S-pedelec (45 km/h)"
+  },
+  "defaultTarget": {
+   "bike": 120,
+   "ebike": 110,
+   "opium": 180
+  },
+  "minDay": {
+   "bike": 40,
+   "ebike": 32,
+   "opium": 38
+  },
+  "maxDay": {
+   "bike": 300,
+   "ebike": 160,
+   "opium": 280
+  },
+  "targetRange": {
+   "bike": [
+    55,
+    300
+   ],
+   "ebike": [
+    40,
+    160
+   ],
+   "opium": [
+    45,
+    280
+   ]
+  },
+  "moped": {
+   "enabled": true,
+   "reroute_if_motorfree_share_at_least": 0.05,
+   "keep_bicycle_line": []
+  }
+ },
+ "sights": {
+  "exclude_kinds": [
+   "memorial",
+   "artwork"
+  ]
+ },
+ "cities": {
+  "population_min": 20000,
+  "detour_km": 20,
+  "rest_day_km": 60
+ }
 }

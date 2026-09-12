@@ -69,6 +69,13 @@ its size is roughly 8 MB per 100 segments with facilities, double that with mope
   At present this only takes effect for a country that ships a prebuilt graph (Japan); a from-scratch country still ignores it.
 - `signedRoutes`: `{"label": "Prefer signed cycle routes", "legs": ["a--b#variant", …]}` — legs that get a signed-route line behind the page switch
   (bicycle and e-bike only; the moped keeps its own line). Needs steps 10 and 11. With no `signedRoutes` the switch does not appear.
+- `vehicles.targetRange`: `{"bike": [45,300], …}` the two ends of the daily-effort slider, per vehicle. `minDay`/`maxDay` stay the hard
+  limits on a single day. Effort is km plus a climb penalty, so divide by the route's effort/km ratio (Japan ~1.8, Switzerland ~2.1)
+  to read a slider number as km/day. Keep both ends and `defaultTarget` on the slider's step of 5. Missing `targetRange` falls back to
+  `[minDay, maxDay]`.
+- `tools/retemplate.py config/<country>.json` re-renders a published page with the current template for a country whose `work/` data
+  is not in the repository (lifts the data blocks out of `docs/<slug>/index.html`, takes CFG from the config). Verify with
+  `--verify` on a country you can build first — it must come out identical to a freshly built page.
 - `vehicles.moped.dropFacilities`: categories left out of the moped data at build time (default eat, wc; they fall back to the bicycle list). Saves ~3 MB on Japan.
 - Steps 02, 03 and 11 take `--extract <file>` to scan one OSM extract per run (time-limited sessions).
 - Background jobs in the Claude sandbox are killed when a tool call ends unless started with `setsid nohup … &`.

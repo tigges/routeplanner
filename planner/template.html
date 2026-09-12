@@ -75,9 +75,9 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 <div class="slrow" style="margin-top:8px"><span>To</span><span></span></div>
 <select id="end"></select></div>
 <div class="sl"><div class="slrow"><span id="efflabel">Daily effort</span><span id="slv"></span></div>
-<input type="range" id="eff" min="110" max="280" step="10" value="140"></div>
+<input type="range" id="eff" min="55" max="280" step="5" value="140"></div>
 <div class="sl"><div class="slrow"><span>Days I have</span><span id="dlv">no limit</span></div>
-<input type="range" id="dtar" min="0" max="60" step="1" value="0">
+<input type="range" id="dtar" min="0" max="120" step="1" value="0">
 <div class="hintline" id="vehnote"></div>
 <div class="hintline">Set a limit and the planner proposes train hops through the dull stretches until the days fit. Click a hop to keep or drop it.</div>
 <div class="layers" id="skips"></div></div>
@@ -126,6 +126,9 @@ function applyVehicle(){
   }
  });
  EMIN=CFG.vehicles.minDay[VEH]; EMAX=CFG.vehicles.maxDay[VEH];
+ var tr=(CFG.vehicles.targetRange||{})[VEH]||[CFG.vehicles.minDay[VEH],CFG.vehicles.maxDay[VEH]];   // slider ends, per vehicle
+ var el=document.getElementById("eff"); el.min=tr[0]; el.max=tr[1];
+ el.value=Math.min(tr[1],Math.max(tr[0],+el.value));
  document.getElementById("efflabel").textContent=VEH==="opium"?"Km per day":"Daily effort";
  document.getElementById("veh").textContent=VEHNAME[VEH];
  document.body.className=document.body.className.replace(/(ebike|opium)/g,"").trim(); if(VEH!=="bike") document.body.classList.add(VEH);
@@ -302,6 +305,7 @@ function drawLabels(){
   placed.push(d); m2++;
   var t=document.createElementNS(NS,"text"); t.setAttribute("x",d.x+7/ppu); t.setAttribute("y",d.y+4/ppu); t.setAttribute("font-size",fs3); t.setAttribute("fill","#b9c6cf");
   t.setAttribute("stroke","#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit"); t.textContent=nm; gT.appendChild(t);});}
+document.getElementById("eff").value=VEHDEF[VEH];   // each country/vehicle opens at its own default
 applyVehicle(); setLangBtn(); favRender();
 document.getElementById("favsave").addEventListener("click",function(){ var L=favList(); L.unshift({name:routeSummary(),code:stateCode()}); try{localStorage.setItem("favs",JSON.stringify(L.slice(0,30)));}catch(e){} favRender(); });
 document.getElementById("copylink").addEventListener("click",function(){ copyText(location.href.split("#")[0]+"#r="+stateCode(),"Link"); });

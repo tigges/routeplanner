@@ -1,43 +1,171 @@
 {
-  "slug": "switzerland",
-  "title": "Across Switzerland",
-  "lang": {"local": "de", "localLabel": "Lokale Namen", "romanise": null},
-  "workdir": "work/switzerland",
-  "osm": {"extracts": ["downloads/switzerland-latest.osm.pbf"], "corridor_km": 2.0},
-  "graph": {
-    "map_width": 520,
-    "outline": null,
-    "note": "outline: optional GeoJSON of the country border/lakes (e.g. from geoBoundaries or Natural Earth); drawn as the faint background lines"
-  },
-  "nodes": {
-    "geneva":    {"name": "Genève",     "lat": 46.2102, "lon": 6.1424, "type": "terminus"},
-    "lausanne":  {"name": "Lausanne",   "lat": 46.5170, "lon": 6.6291},
-    "yverdon":   {"name": "Yverdon",    "lat": 46.7815, "lon": 6.6410},
-    "neuchatel": {"name": "Neuchâtel",  "lat": 46.9967, "lon": 6.9357},
-    "bern":      {"name": "Bern",       "lat": 46.9489, "lon": 7.4394, "type": "gateway"},
-    "lucerne":   {"name": "Luzern",     "lat": 47.0502, "lon": 8.3103, "type": "gateway"},
-    "zurich":    {"name": "Zürich",     "lat": 47.3769, "lon": 8.5417, "type": "gateway"},
-    "stgallen":  {"name": "St. Gallen", "lat": 47.4232, "lon": 9.3699, "type": "terminus"},
-    "thun":      {"name": "Thun",       "lat": 46.7548, "lon": 7.6298},
-    "interlaken":{"name": "Interlaken", "lat": 46.6903, "lon": 7.8632},
-    "brunnen":   {"name": "Brunnen",    "lat": 46.9950, "lon": 8.6060}
-  },
-  "trunks": [
-    {"variant": "base",   "nodes": ["geneva", "lausanne", "yverdon", "neuchatel", "bern", "lucerne", "zurich", "stgallen"]},
-    {"variant": "alpine", "nodes": ["bern", "thun", "interlaken", "brunnen", "lucerne"]}
+ "slug": "switzerland",
+ "title": "Across Switzerland",
+ "lang": {
+  "local": "de",
+  "localLabel": "Lokale Namen",
+  "romanise": null
+ },
+ "workdir": "work/switzerland",
+ "osm": {
+  "extracts": [
+   "downloads/switzerland-latest.osm.pbf"
   ],
-  "ferries": [],
-  "forkLabels": {"bern": "Bern onward"},
-  "optionNames": {"alpine": "Via Thun and Interlaken"},
-  "defaultOptionNames": {"bern": "Mittelland"},
-  "skippable": [],
-  "vehicles": {
-    "names": {"bike": "Bicycle", "ebike": "E-bike (pedelec)", "opium": "S-pedelec (45 km/h)"},
-    "defaultTarget": {"bike": 120, "ebike": 110, "opium": 180},
-    "minDay": {"bike": 60, "ebike": 50, "opium": 70},
-    "maxDay": {"bike": 300, "ebike": 160, "opium": 280},
-    "moped": {"enabled": true, "reroute_if_motorfree_share_at_least": 0.05, "keep_bicycle_line": []}
+  "corridor_km": 2.0
+ },
+ "graph": {
+  "map_width": 520,
+  "outline": null,
+  "note": "outline: optional GeoJSON of the country border/lakes (e.g. from geoBoundaries or Natural Earth); drawn as the faint background lines"
+ },
+ "nodes": {
+  "geneva": {
+   "name": "Genève",
+   "lat": 46.2102,
+   "lon": 6.1424,
+   "type": "terminus"
   },
-  "sights": {"exclude_kinds": ["memorial", "artwork"]},
-  "cities": {"population_min": 20000, "detour_km": 20, "rest_day_km": 60}
+  "lausanne": {
+   "name": "Lausanne",
+   "lat": 46.517,
+   "lon": 6.6291
+  },
+  "yverdon": {
+   "name": "Yverdon",
+   "lat": 46.7815,
+   "lon": 6.641
+  },
+  "neuchatel": {
+   "name": "Neuchâtel",
+   "lat": 46.9967,
+   "lon": 6.9357
+  },
+  "bern": {
+   "name": "Bern",
+   "lat": 46.9489,
+   "lon": 7.4394,
+   "type": "gateway"
+  },
+  "lucerne": {
+   "name": "Luzern",
+   "lat": 47.0502,
+   "lon": 8.3103,
+   "type": "gateway"
+  },
+  "zurich": {
+   "name": "Zürich",
+   "lat": 47.3769,
+   "lon": 8.5417,
+   "type": "gateway"
+  },
+  "stgallen": {
+   "name": "St. Gallen",
+   "lat": 47.4232,
+   "lon": 9.3699,
+   "type": "terminus"
+  },
+  "thun": {
+   "name": "Thun",
+   "lat": 46.7548,
+   "lon": 7.6298
+  },
+  "interlaken": {
+   "name": "Interlaken",
+   "lat": 46.6903,
+   "lon": 7.8632
+  },
+  "brunnen": {
+   "name": "Brunnen",
+   "lat": 46.995,
+   "lon": 8.606
+  }
+ },
+ "trunks": [
+  {
+   "variant": "base",
+   "nodes": [
+    "geneva",
+    "lausanne",
+    "yverdon",
+    "neuchatel",
+    "bern",
+    "lucerne",
+    "zurich",
+    "stgallen"
+   ]
+  },
+  {
+   "variant": "alpine",
+   "nodes": [
+    "bern",
+    "thun",
+    "interlaken",
+    "brunnen",
+    "lucerne"
+   ]
+  }
+ ],
+ "ferries": [],
+ "forkLabels": {
+  "bern": "Bern onward"
+ },
+ "optionNames": {
+  "alpine": "Via Thun and Interlaken"
+ },
+ "defaultOptionNames": {
+  "bern": "Mittelland"
+ },
+ "skippable": [],
+ "vehicles": {
+  "names": {
+   "bike": "Bicycle",
+   "ebike": "E-bike (pedelec)",
+   "opium": "S-pedelec (45 km/h)"
+  },
+  "defaultTarget": {
+   "bike": 120,
+   "ebike": 110,
+   "opium": 180
+  },
+  "minDay": {
+   "bike": 40,
+   "ebike": 32,
+   "opium": 38
+  },
+  "maxDay": {
+   "bike": 300,
+   "ebike": 160,
+   "opium": 280
+  },
+  "targetRange": {
+   "bike": [
+    55,
+    300
+   ],
+   "ebike": [
+    40,
+    160
+   ],
+   "opium": [
+    45,
+    280
+   ]
+  },
+  "moped": {
+   "enabled": true,
+   "reroute_if_motorfree_share_at_least": 0.05,
+   "keep_bicycle_line": []
+  }
+ },
+ "sights": {
+  "exclude_kinds": [
+   "memorial",
+   "artwork"
+  ]
+ },
+ "cities": {
+  "population_min": 20000,
+  "detour_km": 20,
+  "rest_day_km": 60
+ }
 }

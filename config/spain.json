@@ -1,106 +1,434 @@
 {
-  "slug": "spain",
-  "title": "Across Spain",
-  "lang": {"local": "es", "localLabel": "Nombres locales", "romanise": null},
-  "workdir": "work/spain",
-  "osm": {
-    "extracts": [
-      "downloads/cataluna-latest.osm.pbf",
-      "downloads/aragon-latest.osm.pbf",
-      "downloads/navarra-latest.osm.pbf",
-      "downloads/la-rioja-latest.osm.pbf",
-      "downloads/pais-vasco-latest.osm.pbf",
-      "downloads/cantabria-latest.osm.pbf",
-      "downloads/asturias-latest.osm.pbf",
-      "downloads/castilla-y-leon-latest.osm.pbf",
-      "downloads/galicia-latest.osm.pbf"
-    ],
-    "corridor_km": 2.0,
-    "note": "Geofabrik europe/spain/<region>-latest.osm.pbf; download inside the sandbox with curl -L"
-  },
-  "graph": {"map_width": 520, "outline": "config/spain_outline.geojson"},
-  "nodes": {
-    "capcreus":    {"name": "Cap de Creus",               "lat": 42.3185, "lon": 3.3160,  "type": "terminus"},
-    "figueres":    {"name": "Figueres",                   "lat": 42.2670, "lon": 2.9615},
-    "girona":      {"name": "Girona",                     "lat": 41.9794, "lon": 2.8214,  "type": "gateway"},
-    "vic":         {"name": "Vic",                        "lat": 41.9302, "lon": 2.2546},
-    "manresa":     {"name": "Manresa",                    "lat": 41.7286, "lon": 1.8259},
-    "cervera":     {"name": "Cervera",                    "lat": 41.6704, "lon": 1.2722},
-    "lleida":      {"name": "Lleida",                     "lat": 41.6176, "lon": 0.6200,  "type": "gateway"},
-    "fraga":       {"name": "Fraga",                      "lat": 41.5215, "lon": 0.3494},
-    "zaragoza":    {"name": "Zaragoza",                   "lat": 41.6488, "lon": -0.8891, "type": "gateway"},
-    "tudela":      {"name": "Tudela",                     "lat": 42.0617, "lon": -1.6046},
-    "logrono":     {"name": "Logroño",                    "lat": 42.4650, "lon": -2.4457, "type": "gateway"},
-    "stodomingo":  {"name": "Santo Domingo de la Calzada","lat": 42.4401, "lon": -2.9530},
-    "burgos":      {"name": "Burgos",                     "lat": 42.3410, "lon": -3.7017, "type": "gateway"},
-    "fromista":    {"name": "Frómista",                   "lat": 42.2670, "lon": -4.4060},
-    "sahagun":     {"name": "Sahagún",                    "lat": 42.3710, "lon": -5.0300},
-    "leon":        {"name": "León",                       "lat": 42.5987, "lon": -5.5671, "type": "gateway"},
-    "astorga":     {"name": "Astorga",                    "lat": 42.4577, "lon": -6.0560},
-    "ponferrada":  {"name": "Ponferrada",                 "lat": 42.5460, "lon": -6.5911},
-    "ocebreiro":   {"name": "O Cebreiro",                 "lat": 42.7080, "lon": -7.0420},
-    "sarria":      {"name": "Sarria",                     "lat": 42.7811, "lon": -7.4143},
-    "melide":      {"name": "Melide",                     "lat": 42.9142, "lon": -8.0140},
-    "santiago":    {"name": "Santiago de Compostela",     "lat": 42.8782, "lon": -8.5448, "type": "gateway"},
-    "fisterra":    {"name": "Cabo Fisterra",              "lat": 42.8838, "lon": -9.2715, "type": "terminus"},
-
-    "olot":        {"name": "Olot",                       "lat": 42.1817, "lon": 2.4886},
-    "ripoll":      {"name": "Ripoll",                     "lat": 42.2012, "lon": 2.1906},
-    "laseu":       {"name": "La Seu d'Urgell",            "lat": 42.3578, "lon": 1.4581},
-    "sort":        {"name": "Sort",                       "lat": 42.4132, "lon": 1.1305},
-    "pontdesuert": {"name": "El Pont de Suert",           "lat": 42.4076, "lon": 0.7413},
-    "ainsa":       {"name": "Aínsa",                      "lat": 42.4165, "lon": 0.1384},
-    "jaca":        {"name": "Jaca",                       "lat": 42.5700, "lon": -0.5500},
-    "sanguesa":    {"name": "Sangüesa",                   "lat": 42.5745, "lon": -1.2825},
-    "pamplona":    {"name": "Pamplona",                   "lat": 42.8125, "lon": -1.6458, "type": "gateway"},
-    "estella":     {"name": "Estella-Lizarra",            "lat": 42.6716, "lon": -2.0316},
-
-    "barcelona":   {"name": "Barcelona",                  "lat": 41.3874, "lon": 2.1686,  "type": "gateway"},
-    "vilafranca":  {"name": "Vilafranca del Penedès",     "lat": 41.3453, "lon": 1.6981},
-    "montblanc":   {"name": "Montblanc",                  "lat": 41.3763, "lon": 1.1621},
-
-    "vitoria":     {"name": "Vitoria-Gasteiz",            "lat": 42.8467, "lon": -2.6727},
-    "bilbao":      {"name": "Bilbao",                     "lat": 43.2630, "lon": -2.9350, "type": "gateway"},
-    "santander":   {"name": "Santander",                  "lat": 43.4623, "lon": -3.8100, "type": "gateway"},
-    "llanes":      {"name": "Llanes",                     "lat": 43.4212, "lon": -4.7563},
-    "oviedo":      {"name": "Oviedo",                     "lat": 43.3619, "lon": -5.8494, "type": "gateway"},
-    "luarca":      {"name": "Luarca",                     "lat": 43.5417, "lon": -6.5350},
-    "ribadeo":     {"name": "Ribadeo",                    "lat": 43.5361, "lon": -7.0402},
-    "lugo":        {"name": "Lugo",                       "lat": 43.0097, "lon": -7.5560},
-
-    "obarco":      {"name": "O Barco de Valdeorras",      "lat": 42.4160, "lon": -6.9830},
-    "monforte":    {"name": "Monforte de Lemos",          "lat": 42.5215, "lon": -7.5135},
-    "lalin":       {"name": "Lalín",                      "lat": 42.6600, "lon": -8.1120}
-  },
-  "trunks": [
-    {"variant": "base",     "nodes": ["capcreus", "figueres", "girona", "vic", "manresa", "cervera", "lleida", "fraga", "zaragoza", "tudela", "logrono", "stodomingo", "burgos", "fromista", "sahagun", "leon", "astorga", "ponferrada", "ocebreiro", "sarria", "melide", "santiago", "fisterra"]},
-    {"variant": "pyrenees", "nodes": ["figueres", "olot", "ripoll", "laseu", "sort", "pontdesuert", "ainsa", "jaca", "sanguesa", "pamplona", "estella", "logrono"]},
-    {"variant": "barcelona","nodes": ["girona", "barcelona", "vilafranca", "montblanc", "lleida"]},
-    {"variant": "norte",    "nodes": ["logrono", "vitoria", "bilbao", "santander", "llanes", "oviedo", "luarca", "ribadeo", "lugo", "santiago"]},
-    {"variant": "invierno", "nodes": ["ponferrada", "obarco", "monforte", "lalin", "santiago"]}
+ "slug": "spain",
+ "title": "Across Spain",
+ "lang": {
+  "local": "es",
+  "localLabel": "Nombres locales",
+  "romanise": null
+ },
+ "workdir": "work/spain",
+ "osm": {
+  "extracts": [
+   "downloads/cataluna-latest.osm.pbf",
+   "downloads/aragon-latest.osm.pbf",
+   "downloads/navarra-latest.osm.pbf",
+   "downloads/la-rioja-latest.osm.pbf",
+   "downloads/pais-vasco-latest.osm.pbf",
+   "downloads/cantabria-latest.osm.pbf",
+   "downloads/asturias-latest.osm.pbf",
+   "downloads/castilla-y-leon-latest.osm.pbf",
+   "downloads/galicia-latest.osm.pbf"
   ],
-  "ferries": [],
-  "forkLabels": {"figueres": "At Figueres", "girona": "At Girona", "logrono": "At Logroño", "ponferrada": "At Ponferrada"},
-  "optionNames": {
-    "pyrenees":  "Pyrenean foothills to Pamplona",
-    "barcelona": "Via Barcelona",
-    "norte":     "Cantabrian coast (Camino del Norte)",
-    "invierno":  "Camino de Invierno (Sil valley)"
+  "corridor_km": 2.0,
+  "note": "Geofabrik europe/spain/<region>-latest.osm.pbf; download inside the sandbox with curl -L"
+ },
+ "graph": {
+  "map_width": 520,
+  "outline": "config/spain_outline.geojson"
+ },
+ "nodes": {
+  "capcreus": {
+   "name": "Cap de Creus",
+   "lat": 42.3185,
+   "lon": 3.316,
+   "type": "terminus"
   },
-  "defaultOptionNames": {
-    "figueres":   "Girona and the Ebro valley",
-    "girona":     "Vic and Manresa",
-    "logrono":    "Rioja, Burgos and the Meseta",
-    "ponferrada": "O Cebreiro and Sarria"
+  "figueres": {
+   "name": "Figueres",
+   "lat": 42.267,
+   "lon": 2.9615
   },
-  "skippable": [],
-  "vehicles": {
-    "names": {"bike": "Bicycle", "ebike": "E-bike (pedelec)", "opium": "S-pedelec (45 km/h)"},
-    "defaultTarget": {"bike": 120, "ebike": 110, "opium": 180},
-    "minDay": {"bike": 60, "ebike": 50, "opium": 70},
-    "maxDay": {"bike": 300, "ebike": 160, "opium": 280},
-    "moped": {"enabled": true, "reroute_if_motorfree_share_at_least": 0.05, "keep_bicycle_line": []}
+  "girona": {
+   "name": "Girona",
+   "lat": 41.9794,
+   "lon": 2.8214,
+   "type": "gateway"
   },
-  "sights": {"exclude_kinds": ["memorial", "artwork"]},
-  "cities": {"population_min": 20000, "detour_km": 20, "rest_day_km": 60}
+  "vic": {
+   "name": "Vic",
+   "lat": 41.9302,
+   "lon": 2.2546
+  },
+  "manresa": {
+   "name": "Manresa",
+   "lat": 41.7286,
+   "lon": 1.8259
+  },
+  "cervera": {
+   "name": "Cervera",
+   "lat": 41.6704,
+   "lon": 1.2722
+  },
+  "lleida": {
+   "name": "Lleida",
+   "lat": 41.6176,
+   "lon": 0.62,
+   "type": "gateway"
+  },
+  "fraga": {
+   "name": "Fraga",
+   "lat": 41.5215,
+   "lon": 0.3494
+  },
+  "zaragoza": {
+   "name": "Zaragoza",
+   "lat": 41.6488,
+   "lon": -0.8891,
+   "type": "gateway"
+  },
+  "tudela": {
+   "name": "Tudela",
+   "lat": 42.0617,
+   "lon": -1.6046
+  },
+  "logrono": {
+   "name": "Logroño",
+   "lat": 42.465,
+   "lon": -2.4457,
+   "type": "gateway"
+  },
+  "stodomingo": {
+   "name": "Santo Domingo de la Calzada",
+   "lat": 42.4401,
+   "lon": -2.953
+  },
+  "burgos": {
+   "name": "Burgos",
+   "lat": 42.341,
+   "lon": -3.7017,
+   "type": "gateway"
+  },
+  "fromista": {
+   "name": "Frómista",
+   "lat": 42.267,
+   "lon": -4.406
+  },
+  "sahagun": {
+   "name": "Sahagún",
+   "lat": 42.371,
+   "lon": -5.03
+  },
+  "leon": {
+   "name": "León",
+   "lat": 42.5987,
+   "lon": -5.5671,
+   "type": "gateway"
+  },
+  "astorga": {
+   "name": "Astorga",
+   "lat": 42.4577,
+   "lon": -6.056
+  },
+  "ponferrada": {
+   "name": "Ponferrada",
+   "lat": 42.546,
+   "lon": -6.5911
+  },
+  "ocebreiro": {
+   "name": "O Cebreiro",
+   "lat": 42.708,
+   "lon": -7.042
+  },
+  "sarria": {
+   "name": "Sarria",
+   "lat": 42.7811,
+   "lon": -7.4143
+  },
+  "melide": {
+   "name": "Melide",
+   "lat": 42.9142,
+   "lon": -8.014
+  },
+  "santiago": {
+   "name": "Santiago de Compostela",
+   "lat": 42.8782,
+   "lon": -8.5448,
+   "type": "gateway"
+  },
+  "fisterra": {
+   "name": "Cabo Fisterra",
+   "lat": 42.8838,
+   "lon": -9.2715,
+   "type": "terminus"
+  },
+  "olot": {
+   "name": "Olot",
+   "lat": 42.1817,
+   "lon": 2.4886
+  },
+  "ripoll": {
+   "name": "Ripoll",
+   "lat": 42.2012,
+   "lon": 2.1906
+  },
+  "laseu": {
+   "name": "La Seu d'Urgell",
+   "lat": 42.3578,
+   "lon": 1.4581
+  },
+  "sort": {
+   "name": "Sort",
+   "lat": 42.4132,
+   "lon": 1.1305
+  },
+  "pontdesuert": {
+   "name": "El Pont de Suert",
+   "lat": 42.4076,
+   "lon": 0.7413
+  },
+  "ainsa": {
+   "name": "Aínsa",
+   "lat": 42.4165,
+   "lon": 0.1384
+  },
+  "jaca": {
+   "name": "Jaca",
+   "lat": 42.57,
+   "lon": -0.55
+  },
+  "sanguesa": {
+   "name": "Sangüesa",
+   "lat": 42.5745,
+   "lon": -1.2825
+  },
+  "pamplona": {
+   "name": "Pamplona",
+   "lat": 42.8125,
+   "lon": -1.6458,
+   "type": "gateway"
+  },
+  "estella": {
+   "name": "Estella-Lizarra",
+   "lat": 42.6716,
+   "lon": -2.0316
+  },
+  "barcelona": {
+   "name": "Barcelona",
+   "lat": 41.3874,
+   "lon": 2.1686,
+   "type": "gateway"
+  },
+  "vilafranca": {
+   "name": "Vilafranca del Penedès",
+   "lat": 41.3453,
+   "lon": 1.6981
+  },
+  "montblanc": {
+   "name": "Montblanc",
+   "lat": 41.3763,
+   "lon": 1.1621
+  },
+  "vitoria": {
+   "name": "Vitoria-Gasteiz",
+   "lat": 42.8467,
+   "lon": -2.6727
+  },
+  "bilbao": {
+   "name": "Bilbao",
+   "lat": 43.263,
+   "lon": -2.935,
+   "type": "gateway"
+  },
+  "santander": {
+   "name": "Santander",
+   "lat": 43.4623,
+   "lon": -3.81,
+   "type": "gateway"
+  },
+  "llanes": {
+   "name": "Llanes",
+   "lat": 43.4212,
+   "lon": -4.7563
+  },
+  "oviedo": {
+   "name": "Oviedo",
+   "lat": 43.3619,
+   "lon": -5.8494,
+   "type": "gateway"
+  },
+  "luarca": {
+   "name": "Luarca",
+   "lat": 43.5417,
+   "lon": -6.535
+  },
+  "ribadeo": {
+   "name": "Ribadeo",
+   "lat": 43.5361,
+   "lon": -7.0402
+  },
+  "lugo": {
+   "name": "Lugo",
+   "lat": 43.0097,
+   "lon": -7.556
+  },
+  "obarco": {
+   "name": "O Barco de Valdeorras",
+   "lat": 42.416,
+   "lon": -6.983
+  },
+  "monforte": {
+   "name": "Monforte de Lemos",
+   "lat": 42.5215,
+   "lon": -7.5135
+  },
+  "lalin": {
+   "name": "Lalín",
+   "lat": 42.66,
+   "lon": -8.112
+  }
+ },
+ "trunks": [
+  {
+   "variant": "base",
+   "nodes": [
+    "capcreus",
+    "figueres",
+    "girona",
+    "vic",
+    "manresa",
+    "cervera",
+    "lleida",
+    "fraga",
+    "zaragoza",
+    "tudela",
+    "logrono",
+    "stodomingo",
+    "burgos",
+    "fromista",
+    "sahagun",
+    "leon",
+    "astorga",
+    "ponferrada",
+    "ocebreiro",
+    "sarria",
+    "melide",
+    "santiago",
+    "fisterra"
+   ]
+  },
+  {
+   "variant": "pyrenees",
+   "nodes": [
+    "figueres",
+    "olot",
+    "ripoll",
+    "laseu",
+    "sort",
+    "pontdesuert",
+    "ainsa",
+    "jaca",
+    "sanguesa",
+    "pamplona",
+    "estella",
+    "logrono"
+   ]
+  },
+  {
+   "variant": "barcelona",
+   "nodes": [
+    "girona",
+    "barcelona",
+    "vilafranca",
+    "montblanc",
+    "lleida"
+   ]
+  },
+  {
+   "variant": "norte",
+   "nodes": [
+    "logrono",
+    "vitoria",
+    "bilbao",
+    "santander",
+    "llanes",
+    "oviedo",
+    "luarca",
+    "ribadeo",
+    "lugo",
+    "santiago"
+   ]
+  },
+  {
+   "variant": "invierno",
+   "nodes": [
+    "ponferrada",
+    "obarco",
+    "monforte",
+    "lalin",
+    "santiago"
+   ]
+  }
+ ],
+ "ferries": [],
+ "forkLabels": {
+  "figueres": "At Figueres",
+  "girona": "At Girona",
+  "logrono": "At Logroño",
+  "ponferrada": "At Ponferrada"
+ },
+ "optionNames": {
+  "pyrenees": "Pyrenean foothills to Pamplona",
+  "barcelona": "Via Barcelona",
+  "norte": "Cantabrian coast (Camino del Norte)",
+  "invierno": "Camino de Invierno (Sil valley)"
+ },
+ "defaultOptionNames": {
+  "figueres": "Girona and the Ebro valley",
+  "girona": "Vic and Manresa",
+  "logrono": "Rioja, Burgos and the Meseta",
+  "ponferrada": "O Cebreiro and Sarria"
+ },
+ "skippable": [],
+ "vehicles": {
+  "names": {
+   "bike": "Bicycle",
+   "ebike": "E-bike (pedelec)",
+   "opium": "S-pedelec (45 km/h)"
+  },
+  "defaultTarget": {
+   "bike": 120,
+   "ebike": 110,
+   "opium": 180
+  },
+  "minDay": {
+   "bike": 40,
+   "ebike": 32,
+   "opium": 38
+  },
+  "maxDay": {
+   "bike": 300,
+   "ebike": 160,
+   "opium": 280
+  },
+  "targetRange": {
+   "bike": [
+    65,
+    300
+   ],
+   "ebike": [
+    45,
+    160
+   ],
+   "opium": [
+    50,
+    280
+   ]
+  },
+  "moped": {
+   "enabled": true,
+   "reroute_if_motorfree_share_at_least": 0.05,
+   "keep_bicycle_line": []
+  }
+ },
+ "sights": {
+  "exclude_kinds": [
+   "memorial",
+   "artwork"
+  ]
+ },
+ "cities": {
+  "population_min": 20000,
+  "detour_km": 20,
+  "rest_day_km": 60
+ }
 }

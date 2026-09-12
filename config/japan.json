@@ -169,14 +169,28 @@
    "opium": 200
   },
   "minDay": {
-   "bike": 70,
-   "ebike": 60,
-   "opium": 80
+   "bike": 35,
+   "ebike": 30,
+   "opium": 40
   },
   "maxDay": {
    "bike": 330,
    "ebike": 160,
    "opium": 300
+  },
+  "targetRange": {
+   "bike": [
+    45,
+    300
+   ],
+   "ebike": [
+    40,
+    165
+   ],
+   "opium": [
+    50,
+    300
+   ]
   },
   "moped": {
    "enabled": true,
