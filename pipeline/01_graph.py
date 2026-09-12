@@ -148,9 +148,30 @@ if cfg['graph'].get('outline'):
         elif t in ('LineString',): yield obj['coordinates']
         elif t == 'MultiLineString':
             for r in obj['coordinates']: yield r
-    for r in rings(g):
-        pts = decimate([(c[1], c[0]) for c in r], 0.5)
-        if len(pts) > 2: coast.append(' '.join('%.1f,%.1f' % pj.xy(*p) for p in pts))
+    WATERF = (cfg['graph'].get('water') or {}).get('file')
+    has_water = bool(WATERF and os.path.exists(WATERF))
+    for f in (g['features'] if g.get('type') == 'FeatureCollection' else [g]):     # with a water file, the outline's lake features move to the water layer
+        if has_water and (f.get('properties') or {}).get('featurecla') == 'Lake': continue
+        for r in rings(f):
+            pts = decimate([(c[1], c[0]) for c in r], 0.5)
+            if len(pts) > 2: coast.append(' '.join('%.1f,%.1f' % pj.xy(*p) for p in pts))
+# --- water (step 12): lakes as filled shapes, big rivers as lines --------------------------------
+water = None
+WATERF = (cfg['graph'].get('water') or {}).get('file')
+if WATERF and os.path.exists(WATERF):
+    wg = json.load(open(WATERF)); water = dict(lakes=[], rivers=[])
+    for f in wg['features']:
+        pr = f.get('properties') or {}; geo = f['geometry']
+        if pr.get('kind') == 'lake':
+            polys = geo['coordinates'] if geo['type'] == 'MultiPolygon' else [geo['coordinates']]
+            for poly in polys:
+                pts = decimate([(c[1], c[0]) for c in poly[0]], 0.3)
+                if len(pts) > 2: water['lakes'].append(dict(name=pr.get('name', ''), km2=pr.get('km2', 0), pts=' '.join('%.1f,%.1f' % pj.xy(*p) for p in pts)))
+        elif pr.get('kind') == 'river':
+            pts = decimate([(c[1], c[0]) for c in geo['coordinates']], 0.3)
+            if len(pts) > 1: water['rivers'].append(dict(name=pr.get('name', ''), pts=' '.join('%.1f,%.1f' % pj.xy(*p) for p in pts)))
+    print('water:', len(water['lakes']), 'lake shapes', len(water['rivers']), 'river pieces')
 P = dict(nodes=sorted(NODE.values(), key=lambda n: n['rank']), segments=segments, forks=[dict(node=n, options=o) for n, o in forks.items()], coast=coast)
+if water: P['water'] = water
 jdump(W, 'P.json', P); jdump(W, 'seg_data.json', SD, compact=True)
 print('graph:', len(P['nodes']), 'nodes', len(segments), 'segments', len(forks), 'forks', len(coast), 'outline pieces')

@@ -18,7 +18,28 @@
  },
  "graph": {
   "map_width": 520,
-  "outline": "config/switzerland_outline.geojson"
+  "outline": "config/switzerland_outline.geojson",
+  "water": {
+   "file": "config/switzerland_water.geojson",
+   "min_km2": 3,
+   "rivers": [
+    "Rhein",
+    "Le Rhône",
+    "Rotten",
+    "Aare",
+    "Reuss",
+    "Limmat",
+    "Ticino",
+    "Inn",
+    "Thur",
+    "Linth",
+    "Saane",
+    "Sarine"
+   ],
+   "fallback": [
+    "config/switzerland_lakes_fallback.geojson"
+   ]
+  }
  },
  "nodes": {
   "geneva": {
