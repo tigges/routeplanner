@@ -1,0 +1,232 @@
+{
+ "slug": "switzerland-north-south",
+ "title": "Across Switzerland, north to south",
+ "lang": {
+  "local": "de",
+  "localLabel": "Lokale Namen",
+  "romanise": null
+ },
+ "workdir": "work/switzerland-north-south",
+ "osm": {
+  "extracts": [
+   "downloads/switzerland-260909.osm.pbf"
+  ],
+  "corridor_km": 2.0
+ },
+ "graph": {
+  "map_width": 520,
+  "outline": "config/switzerland_outline.geojson"
+ },
+ "nodes": {
+  "basel": {
+   "name": "Basel",
+   "lat": 47.5478,
+   "lon": 7.5896,
+   "type": "terminus"
+  },
+  "olten": {
+   "name": "Olten",
+   "lat": 47.3518,
+   "lon": 7.9077
+  },
+  "zurich": {
+   "name": "Zürich",
+   "lat": 47.3769,
+   "lon": 8.5417,
+   "type": "gateway"
+  },
+  "zug": {
+   "name": "Zug",
+   "lat": 47.1731,
+   "lon": 8.5152
+  },
+  "lucerne": {
+   "name": "Luzern",
+   "lat": 47.0502,
+   "lon": 8.3103,
+   "type": "gateway"
+  },
+  "brunnen": {
+   "name": "Brunnen",
+   "lat": 46.995,
+   "lon": 8.606
+  },
+  "fluelen": {
+   "name": "Flüelen",
+   "lat": 46.904,
+   "lon": 8.625
+  },
+  "andermatt": {
+   "name": "Andermatt",
+   "lat": 46.635,
+   "lon": 8.5945,
+   "type": "gateway"
+  },
+  "oberwald": {
+   "name": "Oberwald",
+   "lat": 46.5347,
+   "lon": 8.351
+  },
+  "disentis": {
+   "name": "Disentis/Mustér",
+   "lat": 46.7035,
+   "lon": 8.852
+  },
+  "biasca": {
+   "name": "Biasca",
+   "lat": 46.3589,
+   "lon": 8.9706
+  },
+  "airolo": {
+   "name": "Airolo",
+   "lat": 46.5275,
+   "lon": 8.607
+  },
+  "bellinzona": {
+   "name": "Bellinzona",
+   "lat": 46.195,
+   "lon": 9.0295,
+   "type": "gateway"
+  },
+  "lugano": {
+   "name": "Lugano",
+   "lat": 46.0056,
+   "lon": 8.9469,
+   "type": "gateway"
+  },
+  "chiasso": {
+   "name": "Chiasso",
+   "lat": 45.8322,
+   "lon": 9.0312,
+   "type": "terminus"
+  }
+ },
+ "trunks": [
+  {
+   "variant": "base",
+   "nodes": [
+    "basel",
+    "olten",
+    "lucerne",
+    "brunnen",
+    "fluelen",
+    "andermatt",
+    "airolo",
+    "bellinzona",
+    "lugano",
+    "chiasso"
+   ]
+  },
+  {
+   "variant": "viazurich",
+   "nodes": [
+    "basel",
+    "zurich",
+    "zug",
+    "lucerne"
+   ]
+  },
+  {
+   "variant": "boat",
+   "nodes": [
+    "brunnen",
+    "fluelen"
+   ]
+  },
+  {
+   "variant": "nufenen",
+   "nodes": [
+    "andermatt",
+    "oberwald",
+    "airolo"
+   ]
+  },
+  {
+   "variant": "lukmanier",
+   "nodes": [
+    "andermatt",
+    "disentis",
+    "biasca",
+    "bellinzona"
+   ]
+  }
+ ],
+ "ferries": [
+  {
+   "from": "brunnen",
+   "to": "fluelen",
+   "km": 12,
+   "variant": "boat",
+   "note": "boat (Lake Lucerne)"
+  }
+ ],
+ "forkLabels": {
+  "basel": "From Basel",
+  "brunnen": "At Brunnen",
+  "andermatt": "From Andermatt"
+ },
+ "optionNames": {
+  "viazurich": "Rhine, Zürich and Zug",
+  "boat": "Boat to Flüelen",
+  "nufenen": "Furka side and the Nufenen pass",
+  "lukmanier": "Oberalp and the Lukmanier pass"
+ },
+ "defaultOptionNames": {
+  "basel": "Hauenstein and Olten",
+  "brunnen": "Axenstrasse ride",
+  "andermatt": "Gotthard pass"
+ },
+ "skippable": [],
+ "vehicles": {
+  "names": {
+   "bike": "Bicycle",
+   "ebike": "E-bike (pedelec)",
+   "opium": "S-pedelec (45 km/h)"
+  },
+  "defaultTarget": {
+   "bike": 120,
+   "ebike": 110,
+   "opium": 180
+  },
+  "minDay": {
+   "bike": 40,
+   "ebike": 32,
+   "opium": 38
+  },
+  "maxDay": {
+   "bike": 300,
+   "ebike": 160,
+   "opium": 280
+  },
+  "targetRange": {
+   "bike": [
+    55,
+    300
+   ],
+   "ebike": [
+    40,
+    160
+   ],
+   "opium": [
+    45,
+    280
+   ]
+  },
+  "moped": {
+   "enabled": true,
+   "reroute_if_motorfree_share_at_least": 0.05,
+   "keep_bicycle_line": []
+  }
+ },
+ "sights": {
+  "exclude_kinds": [
+   "memorial",
+   "artwork"
+  ]
+ },
+ "cities": {
+  "population_min": 20000,
+  "detour_km": 20,
+  "rest_day_km": 60
+ }
+}
