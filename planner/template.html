@@ -662,7 +662,7 @@ function render(){
  drawStrip(ch); tripTitle(); dirRow(); document.getElementById("plansum").textContent=NODE[document.getElementById("start").value].name+" \u2192 "+NODE[document.getElementById("end").value].name+" \u00b7 "+ride.length+" days";
  var _fs=document.getElementById("forksummary");if(_fs)_fs.textContent=forkSummary();
  document.getElementById("slv").textContent=target+"  (~"+Math.round(km/ride.length)+" km/day)";
- document.getElementById("warn").textContent=r.warn;
+ document.getElementById("warn").textContent=r.warn||skipWarn;
  var nre=ch.filter(function(v){return v.moped}).length, kmre=ch.reduce(function(a,v){return a+(v.moped?v.km:0)},0);
  var mfkm=ch.reduce(function(a,v){return a+(v.mode==="ride"&&MF[v.id]?MF[v.id]*v.km:0)},0);
  document.getElementById("vehnote").textContent=VEH==="opium"?

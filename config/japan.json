@@ -325,6 +325,48 @@
    "lat": 43.5165,
    "lon": 142.1844,
    "type": "gateway"
+  },
+  "kumamoto": {
+   "name": "Kumamoto",
+   "lat": 32.7903,
+   "lon": 130.689,
+   "type": "gateway"
+  },
+  "misumi": {
+   "name": "Misumi",
+   "lat": 32.6077,
+   "lon": 130.4698,
+   "type": "gateway"
+  },
+  "kamiamakusa": {
+   "name": "Kamiamakusa",
+   "lat": 32.4985,
+   "lon": 130.4225,
+   "type": "gateway"
+  },
+  "hondo": {
+   "name": "Hondo",
+   "lat": 32.454,
+   "lon": 130.1942,
+   "type": "gateway"
+  },
+  "tomioka": {
+   "name": "Tomioka",
+   "lat": 32.5184,
+   "lon": 130.0359,
+   "type": "gateway"
+  },
+  "sakitsu": {
+   "name": "Sakitsu",
+   "lat": 32.3199,
+   "lon": 130.0243,
+   "type": "gateway"
+  },
+  "ushibuka": {
+   "name": "Ushibuka",
+   "lat": 32.1935,
+   "lon": 130.03,
+   "type": "port"
   }
  },
  "trunks": [
@@ -582,6 +624,20 @@
      ]
     ]
    }
+  },
+  {
+   "variant": "amakusa",
+   "spur": true,
+   "nodes": [
+    "aso",
+    "kumamoto",
+    "misumi",
+    "kamiamakusa",
+    "hondo",
+    "tomioka",
+    "sakitsu",
+    "ushibuka"
+   ]
   }
  ],
  "forks": {
@@ -756,7 +812,8 @@
   "tokachi-south": "South: Hiroo and the Pacific coast",
   "okhotsk": "North to Kitami and the Okhotsk coast",
   "hokkaido-east": "East to Furano, the Karikachi pass and Tokachi",
-  "uwakai": "Uwakai coast to Uwajima (Route 378)"
+  "uwakai": "Uwakai coast to Uwajima (Route 378)",
+  "amakusa": "West to Kumamoto and the Amakusa islands"
  },
  "defaultOptionNames": {
   "aomori": "Sea of Japan",

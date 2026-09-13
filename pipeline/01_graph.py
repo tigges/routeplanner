@@ -16,7 +16,8 @@ if cfg['graph'].get('prebuilt_dir'):
     for s in P['segments']:
         if s['mode'] != 'ride': continue
         key = s['frm'] + '--' + s['to']
-        line = rc[key]['line'] if key in rc else [list(pj.ll(*map(float, p.split(',')))) for p in s['line'].split()]
+        r = rc.get(s['id']) or rc.get(key)      # variant legs are cached under their full id; base legs under frm--to
+        line = r['line'] if r else [list(pj.ll(*map(float, p.split(',')))) for p in s['line'].split()]   # else the page line (coarse, ~1.8 km between points)
         json.dump(seg_geojson(s['id'], line), open(os.path.join(SEGDIR, seg_fn(s['id'])), 'w'))
     water = water_block(cfg, pj)
     if water: P['water'] = water; jdump(W, 'P.json', P); print('water:', len(water['lakes']), 'lake shapes', len(water['rivers']), 'river pieces')
@@ -32,7 +33,9 @@ if cfg['graph'].get('prebuilt_dir'):
             all = (NB[a]['lat'], NB[a]['lon']) if 'lat' in NB[a] else pjv.ll(NB[a]['x'], NB[a]['y'])
             bll = (NB[b]['lat'], NB[b]['lon']) if 'lat' in NB[b] else pjv.ll(NB[b]['x'], NB[b]['y'])
             r = route(W, sid + '#viabase', all, bll, via=via)
-            seg, sd = make_segment(PR, sid, a, b, var, r)
+            if SEG[sid].get('viaBase') and abs(SEG[sid]['km'] - r['km']) < 0.05 and SD.get(sid, {}).get('covered'):
+                print('viaBase unchanged', sid, r['km'], 'km (data kept)'); json.dump(seg_geojson(sid, r['line']), open(os.path.join(SEGDIR, seg_fn(sid)), 'w')); continue
+            seg, sd = make_segment(PR, sid, a, b, var, r); seg['viaBase'] = True
             for i, x in enumerate(P['segments']):
                 if x['id'] == sid: P['segments'][i] = seg
             SD[sid] = dict(sd, covered=False); json.dump(seg_geojson(sid, r['line']), open(os.path.join(SEGDIR, seg_fn(sid)), 'w'))
