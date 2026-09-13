@@ -33,6 +33,54 @@ def decimate(pts, step_km=1.0):
     if out[-1] is not pts[-1]: out.append(pts[-1])
     return out
 
+# --- the page line: keep the shape, not a point every kilometre ---------------------------------
+LINE_TOL_M = 15.0        # Douglas-Peucker: the drawn line never strays this far from the routed one
+LINE_STEP_M = 8.0        # rounding: one step of the last decimal is at most this far on the ground
+                         # (keep it well under LINE_TOL_M, or the rounding makes the line zigzag)
+
+def m_per_unit(PR, lat0):
+    """Ground metres in one page unit at latitude lat0 (the projection scales x and y equally)."""
+    return 111320.0 * math.cos(math.radians(lat0)) / abs(PR['kx'])
+
+def line_decimals(PR, lat0, step_m=LINE_STEP_M):
+    """How many decimals a page coordinate needs so one step is at most step_m on the ground (1–3)."""
+    return max(1, min(3, int(math.ceil(math.log10(max(1e-9, m_per_unit(PR, lat0) / step_m))))))
+
+def dp_keep(xy, tol):
+    """Douglas-Peucker on [(x,y), …]; returns the indices to keep. Iterative — these lines are long."""
+    n = len(xy)
+    if n < 3: return list(range(n))
+    keep = [False]*n; keep[0] = keep[n-1] = True; stack = [(0, n-1)]
+    while stack:
+        i, j = stack.pop()
+        if j <= i + 1: continue
+        ax, ay = xy[i]; bx, by = xy[j]; dx, dy = bx-ax, by-ay; d2 = dx*dx + dy*dy
+        best = -1.0; bi = -1
+        for k in range(i+1, j):
+            px, py = xy[k]
+            if d2 == 0: d = math.hypot(px-ax, py-ay)
+            else:
+                t = ((px-ax)*dx + (py-ay)*dy) / d2
+                t = 0.0 if t < 0 else (1.0 if t > 1 else t)
+                d = math.hypot(px-(ax+t*dx), py-(ay+t*dy))
+            if d > best: best, bi = d, k
+        if best > tol: keep[bi] = True; stack.append((i, bi)); stack.append((bi, j))
+    return [k for k in range(n) if keep[k]]
+
+def page_line(PR, line, tol_m=LINE_TOL_M, step_m=LINE_STEP_M):
+    """Page `line` string from a routed lat/lon line: simplified to tol_m, rounded to a step_m grid.
+    Returns (string, kept xy points, decimals)."""
+    pj = Proj(PR); lat0 = sum(p[0] for p in line) / len(line)
+    xy = [pj.xy(p[0], p[1]) for p in line]
+    dec = line_decimals(PR, lat0, step_m); fmt = '%%.%df,%%.%df' % (dec, dec)
+    txt = []; pts = []
+    for k in dp_keep(xy, tol_m / m_per_unit(PR, lat0)):
+        t = fmt % xy[k]
+        if txt and t == txt[-1]: continue          # the rounding put it on top of the last point
+        txt.append(t); pts.append(xy[k])
+    if len(txt) < 2: txt.append(fmt % xy[-1]); pts.append(xy[-1])
+    return ' '.join(txt), pts, dec
+
 # --- map projection: Mercator, x = kx*lon + bx ; y = ky*mlat + by (y grows downwards) ---------
 def mlat(lat): return math.log(math.tan(math.pi/4 + math.radians(lat)/2))
 class Proj:
@@ -70,7 +118,7 @@ def route(W, key, a_ll, b_ll, profile='trekking', cache_name='route_cache.json',
             f = gj['features'][0]; pr = f['properties']; coords = f['geometry']['coordinates']
             rt[key] = dict(km=round(float(pr['track-length'])/1000, 1), asc=int(pr['filtered ascend']),
                            line=[[round(c[1], 5), round(c[0], 5), int(c[2]) if len(c) > 2 else None] for c in coords])
-            jdump(W, cache_name, rt); time.sleep(1.5)
+            jdump(W, cache_name, rt, compact=True); time.sleep(1.5)   # compact: these caches are megabytes and go into the repository
             print('routed %-34s %6.1f km  +%4d m  (%s)' % (key, rt[key]['km'], rt[key]['asc'], profile), flush=True)
             return rt[key]
         except urllib.error.HTTPError as e:
@@ -98,16 +146,16 @@ def make_segment(P, sid, a, b, variant, r, climb_div=10.0):
     asc = r['asc']; gain = max(1, sum(max(0, q - p) for p, q in zip(zs, zs[1:])))
     desc = int(round(sum(max(0, p - q) for p, q in zip(zs, zs[1:])) * (asc / gain)))
     effort = int(round(r['km'] + asc / climb_div)); effortR = int(round(r['km'] + desc / climb_div))
-    xy = [pj.xy(p[0], p[1]) for p in decimate(line, 1.0)]
+    txt, xy, dec = page_line(P, line)
     def eff_at(kk): return kk + sum(max(0, q - p) for (ka, p), (kb, q) in zip(prof, prof[1:]) if kb <= kk) / climb_div * (asc / gain)
     cand = []; kk = 0.0
     while kk < r['km'] - 4 or kk == 0.0:
         idx = min(range(len(cum)), key=lambda q: abs(cum[q] - kk)); px, py = pj.xy(line[idx][0], line[idx][1]); e = eff_at(kk)
-        cand.append(dict(km=round(kk, 1), eff=round(e, 1), effR=round(effort - e, 1), beds=1, node=None, label='', x=round(px, 1), y=round(py, 1)))
+        cand.append(dict(km=round(kk, 1), eff=round(e, 1), effR=round(effort - e, 1), beds=1, node=None, label='', x=round(px, dec), y=round(py, dec)))
         kk += 8.0
-    cand.append(dict(km=r['km'], eff=float(effort), effR=0.0, beds=0, node=b, label='', x=round(xy[-1][0], 1), y=round(xy[-1][1], 1)))
+    cand.append(dict(km=r['km'], eff=float(effort), effR=0.0, beds=0, node=b, label='', x=round(xy[-1][0], dec), y=round(xy[-1][1], dec)))
     seg = dict(id=sid, frm=a, to=b, variant=variant, mode='ride', km=r['km'], ascent=asc, note='', effort=effort, descent=desc,
-               effortR=effortR, line=' '.join('%.1f,%.1f' % p for p in xy), cand=cand)
+               effortR=effortR, line=txt, cand=cand)
     return seg, dict(covered=False, prof=prof, fac={})
 
 def seg_geojson(sid, line):

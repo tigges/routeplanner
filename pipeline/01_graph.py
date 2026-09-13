@@ -16,8 +16,9 @@ if cfg['graph'].get('prebuilt_dir'):
     for s in P['segments']:
         if s['mode'] != 'ride': continue
         key = s['frm'] + '--' + s['to']
-        r = rc.get(s['id']) or rc.get(key)      # variant legs are cached under their full id; base legs under frm--to
-        line = r['line'] if r else [list(pj.ll(*map(float, p.split(',')))) for p in s['line'].split()]   # else the page line (coarse, ~1.8 km between points)
+        r = rc.get(s['id'] + '#viabase') or rc.get(s['id']) or rc.get(key)   # variant legs are cached under their full id; base legs under frm--to
+        if r and abs(r['km'] - s['km']) > max(0.5, 0.03 * s['km']): r = None  # BRouter answers differently today: that is not this segment's road
+        line = r['line'] if r else [list(pj.ll(*map(float, p.split(',')))) for p in s['line'].split()]   # else the page line
         json.dump(seg_geojson(s['id'], line), open(os.path.join(SEGDIR, seg_fn(s['id'])), 'w'))
     water = water_block(cfg, pj)
     if water: P['water'] = water; jdump(W, 'P.json', P); print('water:', len(water['lakes']), 'lake shapes', len(water['rivers']), 'river pieces')

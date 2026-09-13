@@ -92,7 +92,22 @@ its size is roughly 8 MB per 100 segments with facilities, double that with mope
   template change: `python3 tools/retemplate.py config/<country>.json` for each.
 - `vehicles.moped.dropFacilities`: categories left out of the moped data at build time (default eat, wc; they fall back to the bicycle list). Saves ~3 MB on Japan.
 - Steps 02, 03 and 11 take `--extract <file>` to scan one OSM extract per run (time-limited sessions).
-- `tools/catchup.py config/<a>.json config/<b>.json` brings a country's page up to the current template and data layers in one go: downloads missing extracts (`osm.urls`, or `osm.mirror` paths on download.openstreetmap.fr), runs step 12, refreshes the graph (01 where the data is in work/ or examples/, else retemplate, which now injects the water into the lifted P), rebuilds, publishes, re-measures trips. Needs `pip install osmium shapely numpy scipy playwright` once. Then `git add docs config examples`, commit, push.
+- `tools/densify.py config/<country>.json` redraws the page lines from the routing caches so they follow the road instead of
+  cutting the corner every kilometre. It touches only each segment's `line` (and the day-end dots' positions on it) — km, climb,
+  effort, facilities, scores, beds and day-end names are left alone, so no OSM scan is needed. A cached line is used only when it
+  is still the same road (length within 5%, the typical point at rounding distance, anything further off confined to the first or
+  last fifth of the leg); legs that fail keep the coarse line and are listed with the reason. `--fetch` routes the legs that have
+  no cached line (~2 s each) and applies the same tests; a line it then rejects is dropped from the cache again, because 01_graph
+  cuts the OSM corridor along the cached line. Run it on `work/<slug>/` after 01_graph and before `build_planner`, then copy
+  `P.json` (and `moped_segments.json`, `signed_segments.json`) back into `examples/<slug>/`. For a country with no work data in the
+  repository (Spain, Switzerland north–south) `--page` lifts the graph out of the published page and writes the redrawn lines
+  straight back into it; re-render with `tools/retemplate.py` afterwards. Cost: Japan's page grew 14.3 → 15.1 MB, Britain's
+  0.37 → 0.56 MB; load time unchanged.
+- `tools/ridecheck.js <a.html> <b.html> [tripsFile] [slug]` opens two builds of a page headless and prints every trip's km, climb,
+  effort and leg count side by side, with console errors and page weight — the test ride to run before handing over any change
+  that should not move the numbers. `tools/shot.js <page.html> <prefix> [tripId] [zoom]` screenshots a page with real map tiles
+  (the sandbox proxy blocks the browser from the tile hosts but not curl, so each tile request is fulfilled from a curl).
+- `tools/catchup.py config/<a>.json config/<b>.json` brings a country's page up to the current template and data layers in one go: downloads missing extracts (`osm.urls`, or `osm.mirror` paths on download.openstreetmap.fr), runs step 12, refreshes the graph (01 where the data is in work/ or examples/, else retemplate, which now injects the water into the lifted P), rebuilds, publishes, re-measures trips. `--densify` adds the line redraw above (with `--fetch` to route what is not cached), on whichever of the two paths the country takes. Needs `pip install osmium shapely numpy scipy playwright` once. Then `git add docs config examples`, commit, push.
 - `graph.land_fill: true` paints the country in a land tone (only for a closed border like Switzerland or Spain; Japan's coast comes in pieces and stays a line).
 - Background jobs in the Claude sandbox are killed when a tool call ends unless started with `setsid nohup … &`.
 
