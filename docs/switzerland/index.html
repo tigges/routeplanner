@@ -6,7 +6,8 @@
  --route:#f0713f;--ghost:#2a4150;--stop:#4da3ff;--ferry:#8f9aa3;
  --s-bg:#ffffff;--s-panel:#f3f5f7;--s-hover:#eef1f4;--s-select:#dbeaf7;--s-selline:#8fbfe0;
  --s-line:#e0e5e9;--s-text:#12202a;--s-dim:#55636d;--s-faint:#7c8b96;--s-link:#0f6fbf;
- --s-warn:#a15b12;--s-good:#2f8f5b;--s-train:#3d6a8a;--s-gold:#8a6a12;--s-goldline:#e0cf9c;--s-badge:#e8ecef}
+ --s-warn:#a15b12;--s-good:#2f8f5b;--s-train:#3d6a8a;--s-gold:#8a6a12;--s-goldline:#e0cf9c;--s-badge:#e8ecef;
+ --prof-band:#f9fbfc;--prof-band2:#eef2f5;--prof-num:#93a1ab;--prof-fill:.22}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--paper);
  font-family:"Hiragino Sans","Noto Sans JP",-apple-system,"Segoe UI",system-ui,sans-serif}
@@ -61,6 +62,9 @@ h2{font-size:11px;color:var(--s-faint);margin:0 16px 8px;font-weight:600}
 .day .sup .gap{color:var(--s-warn)}
 .day .sup .nodata{color:var(--s-dim);font-style:italic}
 .day svg.spark{grid-column:2/4;display:block;width:100%;height:26px}
+.spark .area{fill:var(--route);fill-opacity:.28;stroke:none}
+.spark .ln{fill:none;stroke:var(--route);stroke-width:1.2}
+.spark text{fill:var(--s-dim);font-size:8px}
 .layers{display:flex;gap:5px;flex-wrap:wrap;margin:0 16px 14px}
 #skips{margin:8px 0 0}
 .hintline{font-size:12px;color:var(--s-dim);margin-top:6px;line-height:1.4}
@@ -115,7 +119,11 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 .badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:var(--s-badge);color:var(--s-text);font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
 .badge.on{background:var(--route);color:#fff}
 /* --- whole-trip profile --- */
-#profwrap{margin:0 16px 12px}#profwrap svg{display:block;width:100%;height:56px;border-radius:4px;background:var(--s-panel)}
+#profwrap{margin:0 16px 12px}#profwrap svg{display:block;width:100%;height:56px;border-radius:4px;background:var(--s-panel);border:1px solid var(--s-line)}
+#prof .band{fill:var(--prof-band)}#prof .band.b{fill:var(--prof-band2)}
+#prof .num{fill:var(--prof-num);font-size:9px;font-family:inherit}
+#prof .area{fill:var(--route);fill-opacity:var(--prof-fill);stroke:none}
+#prof .ln{fill:none;stroke:var(--route);stroke-width:1.3}
 #proflbl{display:flex;justify-content:space-between;font-size:10.5px;color:var(--s-faint);margin-top:3px}
 /* --- direction --- */
 #dirrow{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0 0}#dirrow .opt{font-variant-numeric:tabular-nums}
@@ -558,9 +566,9 @@ function spark(pr,km){
  if(pr.length<2)return '';
  var W=300,H=26,mx=Math.max.apply(null,pr.map(function(p){return p[1]})),top=Math.max(100,mx);
  var pts=pr.map(function(p){return (p[0]/km*W).toFixed(1)+','+(H-2-(p[1]/top)*(H-6)).toFixed(1)}).join(' ');
- return '<svg class="spark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><polyline points="0,'+(H-2)+' '+pts+' '+W+','+(H-2)+'" fill="#f0713f" fill-opacity=".28" stroke="none"/>'+
-  '<polyline points="'+pts+'" fill="none" stroke="#f0713f" stroke-width="1.2" vector-effect="non-scaling-stroke"/>'+
-  '<text x="'+(W-2)+'" y="8" fill="var(--s-dim)" font-size="8" text-anchor="end">'+Math.round(mx)+' m</text></svg>';}
+ return '<svg class="spark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><polyline class="area" points="0,'+(H-2)+' '+pts+' '+W+','+(H-2)+'"/>'+
+  '<polyline class="ln" points="'+pts+'" vector-effect="non-scaling-stroke"/>'+
+  '<text x="'+(W-2)+'" y="8" text-anchor="end">'+Math.round(mx)+' m</text></svg>';}
 var layers={};
 function ptAt(v,k){var pts=v.line.split(" ").map(function(p){var a=p.split(",");return [+a[0],+a[1]]});
  var L=[0];for(var i=1;i<pts.length;i++)L.push(L[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
@@ -881,12 +889,12 @@ function drawProfile(PR){
  var W=300,H=56,tot=0,lo=Infinity,hi=-Infinity; PR.forEach(function(p){tot+=p.km; p.prof.forEach(function(q){lo=Math.min(lo,q[1]);hi=Math.max(hi,q[1]);});});
  document.getElementById("profwrap").style.display=(tot>0&&hi>lo)?"":"none"; if(!(tot>0&&hi>lo)) return;
  var span=Math.max(hi-lo,150); lo=Math.max(0,hi-span); var off=0, pts=[];
- PR.forEach(function(p,i){ var w=p.km/tot*W; var r=document.createElementNS(NS,"rect"); r.setAttribute("x",off);r.setAttribute("y",0);r.setAttribute("width",w);r.setAttribute("height",H);r.setAttribute("fill",i%2?"#132836":"#0f2130"); g.appendChild(r);
-  if(w>16){ var t=document.createElementNS(NS,"text"); t.setAttribute("x",off+3);t.setAttribute("y",H-4);t.setAttribute("font-size","9");t.setAttribute("fill","#6d8492");t.setAttribute("font-family","inherit");t.textContent=(i+1); g.appendChild(t); }
+ PR.forEach(function(p,i){ var w=p.km/tot*W; var r=document.createElementNS(NS,"rect"); r.setAttribute("x",off);r.setAttribute("y",0);r.setAttribute("width",w);r.setAttribute("height",H);r.setAttribute("class",i%2?"band b":"band"); g.appendChild(r);   // day bands, numbers and line are coloured by the stylesheet (--prof-*)
+  if(w>16){ var t=document.createElementNS(NS,"text"); t.setAttribute("x",off+3);t.setAttribute("y",H-4);t.setAttribute("class","num");t.textContent=(i+1); g.appendChild(t); }
   p.prof.forEach(function(q){ pts.push([off+q[0]/p.km*w, 4+(1-(q[1]-lo)/span)*(H-12)]); }); off+=w; });
  if(pts.length<2) return; var d=pts.map(function(q){return q[0].toFixed(1)+","+q[1].toFixed(1)}).join(" ");
- var f=document.createElementNS(NS,"polyline"); f.setAttribute("points","0,"+H+" "+d+" "+W+","+H); f.setAttribute("fill","#f0713f"); f.setAttribute("fill-opacity",".2"); f.setAttribute("stroke","none"); g.appendChild(f);
- var l=document.createElementNS(NS,"polyline"); l.setAttribute("points",d); l.setAttribute("fill","none"); l.setAttribute("stroke","#f0713f"); l.setAttribute("stroke-width","1.3"); l.setAttribute("vector-effect","non-scaling-stroke"); g.appendChild(l);
+ var f=document.createElementNS(NS,"polyline"); f.setAttribute("points","0,"+H+" "+d+" "+W+","+H); f.setAttribute("class","area"); g.appendChild(f);
+ var l=document.createElementNS(NS,"polyline"); l.setAttribute("points",d); l.setAttribute("class","ln"); l.setAttribute("vector-effect","non-scaling-stroke"); g.appendChild(l);
  document.getElementById("profhi").textContent="▲ "+Math.round(hi).toLocaleString()+" m"; document.getElementById("proflo").textContent="▼ "+Math.round(lo).toLocaleString()+" m"; }
 /* folds and the ... menu */
 document.querySelectorAll(".fold").forEach(function(f){ var id=f.id; try{ var v=localStorage.getItem("fold:"+id); if(v==="0")f.classList.add("closed"); if(v==="1")f.classList.remove("closed"); }catch(e){}

@@ -127,8 +127,11 @@ its size is roughly 8 MB per 100 segments with facilities, double that with mope
 - **Colours.** Every colour on the page is named in the `:root` block at the top of `planner/template.html` — about 70
   variables, grouped as surfaces, borders, text, accents, the map and the trip picker's map. The stylesheet reads them with
   `var(--x)`; the script, which paints the map by setting `fill` and `stroke` straight onto SVG shapes where no stylesheet rule
-  can reach, reads the same names through `C("route")`. Nothing below `:root` contains a hex code, so a different look is a
-  different block of values and nothing else. Names describe the role, not the shade (`--card-hi`, `--mute2`, `--maplbl-day`),
+  can reach, reads the same names through `C("route")`. **This is no longer quite true**: `C()` and `recolour()` are not in the
+  template, and a few hex codes sit below `:root` — the card thumbnails in `tripThumb` and the map pop-up. The whole-trip
+  elevation profile and the per-day sparklines were among them and are not any more: the stylesheet paints them through classes
+  (`#prof .band/.num/.area/.ln`, `.spark .area/.ln`) on `--prof-band`, `--prof-band2`, `--prof-num`, `--prof-fill` and `--route`,
+  so they follow the sidebar's palette. Check before assuming a palette swap reaches everything. Names describe the role, not the shade (`--card-hi`, `--mute2`, `--maplbl-day`),
   and the same shade used for two jobs has two names, because the two jobs part company in another palette. After swapping a
   palette at runtime call `recolour()` (it drops the script's cached values) and then `render()`.
   `tools/preview.js <page.html> <palette.css> <out.png> [tripId] [zoom]` does exactly that against a built page, so a palette can
