@@ -8,17 +8,13 @@ them for Google Maps links and GPX.
 ```
 nodes:    [{id, name, type: terminus|handle|gateway|fork|ncr, x, y, rank, entry: 0|1, requires?: [variant]}]
 segments: [{id, frm, to, variant, mode: ride|ferry, km, ascent, descent, effort, effortR, note,
-            line: "x,y x,y …", cand: [{km, eff, effR, beds, node|null, label, x, y}]}]
+            line: "x,y x,y …" (≈1 point per km), cand: [{km, eff, effR, beds, node|null, label, x, y}]}]
 forks:    [{node, options: [variant, …]}]   first option = default
 coast:    ["x,y x,y …", …]                  faint background outline
 ```
 - `rank` orders nodes along the journey (start = 0); alternative-trunk nodes get interpolated ranks and
   `requires` = the variant that must be picked to reach them.
 - Segment `id` = `frm--to` for the base variant, `frm--to#variant` otherwise.
-- `line` is the routed line simplified with Douglas-Peucker to 15 m (`common.LINE_TOL_M`) and rounded to as
-  many decimals as it takes for one step to be 8 m or less on the ground (`LINE_STEP_M`; 3 decimals on a
-  country-wide map, 2 on a city one). It follows the road: expect 3–6 points per km, more through a town.
-  Legs built before this are redrawn from the routing cache by `tools/densify.py`.
 - `effort` = km + climb/10 (bicycle); `effortR` the same ridden in reverse. The page recomputes both for
   the e-bike (climb/30) and the moped (km only).
 - `cand` = the points a day may end at: every 8 km, every town, every bed cluster (≥ 3 beds within 3 km),

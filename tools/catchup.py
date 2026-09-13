@@ -4,9 +4,7 @@ For each config given: (1) download the OSM extracts named in `osm.extracts` if 
 when `graph.water` is set, (3) refresh the graph — `01_graph` for a country whose data is in work/ or examples/, else
 `tools/retemplate.py`, which lifts the data from the published page and adds the water — (4) rebuild and publish, (5)
 re-measure the trips file when the country has one. Then commit and push docs/ config/ examples/.
-usage: python3 tools/catchup.py config/japan.json config/spain.json [--no-download] [--skip-water] [--densify [--fetch]]
---densify also redraws the page lines from the routing caches (tools/densify.py); --fetch lets it route legs that have no
-cached line. Both are safe to repeat: a line already at full shape is simply redrawn the same."""
+usage: python3 tools/catchup.py config/japan.json config/spain.json [--no-download] [--skip-water]"""
 import json, os, shutil, subprocess, sys, urllib.request
 here = os.path.dirname(os.path.abspath(__file__)); root = os.path.abspath(os.path.join(here, '..')); os.chdir(root)
 PY = sys.executable
@@ -36,13 +34,9 @@ for cp in cfgs:
             for fn in os.listdir(ex):
                 if fn.endswith('.json'): shutil.copy(os.path.join(ex, fn), W)
         run('pipeline/01_graph.py', cp)
-        if '--densify' in sys.argv: run('tools/densify.py', cp, *(['--fetch'] if '--fetch' in sys.argv else []))
-        if os.path.isdir(ex):
-            for fn in ('P.json', 'moped_segments.json', 'signed_segments.json', 'signed_cache.json'):
-                if os.path.exists(os.path.join(W, fn)): shutil.copy(os.path.join(W, fn), ex)
+        if os.path.isdir(ex): shutil.copy(os.path.join(W, 'P.json'), ex)
         run('pipeline/build_planner.py', cp); run('pipeline/publish.py', cp)
     else:
-        if '--densify' in sys.argv: run('tools/densify.py', cp, '--page', *(['--fetch'] if '--fetch' in sys.argv else []))
         run('tools/retemplate.py', cp); run('pipeline/publish.py', cp, '--hub-only')
     t = cfg.get('trips')
     if isinstance(t, str):

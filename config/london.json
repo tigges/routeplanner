@@ -157,6 +157,56 @@
    "name": "Carshalton",
    "lat": 51.366,
    "lon": -0.167
+  },
+  "osterley": {
+   "name": "Osterley Park",
+   "lat": 51.4772,
+   "lon": -0.3556
+  },
+  "syon": {
+   "name": "Syon Park",
+   "lat": 51.4788,
+   "lon": -0.3211
+  },
+  "brentford": {
+   "name": "Brentford",
+   "lat": 51.487,
+   "lon": -0.306
+  },
+  "chiswick": {
+   "name": "Strand-on-the-Green",
+   "lat": 51.4898,
+   "lon": -0.268
+  },
+  "hanwell": {
+   "name": "Hanwell",
+   "lat": 51.5117,
+   "lon": -0.3385
+  },
+  "northala": {
+   "name": "Northala Fields",
+   "lat": 51.5478,
+   "lon": -0.3778
+  },
+  "horsendon": {
+   "name": "Horsenden Hill",
+   "lat": 51.5568,
+   "lon": -0.3239
+  },
+  "perivale": {
+   "name": "Perivale",
+   "lat": 51.531,
+   "lon": -0.3079
+  },
+  "uxbridge": {
+   "name": "Uxbridge",
+   "lat": 51.5462,
+   "lon": -0.4781
+  },
+  "harrowhill": {
+   "name": "Harrow-on-the-Hill",
+   "lat": 51.5793,
+   "lon": -0.336
   }
  },
  "trunks": [
@@ -193,8 +243,8 @@
    "variant": "canal",
    "nodes": [
     "ealing",
-    "rickmansworth",
-    "windsor"
+    "uxbridge",
+    "rickmansworth"
    ]
   },
   {
@@ -267,6 +317,40 @@
     "putney",
     "carshalton"
    ]
+  },
+  {
+   "variant": "osterley",
+   "nodes": [
+    "ealing",
+    "osterley",
+    "syon",
+    "brentford"
+   ]
+  },
+  {
+   "variant": "chiswick",
+   "nodes": [
+    "kew",
+    "chiswick"
+   ]
+  },
+  {
+   "variant": "hills",
+   "nodes": [
+    "ealing",
+    "hanwell",
+    "northala",
+    "horsendon",
+    "perivale"
+   ]
+  },
+  {
+   "variant": "harrowvia",
+   "nodes": [
+    "northala",
+    "harrowhill",
+    "horsendon"
+   ]
   }
  ],
  "ferries": [],
@@ -280,7 +364,8 @@
   "stratford": "At Stratford",
   "westminster": "From Westminster",
   "greenwich": "From Greenwich",
-  "putney": "At Putney"
+  "putney": "At Putney",
+  "northala": "At Northala Fields"
  },
  "optionNames": {
   "park": "Through Richmond Park",
@@ -294,7 +379,11 @@
   "epping": "Epping Forest",
   "brighton": "London to Brighton",
   "waterlink": "Waterlink Way to Crystal Palace",
-  "wandle": "Wandle Trail to Carshalton"
+  "wandle": "Wandle Trail to Carshalton",
+  "osterley": "Osterley Park, Syon Park and Brentford",
+  "chiswick": "To Strand-on-the-Green",
+  "hills": "Northala Fields, Horsenden Hill and Perivale",
+  "harrowvia": "Via Harrow-on-the-Hill"
  },
  "defaultOptionNames": {
   "ealing": "Thames: Kew, Richmond, Hampton Court",
@@ -306,7 +395,8 @@
   "stratford": "Lee Valley north",
   "westminster": "Thames path east",
   "greenwich": "End at Greenwich",
-  "putney": "Thames path east"
+  "putney": "Thames path east",
+  "northala": "Straight to Horsenden Hill"
  },
  "presets": [
   {

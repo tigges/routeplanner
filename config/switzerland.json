@@ -1284,18 +1284,5 @@
   ]
  },
  "by": "CT",
- "pickerDefault": "top",
- "basemap": {
-  "sources": {
-   "national": {
-    "name": "swisstopo",
-    "url": "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg",
-    "s": "",
-    "min": 7,
-    "max": 18,
-    "attr": "© swisstopo",
-    "light": 1
-   }
-  }
- }
+ "pickerDefault": "top"
 }

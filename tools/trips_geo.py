@@ -13,16 +13,11 @@ JS = r"""(t) => {
   var km=0,asc=0,eff=0,pts=[];
   ch.forEach(function(v){ if(v.mode!=='ride'){return;} km+=v.km; asc+=v.ascent; eff+=v.effort;
     var p=v.line.split(' ').map(function(q){var a=q.split(','); return [+a[0],+a[1]];}); if(v.rev) p.reverse(); pts=pts.concat(p); });
-  // simplify (Douglas-Peucker) in page units; 0.6 unit ~ 1 km on the Swiss pages.
-  // Iterative, on indices: the lines are tens of thousands of points and a recursive one runs out of stack.
-  function dp(a,tol){ var n=a.length; if(n<3) return a; var keep=new Array(n), st=[[0,n-1]];
-    keep[0]=keep[n-1]=true;
-    while(st.length){ var s=st.pop(), i=s[0], j=s[1]; if(j<=i+1) continue;
-      var A=a[i],B=a[j],dx=B[0]-A[0],dy=B[1]-A[1],L2=dx*dx+dy*dy,dmax=-1,idx=-1;
-      for(var k=i+1;k<j;k++){ var x=a[k][0],y=a[k][1],t=L2?((x-A[0])*dx+(y-A[1])*dy)/L2:0; t=t<0?0:(t>1?1:t);
-        var d=Math.hypot(x-(A[0]+t*dx),y-(A[1]+t*dy)); if(d>dmax){dmax=d;idx=k;} }
-      if(dmax>tol){ keep[idx]=true; st.push([i,idx]); st.push([idx,j]); } }
-    var out=[]; for(var m=0;m<n;m++) if(keep[m]) out.push(a[m]); return out; }
+  // simplify (Douglas-Peucker) in page units; 0.6 unit ~ 1 km on the Swiss pages
+  function dp(a,tol){ if(a.length<3) return a; var dmax=0,idx=0,A=a[0],B=a[a.length-1];
+    for(var i=1;i<a.length-1;i++){ var x=a[i][0],y=a[i][1],dx=B[0]-A[0],dy=B[1]-A[1],L2=dx*dx+dy*dy,t=L2?((x-A[0])*dx+(y-A[1])*dy)/L2:0; t=Math.max(0,Math.min(1,t));
+      var d=Math.hypot(x-(A[0]+t*dx),y-(A[1]+t*dy)); if(d>dmax){dmax=d;idx=i;} }
+    if(dmax>tol){ var l=dp(a.slice(0,idx+1),tol), r=dp(a.slice(idx),tol); return l.slice(0,-1).concat(r); } return [A,B]; }
   var tol=km/1000; // ~ 1 unit per 1000 km of route -> keeps a few hundred points
   var sp=dp(pts,tol);
   return {km:Math.round(km), asc:Math.round(asc), eff:Math.round(eff), n:ch.length, line:sp.map(function(p){var ll=toLL(p[0],p[1]); return [+ll[0].toFixed(4),+ll[1].toFixed(4)];})};
@@ -40,14 +35,10 @@ with sync_playwright() as pw:
     for slug, pg in pages.items():          # every built leg of the page, simplified, so other pages can draw it as a ghost network
         T['networks'][slug] = pg.evaluate(r"""() => P.segments.filter(function(s){return s.line}).map(function(s){
           var pts=s.line.split(' ').map(function(q){var a=q.split(',');return [+a[0],+a[1]];});
-          function dp(a,tol){ var n=a.length; if(n<3) return a; var keep=new Array(n), st=[[0,n-1]];
-            keep[0]=keep[n-1]=true;
-            while(st.length){ var s=st.pop(), i=s[0], j=s[1]; if(j<=i+1) continue;
-              var A=a[i],B=a[j],dx=B[0]-A[0],dy=B[1]-A[1],L2=dx*dx+dy*dy,dmax=-1,idx=-1;
-              for(var k=i+1;k<j;k++){ var x=a[k][0],y=a[k][1],t=L2?((x-A[0])*dx+(y-A[1])*dy)/L2:0; t=t<0?0:(t>1?1:t);
-                var d=Math.hypot(x-(A[0]+t*dx),y-(A[1]+t*dy)); if(d>dmax){dmax=d;idx=k;} }
-              if(dmax>tol){ keep[idx]=true; st.push([i,idx]); st.push([idx,j]); } }
-            var out=[]; for(var m=0;m<n;m++) if(keep[m]) out.push(a[m]); return out; }
+          function dp(a,tol){ if(a.length<3) return a; var dmax=0,idx=0,A=a[0],B=a[a.length-1];
+            for(var i=1;i<a.length-1;i++){ var x=a[i][0],y=a[i][1],dx=B[0]-A[0],dy=B[1]-A[1],L2=dx*dx+dy*dy,t=L2?((x-A[0])*dx+(y-A[1])*dy)/L2:0; t=Math.max(0,Math.min(1,t));
+              var d=Math.hypot(x-(A[0]+t*dx),y-(A[1]+t*dy)); if(d>dmax){dmax=d;idx=i;} }
+            if(dmax>tol){ var l=dp(a.slice(0,idx+1),tol), r=dp(a.slice(idx),tol); return l.slice(0,-1).concat(r); } return [A,B]; }
           return dp(pts,0.6).map(function(p){var ll=toLL(p[0],p[1]); return [+ll[0].toFixed(3),+ll[1].toFixed(3)];}); })""")
         print('network %-24s %3d legs' % (slug, len(T['networks'][slug])))
     b.close()

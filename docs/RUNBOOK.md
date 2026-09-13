@@ -92,35 +92,7 @@ its size is roughly 8 MB per 100 segments with facilities, double that with mope
   template change: `python3 tools/retemplate.py config/<country>.json` for each.
 - `vehicles.moped.dropFacilities`: categories left out of the moped data at build time (default eat, wc; they fall back to the bicycle list). Saves ~3 MB on Japan.
 - Steps 02, 03 and 11 take `--extract <file>` to scan one OSM extract per run (time-limited sessions).
-- `tools/densify.py config/<country>.json` redraws the page lines from the routing caches so they follow the road instead of
-  cutting the corner every kilometre. It touches only each segment's `line` (and the day-end dots' positions on it) — km, climb,
-  effort, facilities, scores, beds and day-end names are left alone, so no OSM scan is needed. A cached line is used only when it
-  is still the same road (length within 5%, the typical point at rounding distance, anything further off confined to the first or
-  last fifth of the leg); legs that fail keep the coarse line and are listed with the reason. `--fetch` routes the legs that have
-  no cached line (~2 s each) and applies the same tests; a line it then rejects is dropped from the cache again, because 01_graph
-  cuts the OSM corridor along the cached line. Run it on `work/<slug>/` after 01_graph and before `build_planner`, then copy
-  `P.json` (and `moped_segments.json`, `signed_segments.json`) back into `examples/<slug>/`. For a country with no work data in the
-  repository (Spain, Switzerland north–south) `--page` lifts the graph out of the published page and writes the redrawn lines
-  straight back into it; re-render with `tools/retemplate.py` afterwards. Cost: Japan's page grew 14.3 → 15.1 MB, Britain's
-  0.37 → 0.56 MB; load time unchanged.
-- **Colours.** Every colour on the page is named in the `:root` block at the top of `planner/template.html` — about 70
-  variables, grouped as surfaces, borders, text, accents, the map and the trip picker's map. The stylesheet reads them with
-  `var(--x)`; the script, which paints the map by setting `fill` and `stroke` straight onto SVG shapes where no stylesheet rule
-  can reach, reads the same names through `C("route")`. Nothing below `:root` contains a hex code, so a different look is a
-  different block of values and nothing else. Names describe the role, not the shade (`--card-hi`, `--mute2`, `--maplbl-day`),
-  and the same shade used for two jobs has two names, because the two jobs part company in another palette. After swapping a
-  palette at runtime call `recolour()` (it drops the script's cached values) and then `render()`.
-  `tools/preview.js <page.html> <palette.css> <out.png> [tripId] [zoom]` does exactly that against a built page, so a palette can
-  be seen before anything is committed.
-- `tools/pixcheck.js <page.html> <out-dir> [tripId]` screenshots a page in ten states (picker, a loaded trip, zoomed, facility
-  layers, the moped, friendliness colours, a selected leg, light and no map, folds closed) with real tiles. Run it on two builds
-  and compare the images to prove a change alters nothing it should not. Compare with Pillow, not by eye — and when images differ,
-  re-run the reference against itself first: a tile that has not arrived yet shows up as tens of thousands of changed pixels.
-- `tools/ridecheck.js <a.html> <b.html> [tripsFile] [slug]` opens two builds of a page headless and prints every trip's km, climb,
-  effort and leg count side by side, with console errors and page weight — the test ride to run before handing over any change
-  that should not move the numbers. `tools/shot.js <page.html> <prefix> [tripId] [zoom]` screenshots a page with real map tiles
-  (the sandbox proxy blocks the browser from the tile hosts but not curl, so each tile request is fulfilled from a curl).
-- `tools/catchup.py config/<a>.json config/<b>.json` brings a country's page up to the current template and data layers in one go: downloads missing extracts (`osm.urls`, or `osm.mirror` paths on download.openstreetmap.fr), runs step 12, refreshes the graph (01 where the data is in work/ or examples/, else retemplate, which now injects the water into the lifted P), rebuilds, publishes, re-measures trips. `--densify` adds the line redraw above (with `--fetch` to route what is not cached), on whichever of the two paths the country takes. Needs `pip install osmium shapely numpy scipy playwright` once. Then `git add docs config examples`, commit, push.
+- `tools/catchup.py config/<a>.json config/<b>.json` brings a country's page up to the current template and data layers in one go: downloads missing extracts (`osm.urls`, or `osm.mirror` paths on download.openstreetmap.fr), runs step 12, refreshes the graph (01 where the data is in work/ or examples/, else retemplate, which now injects the water into the lifted P), rebuilds, publishes, re-measures trips. Needs `pip install osmium shapely numpy scipy playwright` once. Then `git add docs config examples`, commit, push.
 - `graph.land_fill: true` paints the country in a land tone (only for a closed border like Switzerland or Spain; Japan's coast comes in pieces and stays a line).
 - Background jobs in the Claude sandbox are killed when a tool call ends unless started with `setsid nohup … &`.
 
@@ -141,12 +113,5 @@ segments are scanned. Never edit `work/` files by hand — they are rebuilt.
 - BRouter's moped profile is shorter but sometimes busier; keep the bicycle line where mopeds may push
   (tunnels), and sanity-check any moped leg more than 3× the bicycle length (step 9 does).
 - Nominatim: one request per second, a real User-Agent, cache everything.
-- Anything that decides "is there room to draw this" belongs on pixels, not on map units. Town labels and the
-  road-station/sight layer were gated on `vb[2]` alone, so a wide monitor — more pixels, more room — showed
-  *fewer* labels than a laptop, and the hint's "~60 km" was only true at one window shape. `detailLimit(base)`
-  scales the threshold with the map pane's width and never goes below `base`, so a wide pane gains and a narrow
-  one or a phone keeps what it had.
-- Clicking a day must never widen the view: on a one-day trip the day is the whole route, so re-framing it only
-  added margin and switched the sights off. `zoomDay` now pads like the trip fit and clamps to the current width.
 - Overpass is not reachable from the sandbox. Geofabrik IS reachable (curl -L follows to the dated file);
   a session can download the country extracts straight into downloads/ (all Japan regions ~2.4 GB in a few minutes).
