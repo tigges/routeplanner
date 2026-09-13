@@ -247,6 +247,84 @@
    "lat": 35.2327,
    "lon": 139.7011,
    "type": "gateway"
+  },
+  "obihiro": {
+   "name": "Obihiro",
+   "lat": 42.9181,
+   "lon": 143.202,
+   "type": "gateway"
+  },
+  "kamishihoro": {
+   "name": "Kamishihoro",
+   "lat": 43.2327,
+   "lon": 143.2959,
+   "type": "gateway"
+  },
+  "ashoro": {
+   "name": "Ashoro",
+   "lat": 43.2451,
+   "lon": 143.5467,
+   "type": "gateway"
+  },
+  "ikeda": {
+   "name": "Ikeda",
+   "lat": 42.9215,
+   "lon": 143.4532,
+   "type": "gateway"
+  },
+  "hiroo": {
+   "name": "Hiroo",
+   "lat": 42.2855,
+   "lon": 143.3116,
+   "type": "gateway"
+  },
+  "urahoro": {
+   "name": "Urahoro",
+   "lat": 42.8108,
+   "lon": 143.6515,
+   "type": "gateway"
+  },
+  "kitami": {
+   "name": "Kitami",
+   "lat": 43.8049,
+   "lon": 143.8973,
+   "type": "gateway"
+  },
+  "abashiri": {
+   "name": "Abashiri",
+   "lat": 44.0199,
+   "lon": 144.2541,
+   "type": "gateway"
+  },
+  "monbetsu": {
+   "name": "Monbetsu",
+   "lat": 44.3565,
+   "lon": 143.3545,
+   "type": "gateway"
+  },
+  "iwamizawa": {
+   "name": "Iwamizawa",
+   "lat": 43.2042,
+   "lon": 141.7595,
+   "type": "gateway"
+  },
+  "furano": {
+   "name": "Furano",
+   "lat": 43.344,
+   "lon": 142.388,
+   "type": "gateway"
+  },
+  "shintoku": {
+   "name": "Shintoku",
+   "lat": 43.082,
+   "lon": 142.8325,
+   "type": "gateway"
+  },
+  "ashibetsu": {
+   "name": "Ashibetsu",
+   "lat": 43.5165,
+   "lon": 142.1844,
+   "type": "gateway"
   }
  },
  "trunks": [
@@ -277,15 +355,6 @@
    "nodes": [
     "tsuruga",
     "makino",
-    "otsu"
-   ]
-  },
-  {
-   "variant": "east",
-   "nodes": [
-    "makino",
-    "nagahama",
-    "hikone",
     "otsu"
    ]
   },
@@ -455,6 +524,64 @@
      ]
     ]
    }
+  },
+  {
+   "variant": "hokkaido-east",
+   "nodes": [
+    "sapporo",
+    "iwamizawa",
+    "ashibetsu",
+    "furano",
+    "shintoku",
+    "obihiro"
+   ],
+   "spur": true
+  },
+  {
+   "variant": "tokachi-north",
+   "nodes": [
+    "obihiro",
+    "kamishihoro",
+    "ashoro",
+    "ikeda"
+   ]
+  },
+  {
+   "variant": "tokachi-south",
+   "nodes": [
+    "obihiro",
+    "hiroo",
+    "urahoro",
+    "ikeda"
+   ]
+  },
+  {
+   "variant": "okhotsk",
+   "nodes": [
+    "ashoro",
+    "kitami",
+    "abashiri",
+    "monbetsu"
+   ]
+  },
+  {
+   "variant": "uwakai",
+   "nodes": [
+    "yawatahama",
+    "uwajima"
+   ],
+   "via": {
+    "yawatahama--uwajima": [
+     [
+      33.4125,
+      132.413
+     ],
+     [
+      33.2733,
+      132.5443
+     ]
+    ]
+   }
   }
  ],
  "forks": {
@@ -502,6 +629,18 @@
   "mito": [
    "pacific",
    "boso"
+  ],
+  "obihiro": [
+   "tokachi-north",
+   "tokachi-south"
+  ],
+  "ashoro": [
+   "tokachi-north",
+   "okhotsk"
+  ],
+  "yawatahama": [
+   "shikoku",
+   "uwakai"
   ]
  },
  "viaBase": {
@@ -529,7 +668,13 @@
    "okayama--fukuyama",
    "noshiro--akita",
    "mito--tsukuba#pacific",
-   "akita--nikaho"
+   "akita--nikaho",
+   "itako--tokyo#rinrin",
+   "kofu--motosuko#highland",
+   "mito--choshi#boso",
+   "shintoku--obihiro#hokkaido-east",
+   "kamishihoro--ashoro#tokachi-north",
+   "urahoro--ikeda#tokachi-south"
   ]
  },
  "ferries": [
@@ -573,7 +718,10 @@
   "beppu": "Beppu to Nobeoka",
   "iwaya": "Round Awaji",
   "kyoto": "Kyoto onward",
-  "mito": "Mito to Kamakura"
+  "mito": "Mito to Kamakura",
+  "obihiro": "Round Tokachi",
+  "ashoro": "At Ashoro",
+  "yawatahama": "At Yawatahama"
  },
  "optionNames": {
   "base": "Yotei line",
@@ -604,7 +752,11 @@
   "aso": "Yamanami Highway: Yufuin, Kujū, Aso, Takachiho",
   "awaji-west": "West coast: Goshiki",
   "keinawa": "Via Nara and the Kii valley to Wakayama",
-  "boso": "Chōshi and the Bōsō coast, Tokyo Bay ferry"
+  "boso": "Chōshi and the Bōsō coast, Tokyo Bay ferry",
+  "tokachi-south": "South: Hiroo and the Pacific coast",
+  "okhotsk": "North to Kitami and the Okhotsk coast",
+  "hokkaido-east": "East to Furano, the Karikachi pass and Tokachi",
+  "uwakai": "Uwakai coast to Uwajima (Route 378)"
  },
  "defaultOptionNames": {
   "aomori": "Sea of Japan",
@@ -629,7 +781,10 @@
   "beppu": "Coast via Usuki",
   "iwaya": "East coast: Sumoto and the southern cliffs",
   "kyoto": "Osaka",
-  "mito": "Inland via Tsukuba and Tokyo"
+  "mito": "Inland via Tsukuba and Tokyo",
+  "obihiro": "North: Kamishihoro and Ashoro",
+  "ashoro": "On round Tokachi to Ikeda",
+  "yawatahama": "Ferry to Usuki"
  },
  "skippable": [],
  "neverSkip": [],

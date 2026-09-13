@@ -291,7 +291,7 @@ function walk(a,b,rev){
  var seen={}, out=[];
  function on(o){ var v=o.variant, st=VFORK[v]; return v!=="base"&&(!st||pick[st]===v)&&(!FORK[o.frm]||pick[o.frm]===v); }
  function order(cur,last){ var opts=(rev?IN[cur]:OUT[cur])||[], sc=function(o){ var v=o.variant;
-   return (!rev&&FORK[cur]&&v===pick[cur])?0:(last&&v===last)?1:(rev?on(o):v===pick[o.frm])?2:(v==="base")?3:(opts.length===1)?4:5; };
+   return (!rev&&FORK[cur]&&v===pick[cur])?0:(last&&v===last)?1:(rev?on(o):v===pick[o.frm])?2:(v==="base")?3:(opts.length===1||cur===a)?4:5; };   // at the journey's own start town any road out may be taken (a spur that only starts there)
   return opts.slice().sort(function(x,y){return sc(x)-sc(y);}).filter(function(o){return sc(o)<5;}); }
  function go(cur,last,depth){ if(cur===b) return true; if(seen[cur]||depth>400) return false; seen[cur]=1;
   var opts=order(cur,last);
