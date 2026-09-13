@@ -141,5 +141,12 @@ segments are scanned. Never edit `work/` files by hand — they are rebuilt.
 - BRouter's moped profile is shorter but sometimes busier; keep the bicycle line where mopeds may push
   (tunnels), and sanity-check any moped leg more than 3× the bicycle length (step 9 does).
 - Nominatim: one request per second, a real User-Agent, cache everything.
+- Anything that decides "is there room to draw this" belongs on pixels, not on map units. Town labels and the
+  road-station/sight layer were gated on `vb[2]` alone, so a wide monitor — more pixels, more room — showed
+  *fewer* labels than a laptop, and the hint's "~60 km" was only true at one window shape. `detailLimit(base)`
+  scales the threshold with the map pane's width and never goes below `base`, so a wide pane gains and a narrow
+  one or a phone keeps what it had.
+- Clicking a day must never widen the view: on a one-day trip the day is the whole route, so re-framing it only
+  added margin and switched the sights off. `zoomDay` now pads like the trip fit and clamps to the current width.
 - Overpass is not reachable from the sandbox. Geofabrik IS reachable (curl -L follows to the dated file);
   a session can download the country extracts straight into downloads/ (all Japan regions ~2.4 GB in a few minutes).

@@ -472,9 +472,16 @@ function showPop(x,y,en,ja,sub,place){
  pop.style.left=left+"px"; pop.style.top=top+"px";}
 function hidePop(){ pop.style.display="none"; }
 function pxPerUnit(){var r=svg.getBoundingClientRect();return r.width/vb[2];}
+// How wide a view may be and still get labels. The two thresholds below decide when there is room for
+// them, and room is measured in pixels: a map pane wider than the LABEL_REF_PX these numbers were judged
+// at can hold more labels, so it is allowed more ground. Comparing vb[2] with a fixed number did the
+// opposite — the same trip lost its sights on a wide monitor and kept them on a narrow one. A pane that
+// is narrower (a laptop, a phone) keeps the old threshold rather than losing labels it used to show.
+var LABEL_REF_PX=1170;
+function detailLimit(base){var r=svg.getBoundingClientRect();return r.width?Math.max(base,base*r.width/LABEL_REF_PX):base;}
 function drawLabels(){
  while(gT.firstChild)gT.removeChild(gT.firstChild);
- var ppu=pxPerUnit(); if(vb[2]>170) return;            // only when zoomed in (view narrower than ~300 km)
+ var ppu=pxPerUnit(); if(vb[2]>detailLimit(170)) return;  // only when zoomed in (view narrower than ~300 km)
  var fs=12/ppu, placed=[];
  LABELS.forEach(function(l){
   // simple declutter: skip if another label sits within ~14 px
@@ -484,7 +491,7 @@ function drawLabels(){
   var LM=bmLight(); t.setAttribute("font-size",fs); t.setAttribute("fill",LM?(l.kind==="day"?C("maplbl-day-light"):C("maplbl-light")):(l.kind==="day"?C("maplbl-day"):C("maplbl"))); t.setAttribute("font-weight",l.kind==="day"?"600":"400");
   t.setAttribute("stroke",LM?C("casing"):C("halo")); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit");
   t.textContent=l.name; gT.appendChild(t);});
- if(vb[2]>34) return;                                    // ~60 km across: add road stations and sights
+ if(vb[2]>detailLimit(34)) return;                        // ~60 km across: add road stations and sights
  POIS=[]; var pois=[], x0=vb[0]-2,x1=vb[0]+vb[2]+2,y0=vb[1]-2,y1=vb[1]+vb[3]+2;
  CH.forEach(function(v){ if(v.mode!=="ride")return; var sd=SD[v.id],sc=SC[v.id];
   if(sd&&sd.fac.mne) sd.fac.mne.forEach(function(f){var p=ptAt(SEG[v.id],f[0]); if(p[0]>x0&&p[0]<x1&&p[1]>y0&&p[1]<y1) pois.push({x:p[0],y:p[1],name:"🅿 "+nm(f,2),en:f[2],ja:f[3]||null,kind:"mne",pri:0,sub:"road station (michi-no-eki)"});});
@@ -742,7 +749,9 @@ function zoomDay(d,el){
  p.setAttribute("fill","none"); p.setAttribute("stroke",C("shop")); p.setAttribute("stroke-linecap","round"); p.setAttribute("stroke-linejoin","round"); gH.appendChild(p);
  var xs=pts.map(function(q){return q[0]}),ys=pts.map(function(q){return q[1]});
  var x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y0=Math.min.apply(null,ys),y1=Math.max.apply(null,ys);
- var r=svg.getBoundingClientRect(),asp=r.width/r.height, w=Math.max(x1-x0,(y1-y0)*asp,6)*1.5, h=w/asp;
+ var r=svg.getBoundingClientRect(),asp=r.width/r.height, w=Math.max(x1-x0,(y1-y0)*asp,6)*1.25, h;
+ if(w>vb[2]) w=vb[2];     // clicking a day never widens the view: on a one-day trip the day is the whole route,
+ h=w/asp;                 // so framing it afresh would only add empty margin and switch the sights and road stations off
  var cx=(x0+x1)/2,cy=(y0+y1)/2; setVB([cx-w/2,cy-h/2,w,h]);}
 document.getElementById("fit").addEventListener("click",function(){zoomDay(null);});
 (function(){var ft=document.getElementById("friendtog");if(!ft)return;ft.classList.toggle("on",FRIEND);
