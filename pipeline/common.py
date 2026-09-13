@@ -100,10 +100,14 @@ def make_segment(P, sid, a, b, variant, r, climb_div=10.0):
     effort = int(round(r['km'] + asc / climb_div)); effortR = int(round(r['km'] + desc / climb_div))
     xy = [pj.xy(p[0], p[1]) for p in decimate(line, 1.0)]
     def eff_at(kk): return kk + sum(max(0, q - p) for (ka, p), (kb, q) in zip(prof, prof[1:]) if kb <= kk) / climb_div * (asc / gain)
+    # effR is the effort of riding the leg the other way as far as this point: the rider coming from b climbs
+    # what the forward profile drops. "effort - eff" would be the forward climb still to come, which is the
+    # wrong hill and adds up to the wrong total, so a leg walked backwards got its days in the wrong places.
+    def effR_at(kk): return (r['km'] - kk) + sum(max(0, p - q) for (ka, p), (kb, q) in zip(prof, prof[1:]) if ka >= kk) / climb_div * (asc / gain)
     cand = []; kk = 0.0
     while kk < r['km'] - 4 or kk == 0.0:
         idx = min(range(len(cum)), key=lambda q: abs(cum[q] - kk)); px, py = pj.xy(line[idx][0], line[idx][1]); e = eff_at(kk)
-        cand.append(dict(km=round(kk, 1), eff=round(e, 1), effR=round(effort - e, 1), beds=1, node=None, label='', x=round(px, 1), y=round(py, 1)))
+        cand.append(dict(km=round(kk, 1), eff=round(e, 1), effR=round(effR_at(kk), 1), beds=1, node=None, label='', x=round(px, 1), y=round(py, 1)))
         kk += 8.0
     cand.append(dict(km=r['km'], eff=float(effort), effR=0.0, beds=0, node=b, label='', x=round(xy[-1][0], 1), y=round(xy[-1][1], 1)))
     seg = dict(id=sid, frm=a, to=b, variant=variant, mode='ride', km=r['km'], ascent=asc, note='', effort=effort, descent=desc,

@@ -337,6 +337,11 @@
    "lat": 47.4778,
    "lon": 9.4945
   },
+  "stmargrethen": {
+   "name": "St. Margrethen",
+   "lat": 47.4525,
+   "lon": 9.639
+  },
   "romanshorn": {
    "name": "Romanshorn",
    "lat": 47.5654,
@@ -670,9 +675,17 @@
    "variant": "bodensee",
    "nodes": [
     "altstaetten",
+    "stmargrethen",
     "rorschach",
     "romanshorn",
     "kreuzlingen"
+   ]
+  },
+  {
+   "variant": "seen-ost",
+   "nodes": [
+    "rorschach",
+    "stgallen"
    ]
   },
   {
@@ -685,12 +698,12 @@
   {
    "variant": "panorama-east",
    "nodes": [
-    "rorschach",
+    "stmargrethen",
     "appenzell",
     "wattwil"
    ],
    "via": {
-    "rorschach--appenzell": [
+    "stmargrethen--appenzell": [
      [
       47.443,
       9.53
@@ -1134,6 +1147,7 @@
   "altstaetten": "At Altstätten",
   "romanshorn": "At Romanshorn",
   "rorschach": "At Rorschach",
+  "stmargrethen": "At St. Margrethen",
   "wattwil": "At Wattwil",
   "spiez": "At Spiez",
   "fluelen": "At Flüelen",
@@ -1163,6 +1177,7 @@
   "lakes": "Pre-Alps: Interlaken, Gstaad, Montreux",
   "bodensee": "Rhine to Lake Constance",
   "thurgau": "Thurgau to Wil",
+  "seen-ost": "Goldach and St. Gallen",
   "panorama-east": "Appenzell hills to Wattwil",
   "ricken": "Ricken to Glarus",
   "aare-bern": "Thun and Bern",
@@ -1195,6 +1210,7 @@
   "altstaetten": "St. Gallen",
   "romanshorn": "Lake Constance to Kreuzlingen",
   "rorschach": "Romanshorn",
+  "stmargrethen": "Rhine to Rorschach",
   "wattwil": "Rapperswil",
   "spiez": "Simmental to Gstaad",
   "fluelen": "Reuss valley to Andermatt",
@@ -1233,6 +1249,10 @@
    "bike": 300,
    "ebike": 160,
    "opium": 280
+  },
+  "kmCap": {
+   "bike": 90,
+   "ebike": 110
   },
   "targetRange": {
    "bike": [

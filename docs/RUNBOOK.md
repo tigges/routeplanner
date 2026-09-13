@@ -86,6 +86,11 @@ its size is roughly 8 MB per 100 segments with facilities, double that with mope
   At present this only takes effect for a country that ships a prebuilt graph (Japan); a from-scratch country still ignores it.
 - `signedRoutes`: `{"label": "Prefer signed cycle routes", "legs": ["a--b#variant", …]}` — legs that get a signed-route line behind the page switch
   (bicycle and e-bike only; the moped keeps its own line). Needs steps 10 and 11. With no `signedRoutes` the switch does not appear.
+- `vehicles.kmCap`: `{"bike": 90, "ebike": 110}` the day length in km the splitter tries not to pass, per vehicle, whatever the
+  effort asked for. Soft: passing it costs (quadratically, ×600), a town a few km beyond is still worth stopping at, and it never
+  makes a stretch unsplittable. It is what stops a flat leg running on to the next town 140 km away. With no `kmCap` nothing changes.
+  Note the trade: above roughly the default effort the cap, not the slider, decides how long a flat day is — Switzerland's longest
+  day is 93 km at effort 100 and 109 km at effort 300 (before: 93 km and 217 km).
 - `vehicles.targetRange`: `{"bike": [45,300], …}` the two ends of the daily-effort slider, per vehicle. `minDay`/`maxDay` stay the hard
   limits on a single day. Effort is km plus a climb penalty, so divide by the route's effort/km ratio (Japan ~1.8, Switzerland ~2.1)
   to read a slider number as km/day. Keep both ends and `defaultTarget` on the slider's step of 5. Missing `targetRange` falls back to
@@ -136,6 +141,16 @@ its size is roughly 8 MB per 100 segments with facilities, double that with mope
   effort and leg count side by side, with console errors and page weight — the test ride to run before handing over any change
   that should not move the numbers. `tools/shot.js <page.html> <prefix> [tripId] [zoom]` screenshots a page with real map tiles
   (the sandbox proxy blocks the browser from the tile hosts but not curl, so each tile request is fulfilled from a curl).
+- `tools/segfiles.py config/<country>.json` writes `work/<slug>/segments/*.geojson` back from an existing P.json and the routing
+  cache. The per-segment files live in `work/`, which is not committed, so a fresh clone has the graph but not the files, and
+  `01_graph` would then re-make every segment and throw its facilities, scores and day-end names away (a full 02/03 rescan, an hour).
+  Run this straight after copying `examples/<slug>/*.json` into `work/<slug>/` and only the legs that really changed are rebuilt.
+- `tools/fix_effr.py config/<country>.json [--page]` recomputes every day-end candidate's `effR` from the stored profile (no routing,
+  no scan). `effR` is what the leg costs ridden the other way; it used to be stored as the forward climb still to come, so any stretch
+  a journey walks backwards was split in the wrong places. Fixed in `common.make_segment` for anything built since; this tool brings
+  older data up to date, in `work/`+`examples/` or, with `--page`, in the `var P=` block of the published page (then re-render).
+- Tools named in this runbook that are **not in the repository**: `densify.py`, `preview.js`, `pixcheck.js`, `shot.js` (and so
+  `catchup.py --densify`). Write them again rather than hunting for them.
 - `tools/catchup.py config/<a>.json config/<b>.json` brings a country's page up to the current template and data layers in one go: downloads missing extracts (`osm.urls`, or `osm.mirror` paths on download.openstreetmap.fr), runs step 12, refreshes the graph (01 where the data is in work/ or examples/, else retemplate, which now injects the water into the lifted P), rebuilds, publishes, re-measures trips. `--densify` adds the line redraw above (with `--fetch` to route what is not cached), on whichever of the two paths the country takes. Needs `pip install osmium shapely numpy scipy playwright` once. Then `git add docs config examples`, commit, push.
 - `graph.land_fill: true` paints the country in a land tone (only for a closed border like Switzerland or Spain; Japan's coast comes in pieces and stays a line).
 - Background jobs in the Claude sandbox are killed when a tool call ends unless started with `setsid nohup … &`.

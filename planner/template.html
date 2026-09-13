@@ -224,7 +224,7 @@ var SIGNED=false; try{ SIGNED=localStorage.getItem("signed")==="1"; }catch(e){}
 var MF=/*@MF@*/;   // share of the bicycle line on ways a moped may not use
 var VEH="bike"; try{ VEH=localStorage.getItem("veh")||"bike"; }catch(e){} if(["bike","ebike","opium"].indexOf(VEH)<0) VEH="bike";
 var VEHNAME=CFG.vehicles.names, VEHDEF=CFG.vehicles.defaultTarget;
-var EMIN=70,EMAX=330;
+var EMIN=70,EMAX=330,KMCAP=0;   // KMCAP: the day length in km the splitter tries not to pass (vehicles.kmCap), soft
 var SEG={},OUT={};
 P.segments.forEach(function(s){SEG[s.id]=s;(OUT[s.frm]=OUT[s.frm]||[]).push(s);});
 var NODE={};P.nodes.forEach(function(n){NODE[n.id]=n;});
@@ -244,7 +244,7 @@ function applyVehicle(){
    s.cand=b.cand.map(function(c){var d={}; for(var k in c) d[k]=c[k]; d.eff=+(c.km+(c.eff-c.km)/3).toFixed(1); d.effR=+((b.km-c.km)+(c.effR-(b.km-c.km))/3).toFixed(1); return d;});
   }
  });
- EMIN=CFG.vehicles.minDay[VEH]; EMAX=CFG.vehicles.maxDay[VEH];
+ EMIN=CFG.vehicles.minDay[VEH]; EMAX=CFG.vehicles.maxDay[VEH]; KMCAP=(CFG.vehicles.kmCap||{})[VEH]||0;
  var ef=document.getElementById("eff"), tr=(CFG.vehicles.targetRange||{})[VEH]||[EMIN,EMAX];   // the slider's ends per vehicle (config), step 5
  ef.min=tr[0]; ef.max=tr[1]; ef.step=5; if(!ef.dataset.set){ ef.value=VEHDEF[VEH]; ef.dataset.set=1; } if(+ef.value<tr[0]) ef.value=tr[0]; if(+ef.value>tr[1]) ef.value=tr[1];
  document.getElementById("efflabel").textContent=VEH==="opium"?"Km per day":"Daily effort";
@@ -309,6 +309,10 @@ function walk(a,b,rev){
  return go(a,null,0)?out:[];}
 
 function splitDays(ch,target){
+ // a day is chosen by effort, but effort alone lets a flat stretch run on to the next town 140 km away.
+ // KMCAP (config, per vehicle) is the km a day should not pass, whatever the effort asked for. Soft:
+ // passing it costs, and a town a few km beyond is still worth it, but it never bars a split.
+ var cap=KMCAP;
  var legs=[],cur=[];
  ch.forEach(function(s){if(s.mode==="ferry"||s.mode==="train"){if(cur.length)legs.push(cur);legs.push(s);cur=[];}else cur.push(s);});
  if(cur.length)legs.push(cur);
@@ -324,6 +328,7 @@ function splitDays(ch,target){
     if(dp[j]===Infinity)continue;var e=C[i].eff-C[j].eff;
     if(e<EMIN||e>EMAX)continue;
     var c=dp[j]+Math.pow((e-target)/target,2)*100-Math.min(C[i].beds,6)*1.2-(C[i].node?14:0);
+    if(cap){ var dk=C[i].km-C[j].km; if(dk>cap) c+=Math.pow((dk-cap)/cap,2)*600; }   // a town is still worth a few km over the cap; 20% over is not
     if(c<dp[i]){dp[i]=c;bp[i]=j;}}}
   if(dp[n-1]===Infinity){if(base>=EMIN)warn="No valid split at this effort - try a higher target.";   // a short ride between two boats is simply one short day
    var nmN=function(id){return NODE[id]?NODE[id].name:id;};

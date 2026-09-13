@@ -33,6 +33,7 @@ for cp in cfgs:
             os.makedirs(W, exist_ok=True)
             for fn in os.listdir(ex):
                 if fn.endswith('.json'): shutil.copy(os.path.join(ex, fn), W)
+        run('tools/segfiles.py', cp)          # without the per-segment files 01_graph re-makes every leg and loses its scanned data
         run('pipeline/01_graph.py', cp)
         if os.path.isdir(ex): shutil.copy(os.path.join(W, 'P.json'), ex)
         run('pipeline/build_planner.py', cp); run('pipeline/publish.py', cp)

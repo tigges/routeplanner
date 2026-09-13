@@ -33,6 +33,13 @@ driven by `config/<country>.json`. Japan is the finished reference; a new countr
 ## Extending a country
 Edit the config (new trunk = list of towns from a fork town to a rejoin town) and re-run the steps in
 order; unchanged segments keep their data, caches make routing free.
+- Copy `examples/<slug>/*.json` into `work/<slug>/` and run `tools/segfiles.py` **before** `01_graph`: the per-segment
+  GeoJSON lives in `work/`, which is not committed, and without it 01 re-makes every leg and throws away the
+  facilities and scores, turning a four-leg change into an hour of rescanning.
+- A trunk's **first** town must already have a rank, so a brand-new town cannot be a trunk's first node: put it on an
+  existing trunk (in the list of towns, where it really lies) and start the new trunk from it.
+- A leg is walked backwards whenever a journey runs against the graph's direction. `effR` on each day-end candidate
+  is what that costs; see `tools/fix_effr.py` if a country's data predates the fix.
 - Signed cycle routes: `10_cycleroutes.py` finds, for weak legs, a line through nearby signed routes (a report).
   Pick legs by how much signed-route share they gain (aim for 10+ points), not by extra length alone; most
   candidates gain little. List them in `signedRoutes.legs` and run `11_signed.py` for the page switch, or
@@ -44,6 +51,10 @@ order; unchanged segments keep their data, caches make routing free.
 ## Test, publish, hand over
 - Test the built page in a headless browser before handing it over (Playwright is available; `tools/smoke.js`
   exists): the changed controls in each state, the default journey's days/km, no console errors.
+- `node tools/ridecheck.js <before.html> <after.html>` prints every trip's km, climb, effort, days and legs side by
+  side with the old published page (`git show HEAD:docs/<slug>/index.html`). Run it on every country a change touches
+  and expect the count of moved trips to be exactly the ones you meant to move. Block the tile hosts in headless
+  tests (`page.route`, file:// only) or the page hangs on them.
 - Publish with `python3 pipeline/publish.py config/<country>.json` → `docs/<slug>/index.html` and the hub; GitHub
   Pages serves `https://tigges.github.io/routeplanner/<slug>/`. (The old Artifact-tool publishing is retired.)
 - Hand Charles one patch: `git add -A`, then `git diff --cached --binary > /mnt/user-data/outputs/<name>.patch`.
