@@ -69,6 +69,9 @@ h2{font-size:11px;color:#6d8492;margin:0 16px 8px;font-weight:600}
 #favs{margin:6px 16px 0}#favs div{display:flex;gap:8px;align-items:center;font-size:12px;padding:4px 0;border-bottom:1px solid var(--line)}
 #favs div span{flex:1;cursor:pointer}#favs div b{color:#7fc4ff;cursor:pointer;font-weight:500}#favs div i{color:#b9c6cf;cursor:pointer;font-style:normal}
 #exp{width:calc(100% - 32px);margin:6px 16px;height:120px;font-size:11px;background:#0d1a22;color:#c9d6de;border:1px solid var(--line);border-radius:6px}
+#basemap{font-size:11.5px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--dim);font-family:inherit;cursor:pointer}
+#attrib{position:absolute;right:6px;bottom:4px;z-index:3;font-size:10px;color:#3a4a55;background:rgba(255,255,255,.75);padding:1px 6px;border-radius:4px;pointer-events:none}#attrib:empty{display:none}
+body.lightmap #hint{background:rgba(255,255,255,.8);color:#3a4a55}
 #topbtns{position:absolute;right:14px;top:12px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:60%}
 #pop{display:none;position:absolute;z-index:5;max-width:260px;cursor:pointer;background:#15303f;border:1px solid #4d7a99;border-radius:8px;padding:8px 10px;font-size:12.5px;color:#eef2f4;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 #pop .ja{color:#c9d6de;margin-top:2px}#pop .sub{color:#8fa3b0;margin-top:3px;font-size:11.5px}#pop .links{margin-top:6px;display:flex;gap:10px;flex-wrap:wrap}#pop a{color:#7fc4ff;text-decoration:none;font-size:11.5px}
@@ -403,8 +406,8 @@ function drawLabels(){
   if(placed.some(function(p){return Math.abs(p.x-l.x)*ppu<90&&Math.abs(p.y-l.y)*ppu<14})) return;
   placed.push(l);
   var t=document.createElementNS(NS,"text"); t.setAttribute("x",l.x+7/ppu); t.setAttribute("y",l.y+4/ppu);
-  t.setAttribute("font-size",fs); t.setAttribute("fill",l.kind==="day"?"#dbe7ee":"#8fa3b0"); t.setAttribute("font-weight",l.kind==="day"?"600":"400");
-  t.setAttribute("stroke","#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit");
+  var LM=bmLight(); t.setAttribute("font-size",fs); t.setAttribute("fill",LM?(l.kind==="day"?"#0d1a23":"#3a4a55"):(l.kind==="day"?"#dbe7ee":"#8fa3b0")); t.setAttribute("font-weight",l.kind==="day"?"600":"400");
+  t.setAttribute("stroke",LM?"#ffffff":"#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit");
   t.textContent=l.name; gT.appendChild(t);});
  if(vb[2]>34) return;                                    // ~60 km across: add road stations and sights
  POIS=[]; var pois=[], x0=vb[0]-2,x1=vb[0]+vb[2]+2,y0=vb[1]-2,y1=vb[1]+vb[3]+2;
@@ -418,8 +421,8 @@ function drawLabels(){
   placed.push(l); n++; POIS.push(l);
   var m=document.createElementNS(NS,"circle"); m.setAttribute("cx",l.x); m.setAttribute("cy",l.y); m.setAttribute("r",2.5/ppu); m.setAttribute("fill",l.kind==="mne"?"#7fd1a8":"#e7c46a"); gT.appendChild(m);
   var t=document.createElementNS(NS,"text"); t.setAttribute("x",l.x+6/ppu); t.setAttribute("y",l.y+4/ppu);
-  t.setAttribute("font-size",fs2); t.setAttribute("fill",l.kind==="mne"?"#9fe0bf":"#e7c46a"); t.setAttribute("font-style",l.kind==="mne"?"normal":"italic");
-  t.setAttribute("stroke","#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit");
+  t.setAttribute("font-size",fs2); t.setAttribute("fill",bmLight()?(l.kind==="mne"?"#1d6b45":"#7a5a00"):(l.kind==="mne"?"#9fe0bf":"#e7c46a")); t.setAttribute("font-style",l.kind==="mne"?"normal":"italic");
+  t.setAttribute("stroke",bmLight()?"#ffffff":"#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit");
   t.textContent=l.name; gT.appendChild(t);});
  if(vb[2]>7) return;                                     // ~12 km across: name the facility dots in view
  var fs3=10.5/ppu, m2=0;
@@ -427,8 +430,8 @@ function drawLabels(){
   var nm=(LANG==="local"&&d.ja)?d.ja:d.en; if(/^(Toilets|Drinking water|Convenience store|Supermarket|Hotel|Guest house|Campsite|Station|Laundry|Repair stand|Bath house|Hot spring)$/.test(nm))return;
   if(placed.some(function(p){return Math.abs(p.x-d.x)*ppu<100&&Math.abs(p.y-d.y)*ppu<12})) return;
   placed.push(d); m2++;
-  var t=document.createElementNS(NS,"text"); t.setAttribute("x",d.x+7/ppu); t.setAttribute("y",d.y+4/ppu); t.setAttribute("font-size",fs3); t.setAttribute("fill","#b9c6cf");
-  t.setAttribute("stroke","#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit"); t.textContent=nm; gT.appendChild(t);});}
+  var t=document.createElementNS(NS,"text"); t.setAttribute("x",d.x+7/ppu); t.setAttribute("y",d.y+4/ppu); t.setAttribute("font-size",fs3); t.setAttribute("fill",bmLight()?"#2b3a44":"#b9c6cf");
+  t.setAttribute("stroke",bmLight()?"#ffffff":"#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit"); t.textContent=nm; gT.appendChild(t);});}
 applyVehicle(); setLangBtn(); favRender();
 document.getElementById("favsave").addEventListener("click",function(){ var L=favList(); L.unshift({name:routeSummary(),code:stateCode()}); try{localStorage.setItem("favs",JSON.stringify(L.slice(0,30)));}catch(e){} favRender(); });
 document.getElementById("copylink").addEventListener("click",function(){ copyText(location.href.split("#")[0]+"#r="+stateCode(),"Link"); });
@@ -455,7 +458,61 @@ var xs=[],ys=[];P.segments.forEach(function(s){if(!s.line)return;
 var full=[Math.min.apply(null,xs)-120,Math.min.apply(null,ys)-60,
  (Math.max.apply(null,xs)-Math.min.apply(null,xs))+240,(Math.max.apply(null,ys)-Math.min.apply(null,ys))+120];
 var vb=full.slice();
+
+/* ===== map underlay: online tiles under our lines (config.basemap); our coast and lakes stay underneath as the offline fallback ===== */
+var BM_SRC={
+ plain:{name:"Plain map",url:"https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",s:"",max:16,attr:"© Esri, HERE, Garmin, OpenStreetMap contributors",light:1},
+ cycle:{name:"Cycling map",url:"https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",s:"abc",max:20,attr:"© OpenStreetMap contributors · CyclOSM",light:1},
+ topo:{name:"Topographic",url:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",s:"abc",max:17,attr:"© OpenStreetMap contributors · SRTM · OpenTopoMap (CC-BY-SA)",light:1},
+ sat:{name:"Satellite",url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",s:"",max:19,attr:"Imagery © Esri, Maxar, Earthstar Geographics",light:0}};
+var BM=CFG.basemap||null;                                       // {auto:{plain:"plain",detail:"cycle",switchZoom:10}, sources:{national:{…}}, order:[…]}
+if(BM){ for(var k in (BM.sources||{})) BM_SRC[k]=BM.sources[k]; }
+var BM_ORDER=BM&&BM.order||["auto","plain","cycle","topo","national","sat","none"];
+var BM_MODE="auto"; try{ BM_MODE=localStorage.getItem("basemap")||"auto"; }catch(e){}
+if(BM_MODE!=="none"&&BM_MODE!=="auto"&&!BM_SRC[BM_MODE]) BM_MODE="auto";
+var gB=document.createElementNS(NS,"g"); svg.insertBefore(gB,gG);                 // above coast and water, below the ghost network and routes
+var BM_W=360*PJ.kx, BM_X0=PJ.kx*(-180)+PJ.bx, BM_Y0=PJ.ky*Math.PI+PJ.by;      // the Web-Mercator world in page units
+var BM_TILES={}, BM_CUR=null, BM_T=null, BM_Z=-1;
+function bmZoom(){ var ppu=pxPerUnit(), dpr=Math.min(window.devicePixelRatio||1,2); return Math.round(Math.log(BM_W*ppu*dpr/256)/Math.LN2); }
+function bmSource(){ if(!BM||BM_MODE==="none") return null;
+ if(BM_MODE!=="auto") return BM_SRC[BM_MODE]?BM_MODE:null;
+ var a=BM.auto||{}; var z=bmZoom(); var detail=a.detail||"cycle", plain=a.plain||"plain";
+ return z>=(a.switchZoom||10)&&BM_SRC[detail]?detail:(BM_SRC[plain]?plain:null); }
+function bmLight(){ var k=bmSource(); return !!(k&&BM_SRC[k].light); }
+function drawTiles(){
+ var key=bmSource(); var att=document.getElementById("attrib");
+ if(!key){ while(gB.firstChild)gB.removeChild(gB.firstChild); BM_TILES={}; BM_CUR=null; if(att) att.textContent=""; return; }
+ var src=BM_SRC[key], z=Math.max(src.min||0,Math.min(src.max||19,bmZoom())), S=BM_W/Math.pow(2,z), n=Math.pow(2,z);
+ var r=(src.r&&(window.devicePixelRatio||1)>1.4)?src.r:"";
+ var x0=Math.floor((vb[0]-BM_X0)/S)-1, x1=Math.floor((vb[0]+vb[2]-BM_X0)/S)+1, y0=Math.max(0,Math.floor((vb[1]-BM_Y0)/S)-1), y1=Math.min(n-1,Math.floor((vb[1]+vb[3]-BM_Y0)/S)+1);
+ if((x1-x0+1)*(y1-y0+1)>400){ return; }
+ var want={}, sub=src.s||"";
+ for(var tx=x0;tx<=x1;tx++) for(var ty=y0;ty<=y1;ty++){
+  var wx=((tx%n)+n)%n, id=key+"/"+z+"/"+tx+"/"+ty; want[id]=1;
+  if(BM_TILES[id]) continue;
+  var im=document.createElementNS(NS,"image"); im.setAttribute("x",BM_X0+tx*S); im.setAttribute("y",BM_Y0+ty*S); im.setAttribute("width",S*1.003); im.setAttribute("height",S*1.003); im.setAttribute("preserveAspectRatio","none");
+  var url=src.url.replace("{z}",z).replace("{x}",wx).replace("{y}",ty).replace("{r}",r).replace("{s}",sub?sub[(tx+ty)%sub.length]:"");
+  im.setAttributeNS("http://www.w3.org/1999/xlink","href",url); im.setAttribute("href",url); im.dataset.z=z; im.dataset.src=key; im.style.opacity="0";
+  im.addEventListener("load",function(e){ e.target.style.opacity="1"; bmClean(); }); im.addEventListener("error",function(e){ var t=e.target; t.remove(); for(var q in BM_TILES) if(BM_TILES[q]===t) delete BM_TILES[q]; bmClean(); });
+  gB.appendChild(im); BM_TILES[id]=im; }
+ for(var id in BM_TILES){ var im2=BM_TILES[id]; if(want[id]) continue;
+  if(+im2.dataset.z===z&&im2.dataset.src===key){ im2.remove(); delete BM_TILES[id]; }       // same level, out of view
+  else { im2.dataset.stale=1; } }                                                            // other level: keep until the new tiles are in
+ BM_CUR=key; BM_Z=z; if(att) att.textContent=src.attr||"";
+ var vis=gB.querySelectorAll("image[data-stale]"); vis.forEach(function(im){gB.insertBefore(im,gB.firstChild);});   // stale under new
+ setTimeout(bmClean,1500); }
+function bmClean(){ var pending=false; for(var id in BM_TILES){ var im=BM_TILES[id]; if(!im.dataset.stale&&im.style.opacity==="0"){pending=true;break;} }
+ if(pending) return; for(var id in BM_TILES){ var im=BM_TILES[id]; if(im.dataset.stale){ im.remove(); delete BM_TILES[id]; } } }
+function scheduleTiles(){ if(!BM) return; if(BM_T) clearTimeout(BM_T); BM_T=setTimeout(function(){BM_T=null; drawTiles();},60); }
+function setBasemap(m){ BM_MODE=m; try{localStorage.setItem("basemap",m);}catch(e){} var sel=document.getElementById("basemap"); if(sel) sel.value=m; drawTiles(); document.body.classList.toggle("lightmap",bmLight()); drawLabels(); }
+(function(){ if(!BM) return; var sel=document.createElement("select"); sel.id="basemap"; sel.title="map underneath";
+ BM_ORDER.forEach(function(k){ if(k!=="auto"&&k!=="none"&&!BM_SRC[k]) return; var o=document.createElement("option"); o.value=k; o.textContent=k==="auto"?"Map: auto":k==="none"?"Map: none":"Map: "+BM_SRC[k].name; sel.appendChild(o); });
+ sel.value=BM_MODE; sel.addEventListener("change",function(){setBasemap(sel.value);});
+ var tb=document.getElementById("topbtns"); tb.insertBefore(sel,tb.firstChild);
+ var att=document.createElement("div"); att.id="attrib"; document.getElementById("stage").appendChild(att);
+ window.addEventListener("resize",scheduleTiles); })();
 function setVB(b){vb=b;svg.setAttribute("viewBox",b.join(" "));
+ scheduleTiles(); document.body.classList.toggle("lightmap",bmLight());
  var k=vb[2]/full[2];
  gC.querySelectorAll("polygon,polyline").forEach(function(p){p.setAttribute("stroke-width",Math.max(.3,1*k))});
  gW.querySelectorAll(".lake").forEach(function(p){p.setAttribute("stroke-width",Math.max(.2,.6*k))}); gW.querySelectorAll(".river").forEach(function(p){p.setAttribute("stroke-width",Math.max(.4,1.2*k))});
@@ -467,8 +524,8 @@ function setVB(b){vb=b;svg.setAttribute("viewBox",b.join(" "));
  gH.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",4.5*k)});
  gC.querySelectorAll("polygon,polyline").forEach(function(p){p.setAttribute("stroke-width",1*k)});
  gG.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",1.6*k)});
- gR.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",2.6*k)});
- gS.querySelectorAll("circle").forEach(function(c){c.setAttribute("r",2.6*k)});}
+ var LM=bmLight(); gR.querySelectorAll("polyline").forEach(function(p){ var cas=p.classList.contains("cas"); p.setAttribute("stroke-width",(cas?6.2:LM?3.4:2.6)*k); if(cas) p.style.display=LM?"":"none"; });
+ gS.querySelectorAll("circle").forEach(function(c){c.setAttribute("r",LM?3.2*k:2.6*k); c.setAttribute("stroke",LM?"#fff":"none"); c.setAttribute("stroke-width",1*k);});}
 
 /* --- data layer: facilities and elevation live on segments; a day inherits its slices --- */
 function segKm(v,k){return v.rev?v.km-k:k;}          // planner-direction km -> stored-segment km
@@ -684,7 +741,8 @@ function render(){
  P.segments.forEach(function(s){if(!s.line)return;
   var p=document.createElementNS(NS,"polyline");p.setAttribute("points",s.line);
   p.setAttribute("fill","none");p.setAttribute("stroke-linecap","round");p.setAttribute("stroke-linejoin","round");
-  if(inChain[s.id]){p.setAttribute("stroke",FRIEND?friendCol(s.id):"#f0713f");gR.appendChild(p);}
+  if(inChain[s.id]){ var cas=p.cloneNode(false); cas.setAttribute("stroke","#ffffff"); cas.setAttribute("stroke-opacity",".85"); cas.setAttribute("class","cas"); gR.insertBefore(cas,gR.firstChild);   // white casing, shown on a light map underlay
+   p.setAttribute("stroke",FRIEND?friendCol(s.id):"#f0713f");gR.appendChild(p);}
   else{p.setAttribute("stroke","#2a4150");p.setAttribute("stroke-dasharray","4 4");gG.appendChild(p);}});
  ride.forEach(function(d){if(d.x===undefined)return;
   var c=document.createElementNS(NS,"circle");c.setAttribute("cx",d.x);c.setAttribute("cy",d.y);

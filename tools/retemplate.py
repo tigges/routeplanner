@@ -27,7 +27,7 @@ page_cfg = dict(title=cfg['title'], slug=cfg['slug'], by=cfg.get('by', ''), pick
                 forkLabels=cfg.get('forkLabels', {}), optionNames=cfg.get('optionNames', {}),
                 defaultOptionNames=cfg.get('defaultOptionNames', {}), skippable=cfg.get('skippable', []),
                 neverSkip=cfg.get('neverSkip', []), skipRule=cfg.get('skipRule'), vehicles=cfg['vehicles'],
-                signedRoutes={'label': cfg.get('signedRoutes', {}).get('label', 'Prefer signed cycle routes')})
+                signedRoutes={'label': cfg.get('signedRoutes', {}).get('label', 'Prefer signed cycle routes')}, basemap=cfg.get('basemap'))
 if page_cfg['proj'] is None: raise SystemExit('no CFG in %s' % page)
 subs = {'CFG': json.dumps(page_cfg, ensure_ascii=False)}
 for n in NAMES: subs[n] = grab(n)

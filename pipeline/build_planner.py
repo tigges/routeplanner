@@ -29,7 +29,7 @@ mf = json.load(open(os.path.join(W, 'motorfree.json'))) if os.path.exists(os.pat
 TRIPS, NETWORKS = load_trips(cfg, sys.argv[1])
 page_cfg = dict(title=cfg['title'], slug=cfg['slug'], by=cfg.get('by', ''), pickerDefault=cfg.get('pickerDefault', 'all'), routeWord=cfg.get('routeWord', 'national routes'), landFill=bool(cfg.get('graph', {}).get('land_fill')), trips=TRIPS, networks=NETWORKS, lang=cfg['lang'], proj=proj, forkLabels=cfg.get('forkLabels', {}), optionNames=cfg.get('optionNames', {}),
                 defaultOptionNames=cfg.get('defaultOptionNames', {}), skippable=cfg.get('skippable', []), neverSkip=cfg.get('neverSkip', []), skipRule=cfg.get('skipRule'), vehicles=cfg['vehicles'],
-                signedRoutes={'label': cfg.get('signedRoutes', {}).get('label', 'Prefer signed cycle routes')})
+                signedRoutes={'label': cfg.get('signedRoutes', {}).get('label', 'Prefer signed cycle routes')}, basemap=cfg.get('basemap'))
 subs = {'CFG': json.dumps(page_cfg, ensure_ascii=False), 'P': load('P.json'), 'SD': load('seg_data.json'), 'SC': load('seg_scores.json'),
         'MSEG': load('moped_segments.json'), 'MSD': trim_moped(load('moped_sd.json'), cfg), 'MSC': load('moped_sc.json'),
         'MF': json.dumps({k: v['share'] for k, v in mf.items()}),

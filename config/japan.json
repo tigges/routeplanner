@@ -903,5 +903,23 @@
  "trips": "japan-trips.json",
  "pickerDefault": "top",
  "routeWord": "famous routes",
- "by": "CT"
+ "by": "CT",
+ "basemap": {
+  "auto": {
+   "plain": "plain",
+   "detail": "cycle",
+   "switchZoom": 10
+  },
+  "sources": {
+   "national": {
+    "name": "GSI map (Japan)",
+    "url": "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
+    "s": "",
+    "min": 5,
+    "max": 18,
+    "attr": "地理院タイル © GSI Japan",
+    "light": 1
+   }
+  }
+ }
 }
