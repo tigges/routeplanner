@@ -1,0 +1,381 @@
+{
+ "slug": "london",
+ "title": "Britain by bike",
+ "lang": {
+  "local": "en",
+  "localLabel": "Local names",
+  "romanise": null
+ },
+ "workdir": "work/london",
+ "osm": {
+  "extracts": [
+   "downloads/en-greater_london.osm.pbf",
+   "downloads/en-south_east.osm.pbf",
+   "downloads/en-east.osm.pbf"
+  ],
+  "corridor_km": 2.0,
+  "note": "download.openstreetmap.fr extracts/europe/united_kingdom/england/<region>.osm.pbf (Geofabrik was unreachable from the sandbox)"
+ },
+ "graph": {
+  "map_width": 520,
+  "outline": "config/uk_outline.geojson",
+  "land_fill": true
+ },
+ "nodes": {
+  "ealing": {
+   "name": "Ealing Broadway",
+   "lat": 51.5148,
+   "lon": -0.3016,
+   "type": "terminus"
+  },
+  "kew": {
+   "name": "Kew Bridge",
+   "lat": 51.488,
+   "lon": -0.288
+  },
+  "richmond": {
+   "name": "Richmond",
+   "lat": 51.4613,
+   "lon": -0.3037,
+   "type": "gateway"
+  },
+  "kingston": {
+   "name": "Kingston",
+   "lat": 51.411,
+   "lon": -0.306
+  },
+  "hamptoncourt": {
+   "name": "Hampton Court",
+   "lat": 51.4037,
+   "lon": -0.342,
+   "type": "gateway"
+  },
+  "staines": {
+   "name": "Staines",
+   "lat": 51.434,
+   "lon": -0.51
+  },
+  "windsor": {
+   "name": "Windsor",
+   "lat": 51.482,
+   "lon": -0.61,
+   "type": "terminus"
+  },
+  "richmondpark": {
+   "name": "Richmond Park (Roehampton Gate)",
+   "lat": 51.452,
+   "lon": -0.256
+  },
+  "beaconsfield": {
+   "name": "Beaconsfield",
+   "lat": 51.61,
+   "lon": -0.644
+  },
+  "marlow": {
+   "name": "Marlow",
+   "lat": 51.571,
+   "lon": -0.777
+  },
+  "rickmansworth": {
+   "name": "Rickmansworth",
+   "lat": 51.639,
+   "lon": -0.472
+  },
+  "putney": {
+   "name": "Putney Bridge",
+   "lat": 51.464,
+   "lon": -0.217
+  },
+  "westminster": {
+   "name": "Westminster",
+   "lat": 51.501,
+   "lon": -0.124,
+   "type": "gateway"
+  },
+  "greenwich": {
+   "name": "Greenwich",
+   "lat": 51.481,
+   "lon": -0.008,
+   "type": "gateway"
+  },
+  "littlevenice": {
+   "name": "Little Venice",
+   "lat": 51.5215,
+   "lon": -0.183
+  },
+  "limehouse": {
+   "name": "Limehouse Basin",
+   "lat": 51.5115,
+   "lon": -0.038
+  },
+  "leatherhead": {
+   "name": "Leatherhead",
+   "lat": 51.296,
+   "lon": -0.33
+  },
+  "boxhill": {
+   "name": "Box Hill",
+   "lat": 51.2513,
+   "lon": -0.3125
+  },
+  "stratford": {
+   "name": "Stratford",
+   "lat": 51.542,
+   "lon": -0.003
+  },
+  "ware": {
+   "name": "Ware",
+   "lat": 51.81,
+   "lon": -0.029
+  },
+  "epping": {
+   "name": "Epping",
+   "lat": 51.699,
+   "lon": 0.111
+  },
+  "redhill": {
+   "name": "Redhill",
+   "lat": 51.24,
+   "lon": -0.17
+  },
+  "ditchling": {
+   "name": "Ditchling",
+   "lat": 50.921,
+   "lon": -0.116
+  },
+  "brighton": {
+   "name": "Brighton",
+   "lat": 50.8225,
+   "lon": -0.1372
+  },
+  "crystalpalace": {
+   "name": "Crystal Palace",
+   "lat": 51.421,
+   "lon": -0.075
+  },
+  "carshalton": {
+   "name": "Carshalton",
+   "lat": 51.366,
+   "lon": -0.167
+  }
+ },
+ "trunks": [
+  {
+   "variant": "base",
+   "nodes": [
+    "ealing",
+    "kew",
+    "richmond",
+    "kingston",
+    "hamptoncourt",
+    "staines",
+    "windsor"
+   ]
+  },
+  {
+   "variant": "park",
+   "nodes": [
+    "kew",
+    "richmondpark",
+    "richmond"
+   ]
+  },
+  {
+   "variant": "chilterns",
+   "nodes": [
+    "ealing",
+    "beaconsfield",
+    "marlow",
+    "windsor"
+   ]
+  },
+  {
+   "variant": "canal",
+   "nodes": [
+    "ealing",
+    "rickmansworth",
+    "windsor"
+   ]
+  },
+  {
+   "variant": "thames",
+   "nodes": [
+    "richmond",
+    "putney",
+    "westminster",
+    "greenwich"
+   ]
+  },
+  {
+   "variant": "regents",
+   "nodes": [
+    "ealing",
+    "littlevenice",
+    "limehouse",
+    "greenwich"
+   ]
+  },
+  {
+   "variant": "city",
+   "nodes": [
+    "littlevenice",
+    "westminster"
+   ]
+  },
+  {
+   "variant": "boxhill",
+   "nodes": [
+    "kingston",
+    "leatherhead",
+    "boxhill"
+   ]
+  },
+  {
+   "variant": "leevalley",
+   "nodes": [
+    "limehouse",
+    "stratford",
+    "ware"
+   ]
+  },
+  {
+   "variant": "epping",
+   "nodes": [
+    "stratford",
+    "epping"
+   ]
+  },
+  {
+   "variant": "brighton",
+   "nodes": [
+    "westminster",
+    "redhill",
+    "ditchling",
+    "brighton"
+   ]
+  },
+  {
+   "variant": "waterlink",
+   "nodes": [
+    "greenwich",
+    "crystalpalace"
+   ]
+  },
+  {
+   "variant": "wandle",
+   "nodes": [
+    "putney",
+    "carshalton"
+   ]
+  }
+ ],
+ "ferries": [],
+ "forkLabels": {
+  "ealing": "From Ealing Broadway",
+  "kew": "At Kew Bridge",
+  "richmond": "From Richmond",
+  "kingston": "At Kingston",
+  "littlevenice": "At Little Venice",
+  "limehouse": "At Limehouse",
+  "stratford": "At Stratford",
+  "westminster": "From Westminster",
+  "greenwich": "From Greenwich",
+  "putney": "At Putney"
+ },
+ "optionNames": {
+  "park": "Through Richmond Park",
+  "chilterns": "Chilterns: Beaconsfield, Marlow",
+  "canal": "Grand Union canal to Rickmansworth",
+  "thames": "Thames path into town",
+  "regents": "Grand Union and Regent's canal",
+  "city": "To Westminster",
+  "boxhill": "Box Hill via Leatherhead",
+  "leevalley": "Lee Valley to Ware",
+  "epping": "Epping Forest",
+  "brighton": "London to Brighton",
+  "waterlink": "Waterlink Way to Crystal Palace",
+  "wandle": "Wandle Trail to Carshalton"
+ },
+ "defaultOptionNames": {
+  "ealing": "Thames: Kew, Richmond, Hampton Court",
+  "kew": "Along the river",
+  "richmond": "On to Kingston",
+  "kingston": "On to Hampton Court",
+  "littlevenice": "Regent's canal east",
+  "limehouse": "On to Greenwich",
+  "stratford": "Lee Valley north",
+  "westminster": "Thames path east",
+  "greenwich": "End at Greenwich",
+  "putney": "Thames path east"
+ },
+ "presets": [
+  {
+   "name": "River",
+   "picks": {}
+  },
+  {
+   "name": "Chilterns",
+   "picks": {
+    "ealing": "chilterns"
+   }
+  }
+ ],
+ "trips": "uk-trips.json",
+ "pickerDefault": "top",
+ "routeWord": "famous rides",
+ "skippable": [],
+ "vehicles": {
+  "names": {
+   "bike": "Bicycle",
+   "ebike": "E-bike (pedelec)",
+   "opium": "S-pedelec (45 km/h)"
+  },
+  "defaultTarget": {
+   "bike": 130,
+   "ebike": 110,
+   "opium": 180
+  },
+  "minDay": {
+   "bike": 10,
+   "ebike": 10,
+   "opium": 10
+  },
+  "maxDay": {
+   "bike": 300,
+   "ebike": 160,
+   "opium": 280
+  },
+  "targetRange": {
+   "bike": [
+    30,
+    300
+   ],
+   "ebike": [
+    25,
+    160
+   ],
+   "opium": [
+    30,
+    280
+   ]
+  },
+  "moped": {
+   "enabled": true,
+   "reroute_if_motorfree_share_at_least": 0.05,
+   "keep_bicycle_line": []
+  }
+ },
+ "sights": {
+  "exclude_kinds": [
+   "memorial",
+   "artwork"
+  ]
+ },
+ "cities": {
+  "population_min": 20000,
+  "detour_km": 20,
+  "rest_day_km": 60
+ },
+ "by": "CT",
+ "hub": false
+}

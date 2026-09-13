@@ -1,0 +1,496 @@
+{
+ "slug": "uk",
+ "title": "Britain by bike",
+ "lang": {
+  "local": "en",
+  "localLabel": "Local names",
+  "romanise": null
+ },
+ "workdir": "work/uk",
+ "osm": {
+  "extracts": [
+   "downloads/en-south_west.osm.pbf",
+   "downloads/en-south_east.osm.pbf",
+   "downloads/en-greater_london.osm.pbf",
+   "downloads/en-east.osm.pbf",
+   "downloads/en-east_midlands.osm.pbf",
+   "downloads/en-west_midlands.osm.pbf",
+   "downloads/en-north_west.osm.pbf",
+   "downloads/en-yorkshire_and_the_humber.osm.pbf",
+   "downloads/en-north_east.osm.pbf",
+   "downloads/scotland.osm.pbf"
+  ],
+  "corridor_km": 2.0,
+  "note": "England regions from download.openstreetmap.fr extracts/europe/united_kingdom/england/<region>.osm.pbf (Geofabrik was unreachable from the sandbox on 2026-09-13). Scotland: Geofabrik europe/united-kingdom/scotland-latest.osm.pbf, not yet downloaded.",
+  "urls": {
+   "en-south_west.osm.pbf": "https://download.openstreetmap.fr/extracts/europe/united_kingdom/england/south_west.osm.pbf",
+   "en-south_east.osm.pbf": "https://download.openstreetmap.fr/extracts/europe/united_kingdom/england/south_east.osm.pbf",
+   "en-greater_london.osm.pbf": "https://download.openstreetmap.fr/extracts/europe/united_kingdom/england/greater_london.osm.pbf",
+   "en-east.osm.pbf": "https://download.openstreetmap.fr/extracts/europe/united_kingdom/england/east.osm.pbf",
+   "en-east_midlands.osm.pbf": "https://download.openstreetmap.fr/extracts/europe/united_kingdom/england/east_midlands.osm.pbf",
+   "en-west_midlands.osm.pbf": "https://download.openstreetmap.fr/extracts/europe/united_kingdom/england/west_midlands.osm.pbf",
+   "en-north_west.osm.pbf": "https://download.openstreetmap.fr/extracts/europe/united_kingdom/england/north_west.osm.pbf",
+   "en-yorkshire_and_the_humber.osm.pbf": "https://download.openstreetmap.fr/extracts/europe/united_kingdom/england/yorkshire_and_the_humber.osm.pbf",
+   "en-north_east.osm.pbf": "https://download.openstreetmap.fr/extracts/europe/united_kingdom/england/north_east.osm.pbf"
+  },
+  "mirror": {
+   "scotland.osm.pbf": "europe/united-kingdom/scotland.osm.pbf"
+  }
+ },
+ "graph": {
+  "map_width": 520,
+  "outline": "config/uk_outline.geojson",
+  "land_fill": true
+ },
+ "nodes": {
+  "landsend": {
+   "name": "Land's End",
+   "lat": 50.066,
+   "lon": -5.71,
+   "type": "terminus"
+  },
+  "penzance": {
+   "name": "Penzance",
+   "lat": 50.1215,
+   "lon": -5.5325
+  },
+  "truro": {
+   "name": "Truro",
+   "lat": 50.2632,
+   "lon": -5.051
+  },
+  "bodmin": {
+   "name": "Bodmin",
+   "lat": 50.4715,
+   "lon": -4.7185
+  },
+  "okehampton": {
+   "name": "Okehampton",
+   "lat": 50.7385,
+   "lon": -4.0025
+  },
+  "exeter": {
+   "name": "Exeter",
+   "lat": 50.726,
+   "lon": -3.53,
+   "type": "gateway"
+  },
+  "taunton": {
+   "name": "Taunton",
+   "lat": 51.015,
+   "lon": -3.103
+  },
+  "bath": {
+   "name": "Bath",
+   "lat": 51.381,
+   "lon": -2.359
+  },
+  "bristol": {
+   "name": "Bristol",
+   "lat": 51.45,
+   "lon": -2.582,
+   "type": "gateway"
+  },
+  "gloucester": {
+   "name": "Gloucester",
+   "lat": 51.865,
+   "lon": -2.244
+  },
+  "ludlow": {
+   "name": "Ludlow",
+   "lat": 52.3675,
+   "lon": -2.7185
+  },
+  "shrewsbury": {
+   "name": "Shrewsbury",
+   "lat": 52.708,
+   "lon": -2.754
+  },
+  "chester": {
+   "name": "Chester",
+   "lat": 53.1905,
+   "lon": -2.891
+  },
+  "preston": {
+   "name": "Preston",
+   "lat": 53.7585,
+   "lon": -2.704
+  },
+  "lancaster": {
+   "name": "Lancaster",
+   "lat": 54.048,
+   "lon": -2.8
+  },
+  "kendal": {
+   "name": "Kendal",
+   "lat": 54.328,
+   "lon": -2.745
+  },
+  "penrith": {
+   "name": "Penrith",
+   "lat": 54.665,
+   "lon": -2.754
+  },
+  "carlisle": {
+   "name": "Carlisle",
+   "lat": 54.8925,
+   "lon": -2.933,
+   "type": "gateway"
+  },
+  "moffat": {
+   "name": "Moffat",
+   "lat": 55.333,
+   "lon": -3.442
+  },
+  "peebles": {
+   "name": "Peebles",
+   "lat": 55.651,
+   "lon": -3.188
+  },
+  "edinburgh": {
+   "name": "Edinburgh",
+   "lat": 55.952,
+   "lon": -3.19,
+   "type": "terminus"
+  },
+  "honiton": {
+   "name": "Honiton",
+   "lat": 50.799,
+   "lon": -3.189
+  },
+  "dorchester": {
+   "name": "Dorchester",
+   "lat": 50.715,
+   "lon": -2.438
+  },
+  "salisbury": {
+   "name": "Salisbury",
+   "lat": 51.069,
+   "lon": -1.7945
+  },
+  "winchester": {
+   "name": "Winchester",
+   "lat": 51.063,
+   "lon": -1.315
+  },
+  "guildford": {
+   "name": "Guildford",
+   "lat": 51.236,
+   "lon": -0.572
+  },
+  "london": {
+   "name": "London",
+   "lat": 51.5075,
+   "lon": -0.128,
+   "type": "gateway"
+  },
+  "hertford": {
+   "name": "Hertford",
+   "lat": 51.7965,
+   "lon": -0.079
+  },
+  "cambridge": {
+   "name": "Cambridge",
+   "lat": 52.205,
+   "lon": 0.122,
+   "type": "gateway"
+  },
+  "peterborough": {
+   "name": "Peterborough",
+   "lat": 52.5735,
+   "lon": -0.242
+  },
+  "lincoln": {
+   "name": "Lincoln",
+   "lat": 53.23,
+   "lon": -0.54
+  },
+  "york": {
+   "name": "York",
+   "lat": 53.958,
+   "lon": -1.093,
+   "type": "gateway"
+  },
+  "northallerton": {
+   "name": "Northallerton",
+   "lat": 54.339,
+   "lon": -1.434
+  },
+  "durham": {
+   "name": "Durham",
+   "lat": 54.776,
+   "lon": -1.576
+  },
+  "newcastle": {
+   "name": "Newcastle",
+   "lat": 54.972,
+   "lon": -1.614,
+   "type": "gateway"
+  },
+  "alnwick": {
+   "name": "Alnwick",
+   "lat": 55.4135,
+   "lon": -1.706
+  },
+  "berwick": {
+   "name": "Berwick-upon-Tweed",
+   "lat": 55.77,
+   "lon": -2.006
+  },
+  "stives": {
+   "name": "St Ives",
+   "lat": 50.211,
+   "lon": -5.48
+  },
+  "newquay": {
+   "name": "Newquay",
+   "lat": 50.415,
+   "lon": -5.08
+  },
+  "wadebridge": {
+   "name": "Wadebridge",
+   "lat": 50.517,
+   "lon": -4.835
+  },
+  "nottingham": {
+   "name": "Nottingham",
+   "lat": 52.953,
+   "lon": -1.15
+  },
+  "sheffield": {
+   "name": "Sheffield",
+   "lat": 53.381,
+   "lon": -1.47
+  },
+  "leeds": {
+   "name": "Leeds",
+   "lat": 53.797,
+   "lon": -1.548
+  },
+  "windermere": {
+   "name": "Windermere",
+   "lat": 54.38,
+   "lon": -2.908
+  },
+  "keswick": {
+   "name": "Keswick",
+   "lat": 54.601,
+   "lon": -3.136
+  },
+  "lockerbie": {
+   "name": "Lockerbie",
+   "lat": 55.123,
+   "lon": -3.355
+  },
+  "lanark": {
+   "name": "Lanark",
+   "lat": 55.674,
+   "lon": -3.778
+  },
+  "glasgow": {
+   "name": "Glasgow",
+   "lat": 55.86,
+   "lon": -4.252,
+   "type": "gateway"
+  },
+  "falkirk": {
+   "name": "Falkirk",
+   "lat": 55.999,
+   "lon": -3.784
+  },
+  "stamford": {
+   "name": "Stamford",
+   "lat": 52.652,
+   "lon": -0.48
+  },
+  "selby": {
+   "name": "Selby",
+   "lat": 53.783,
+   "lon": -1.067
+  }
+ },
+ "trunks": [
+  {
+   "variant": "base",
+   "nodes": [
+    "landsend",
+    "penzance",
+    "truro",
+    "bodmin",
+    "okehampton",
+    "exeter",
+    "taunton",
+    "bath",
+    "bristol",
+    "gloucester",
+    "ludlow",
+    "shrewsbury",
+    "chester",
+    "preston",
+    "lancaster",
+    "kendal",
+    "penrith",
+    "carlisle",
+    "moffat",
+    "peebles",
+    "edinburgh"
+   ]
+  },
+  {
+   "variant": "london",
+   "nodes": [
+    "exeter",
+    "honiton",
+    "dorchester",
+    "salisbury",
+    "winchester",
+    "guildford",
+    "london",
+    "hertford",
+    "cambridge",
+    "peterborough",
+    "lincoln",
+    "selby",
+    "york",
+    "northallerton",
+    "durham",
+    "newcastle",
+    "alnwick",
+    "berwick",
+    "edinburgh"
+   ]
+  },
+  {
+   "variant": "northcoast",
+   "nodes": [
+    "penzance",
+    "stives",
+    "newquay",
+    "wadebridge",
+    "bodmin"
+   ]
+  },
+  {
+   "variant": "pennines",
+   "nodes": [
+    "cambridge",
+    "stamford",
+    "nottingham",
+    "sheffield",
+    "leeds",
+    "york"
+   ]
+  },
+  {
+   "variant": "lakes",
+   "nodes": [
+    "kendal",
+    "windermere",
+    "keswick",
+    "penrith"
+   ]
+  },
+  {
+   "variant": "glasgow",
+   "nodes": [
+    "carlisle",
+    "lockerbie",
+    "lanark",
+    "glasgow",
+    "falkirk",
+    "edinburgh"
+   ]
+  }
+ ],
+ "ferries": [],
+ "forkLabels": {
+  "exeter": "From Exeter",
+  "penzance": "At Penzance",
+  "cambridge": "From Cambridge",
+  "kendal": "At Kendal",
+  "carlisle": "From Carlisle"
+ },
+ "optionNames": {
+  "london": "East side via London",
+  "northcoast": "North coast: St Ives, Newquay, Camel Trail",
+  "pennines": "Pennine edge: Nottingham, Sheffield, Leeds",
+  "lakes": "Lake District: Windermere, Keswick",
+  "glasgow": "Glasgow and the canals"
+ },
+ "defaultOptionNames": {
+  "exeter": "West side: Bath, Shropshire, Lakes",
+  "penzance": "South coast via Truro",
+  "cambridge": "Fens and Lincoln",
+  "kendal": "Kendal to Penrith direct",
+  "carlisle": "Borders: Moffat, Peebles"
+ },
+ "presets": [
+  {
+   "name": "West",
+   "picks": {}
+  },
+  {
+   "name": "Via London",
+   "picks": {
+    "exeter": "london"
+   }
+  }
+ ],
+ "trips": "uk-trips.json",
+ "pickerDefault": "top",
+ "routeWord": "famous rides",
+ "skippable": [],
+ "vehicles": {
+  "names": {
+   "bike": "Bicycle",
+   "ebike": "E-bike (pedelec)",
+   "opium": "S-pedelec (45 km/h)"
+  },
+  "defaultTarget": {
+   "bike": 120,
+   "ebike": 110,
+   "opium": 180
+  },
+  "minDay": {
+   "bike": 40,
+   "ebike": 32,
+   "opium": 38
+  },
+  "maxDay": {
+   "bike": 300,
+   "ebike": 160,
+   "opium": 280
+  },
+  "targetRange": {
+   "bike": [
+    60,
+    300
+   ],
+   "ebike": [
+    45,
+    160
+   ],
+   "opium": [
+    50,
+    280
+   ]
+  },
+  "moped": {
+   "enabled": true,
+   "reroute_if_motorfree_share_at_least": 0.05,
+   "keep_bicycle_line": []
+  }
+ },
+ "sights": {
+  "exclude_kinds": [
+   "memorial",
+   "artwork"
+  ]
+ },
+ "cities": {
+  "population_min": 20000,
+  "detour_km": 20,
+  "rest_day_km": 60
+ },
+ "by": "CT"
+}
