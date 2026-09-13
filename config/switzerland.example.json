@@ -167,5 +167,18 @@
   "population_min": 20000,
   "detour_km": 20,
   "rest_day_km": 60
+ },
+ "basemap": {
+  "sources": {
+   "national": {
+    "name": "Ordnance Survey (example)",
+    "url": "https://example.tile.server/{z}/{x}/{y}.png",
+    "s": "",
+    "min": 6,
+    "max": 18,
+    "attr": "© the national mapping agency",
+    "light": 1
+   }
+  }
  }
 }

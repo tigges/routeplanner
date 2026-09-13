@@ -467,5 +467,6 @@
   "rest_day_km": 60
  },
  "by": "CT",
- "hub": false
+ "hub": false,
+ "basemap": {}
 }

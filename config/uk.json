@@ -492,5 +492,6 @@
   "detour_km": 20,
   "rest_day_km": 60
  },
- "by": "CT"
+ "by": "CT",
+ "basemap": {}
 }
