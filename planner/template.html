@@ -465,7 +465,7 @@ var BM_SRC={
  cycle:{name:"Cycling map",url:"https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",s:"abc",max:20,attr:"© OpenStreetMap contributors · CyclOSM",light:1},
  topo:{name:"Topographic",url:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",s:"abc",max:17,attr:"© OpenStreetMap contributors · SRTM · OpenTopoMap (CC-BY-SA)",light:1},
  sat:{name:"Satellite",url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",s:"",max:19,attr:"Imagery © Esri, Maxar, Earthstar Geographics",light:0}};
-var BM=CFG.basemap||null;                                       // {auto:{plain:"plain",detail:"cycle",switchZoom:10}, sources:{national:{…}}, order:[…]}
+var BM=CFG.basemap===false?null:(CFG.basemap||{});             // on for every country unless the config says "basemap": false; {auto:{plain,detail,switchZoom}, sources:{national:{…}}, order:[…]}
 if(BM){ for(var k in (BM.sources||{})) BM_SRC[k]=BM.sources[k]; }
 var BM_ORDER=BM&&BM.order||["auto","plain","cycle","topo","national","sat","none"];
 var BM_MODE="auto"; try{ BM_MODE=localStorage.getItem("basemap")||"auto"; }catch(e){}
@@ -491,7 +491,7 @@ function drawTiles(){
   var wx=((tx%n)+n)%n, id=key+"/"+z+"/"+tx+"/"+ty; want[id]=1;
   if(BM_TILES[id]) continue;
   var im=document.createElementNS(NS,"image"); im.setAttribute("x",BM_X0+tx*S); im.setAttribute("y",BM_Y0+ty*S); im.setAttribute("width",S*1.003); im.setAttribute("height",S*1.003); im.setAttribute("preserveAspectRatio","none");
-  var url=src.url.replace("{z}",z).replace("{x}",wx).replace("{y}",ty).replace("{r}",r).replace("{s}",sub?sub[(tx+ty)%sub.length]:"");
+  var url=src.url.replace("{z}",z).replace("{x}",wx).replace("{y}",ty).replace("{-y}",n-1-ty).replace("{r}",r).replace("{s}",sub?sub[(tx+ty)%sub.length]:"");
   im.setAttributeNS("http://www.w3.org/1999/xlink","href",url); im.setAttribute("href",url); im.dataset.z=z; im.dataset.src=key; im.style.opacity="0";
   im.addEventListener("load",function(e){ e.target.style.opacity="1"; bmClean(); }); im.addEventListener("error",function(e){ var t=e.target; t.remove(); for(var q in BM_TILES) if(BM_TILES[q]===t) delete BM_TILES[q]; bmClean(); });
   gB.appendChild(im); BM_TILES[id]=im; }

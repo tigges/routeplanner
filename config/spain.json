@@ -486,5 +486,18 @@
   "detour_km": 20,
   "rest_day_km": 60
  },
- "by": "CT"
+ "by": "CT",
+ "basemap": {
+  "sources": {
+   "national": {
+    "name": "IGN Spain",
+    "url": "https://tms-mapa-raster.ign.es/1.0.0/mapa-raster/{z}/{x}/{-y}.jpeg",
+    "s": "",
+    "min": 6,
+    "max": 18,
+    "attr": "© Instituto Geográfico Nacional de España",
+    "light": 1
+   }
+  }
+ }
 }
