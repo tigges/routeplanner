@@ -2,8 +2,75 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Journey planner</title>
 <style>
-:root{--bg:#0a141b;--panel:#0d1a23;--line:#22323d;--paper:#eef2f4;--dim:#c9d6de;--coast:#1e2f3b;
- --route:#f0713f;--ghost:#2a4150;--stop:#4da3ff;--ferry:#8f9aa3}
+:root{
+ /* Every colour on this page is named here. The stylesheet reads them with var(--x); the script,
+    which paints the map by setting attributes on SVG shapes, reads the same names through C().
+    A different palette is a different block of values — nothing below :root knows a hex code. */
+ /* surfaces */
+ --bg:#0a141b;          /* the page */
+ --panel:#0d1a23;       /* the sidebar */
+ --card:#0f1e28;        /* segment card, select, trip card */
+ --card-hi:#15303f;     /* the same, chosen or hovered */
+ --row-hover:#122531;   /* a day row under the pointer */
+ --well:#0a141b;        /* recessed strips: profile, friendliness, split bars */
+ --track:#1b2f3b;       /* the day bar behind its fill */
+ --field:#0d1a22;       /* the export textarea */
+ --train-bg:#1f3a4d;    /* a train hop, chosen */
+ --prof-a:#0f2130;      /* alternating blocks behind the whole-trip profile */
+ --prof-b:#132836;
+ --tripbar-bg:rgba(13,26,35,.92);
+ --attrib-bg:rgba(255,255,255,.75);
+ --hint-bg-light:rgba(255,255,255,.8);
+ --shadow:rgba(0,0,0,.4);
+ /* borders */
+ --line:#22323d;        /* the ordinary divider */
+ --line-on:#2f5a72;     /* a chosen option */
+ --line-layer-on:#2b4d63;
+ --line-hi:#4d7a99;     /* hover, pop-up, the quoted stretch in a fork */
+ --line-train:#3d5a6e;
+ --line-top:#6b5a2a;    /* the Top-5 pill */
+ --line-dl0:#4a6a2a;--line-dl1:#7a5418;--line-dl2:#7a3f1c;--line-dl3:#7a2a2a;   /* difficulty pills */
+ /* text */
+ --paper:#eef2f4;       /* primary */
+ --strong:#e6edf1;      /* figures */
+ --soft:#d6e0e6;        /* hints */
+ --dim:#c9d6de;         /* secondary */
+ --mute:#b9c6cf;        /* tertiary */
+ --mute2:#8fa3b0;       /* faintest */
+ --head:#6d8492;        /* section headings */
+ --why:#9fb3c0;         /* the one-line reason on a trip card */
+ --train-txt:#9fc3dc;--train-on-txt:#dbe7ee;
+ --ink-invert:#0a141b;  /* text on a light badge */
+ --on-accent:#fff;      /* text on the route colour */
+ --ink-light:#3a4a55;   /* text over light map tiles */
+ --ink-light2:#2b3a44;
+ /* accents */
+ --route:#f0713f;
+ --stop:#4da3ff;        /* day ends, and the lodging layer */
+ --link:#7fc4ff;
+ --warn:#e8a13f;
+ --good:#8fd3a1;
+ --shop:#ffd166;--bath:#c77dff;--water:#5ee0c8;--rail:#eef2f4;   /* facility layers */
+ --opium:#ffd166;--ebike:#7fd1a8;                                /* vehicles */
+ --top:#ffd166;                                                  /* the Top-5 pill */
+ --band-g:#97C459;--band-a:#EF9F27;--band-r:#E24B4A;             /* signed / mixed / busy */
+ --band-none:#3a5566;--dot-none:#5a6b78;
+ --dl2:#f07d3f;
+ /* the map */
+ --coast:#1e2f3b;--coast-line:#4a6a80;--land:#13242f;
+ --lake:#1b3f55;--lake-line:#35678a;--river:#3f7a9e;
+ --ghost:#2a4150;       /* a leg not on this journey */
+ --casing:#ffffff;      /* the white edge that keeps the route readable on tiles */
+ --mne:#7fd1a8;--mne-lbl:#9fe0bf;--mne-lbl-light:#1d6b45;        /* road stations */
+ --sight:#e7c46a;--sight-lbl:#e7c46a;--sight-lbl-light:#7a5a00;
+ --maplbl:#8fa3b0;--maplbl-day:#dbe7ee;                          /* town names on the map */
+ --maplbl-light:#3a4a55;--maplbl-day-light:#0d1a23;
+ --fac-lbl:#b9c6cf;--fac-lbl-light:#2b3a44;
+ --halo:#0a141b;                                                 /* behind map text, dark tiles */
+ --ferry:#8f9aa3;
+ /* the trip picker's map */
+ --ghost-pick:#223744;--net:#557386;--net-major:#9fbfd6;
+ --badge-major:#eef2f4;--badge-minor:#7f9cb0;--coast-pick:#3d5a70}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--paper);
  font-family:"Hiragino Sans","Noto Sans JP",-apple-system,"Segoe UI",system-ui,sans-serif}
@@ -11,89 +78,89 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--paper);
 #side{overflow-y:auto;background:var(--panel);border-right:1px solid var(--line)}
 #stage{position:relative;overflow:hidden}
 svg{display:block;width:100%;height:100%;cursor:grab}svg.drag{cursor:grabbing}
-h1{font-size:17px;margin:18px 16px 3px;font-weight:600;letter-spacing:-.01em}h1 .by{font-size:12px;font-weight:500;color:#8fa3b0;letter-spacing:0;margin-left:4px}
-#pick .sub{margin:8px 16px 0;line-height:1.45}#pick .pickhint{margin-top:12px;color:#8fa3b0}#pick h2{margin-top:22px}#pickhead{margin-top:16px}#pickfilters{margin-bottom:4px}
+h1{font-size:17px;margin:18px 16px 3px;font-weight:600;letter-spacing:-.01em}h1 .by{font-size:12px;font-weight:500;color:var(--mute2);letter-spacing:0;margin-left:4px}
+#pick .sub{margin:8px 16px 0;line-height:1.45}#pick .pickhint{margin-top:12px;color:var(--mute2)}#pick h2{margin-top:22px}#pickhead{margin-top:16px}#pickfilters{margin-bottom:4px}
 .sub{margin:0 16px 14px;font-size:12px;color:var(--dim);line-height:1.5}
 .stats{display:flex;gap:14px;margin:0 16px 16px}
 .stats div{font-size:11px;color:var(--dim)}
 .stats b{display:block;font-size:20px;color:var(--paper);font-weight:600}
-h2{font-size:11px;color:#6d8492;margin:0 16px 8px;font-weight:600}
+h2{font-size:11px;color:var(--head);margin:0 16px 8px;font-weight:600}
 .fork{margin:0 16px 12px}
 #forkhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 16px 6px}
 #forksummary{font-size:11.5px;color:var(--dim)}
-#forktoggle{font-size:11.5px;color:#7fc4ff;cursor:pointer;border:1px solid var(--line);border-radius:5px;padding:2px 8px}
+#forktoggle{font-size:11.5px;color:var(--link);cursor:pointer;border:1px solid var(--line);border-radius:5px;padding:2px 8px}
 #forkbody[hidden]{display:none}
-#strip div.sel{outline:2px solid #7fc4ff;outline-offset:1px;border-radius:2px}
-#segcard{margin:0 16px 14px;background:#0f1e28;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+#strip div.sel{outline:2px solid var(--link);outline-offset:1px;border-radius:2px}
+#segcard{margin:0 16px 14px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
 #segcard[hidden]{display:none}
 .schead{display:flex;justify-content:space-between;align-items:center}
 .schead b{font-size:13px;color:var(--paper)}
-.scx{cursor:pointer;color:#b9c6cf;font-size:16px;line-height:1;padding:0 2px}
+.scx{cursor:pointer;color:var(--mute);font-size:16px;line-height:1;padding:0 2px}
 .scmeta{font-size:11.5px;color:var(--dim);margin-top:5px}
-.scbar{display:flex;height:6px;border-radius:3px;overflow:hidden;background:#0a141b;margin-top:7px}
+.scbar{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--well);margin-top:7px}
 .scbar i{display:block;height:100%}
 .scbtns{display:flex;gap:6px;margin-top:9px}
 #presets{margin:0 16px 12px}
-.preslabel{font-size:11px;color:#6d8492;margin-bottom:6px}
+.preslabel{font-size:11px;color:var(--head);margin-bottom:6px}
 .fdot{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:5px;vertical-align:middle}
 .fork .q{font-size:12.5px;margin-bottom:5px}
 .opts{display:flex;gap:5px;flex-wrap:wrap}
 .opt{border:1px solid var(--line);background:transparent;color:var(--dim);border-radius:6px;
  padding:4px 9px;font-size:11.5px;cursor:pointer;font-family:inherit}
-.opt.on{background:#15303f;color:var(--paper);border-color:#2f5a72}
+.opt.on{background:var(--card-hi);color:var(--paper);border-color:var(--line-on)}
 .sl{margin:4px 16px 16px}
 .sl input{width:100%}
-.sl select{width:100%;background:#0f1e28;color:var(--paper);border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-size:12.5px;font-family:inherit}
+.sl select{width:100%;background:var(--card);color:var(--paper);border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-size:12.5px;font-family:inherit}
 .slrow{display:flex;justify-content:space-between;font-size:11.5px;color:var(--dim);margin-bottom:4px}
 .day{display:grid;grid-template-columns:26px 1fr auto;gap:7px;align-items:center;
  padding:5px 16px;font-size:12px;border-left:3px solid transparent}
-.day:hover{background:#122531}
+.day:hover{background:var(--row-hover)}
 .day.fer{color:var(--dim);font-style:italic}
-.day .n{color:#b9c6cf;font-size:11px;font-variant-numeric:tabular-nums}
-.day .m{font-size:12px;color:#e6edf1;font-variant-numeric:tabular-nums}
-.bar{grid-column:2/4;height:3px;background:#1b2f3b;border-radius:2px}
+.day .n{color:var(--mute);font-size:11px;font-variant-numeric:tabular-nums}
+.day .m{font-size:12px;color:var(--strong);font-variant-numeric:tabular-nums}
+.bar{grid-column:2/4;height:3px;background:var(--track);border-radius:2px}
 .bar i{display:block;height:100%;background:var(--route);border-radius:2px}
 .day .sup{grid-column:2/4;font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums;line-height:1.4}
 .day .sup b{color:var(--paper);font-weight:600}
-.day .sup .gap{color:#e8a13f}
-.day .sup .nodata{color:#b9c6cf;font-style:italic}
+.day .sup .gap{color:var(--warn)}
+.day .sup .nodata{color:var(--mute);font-style:italic}
 .day svg.spark{grid-column:2/4;display:block;width:100%;height:26px}
 .layers{display:flex;gap:5px;flex-wrap:wrap;margin:0 16px 14px}
 #skips{margin:8px 0 0}
-.hintline{font-size:12px;color:#d6e0e6;margin-top:6px;line-height:1.4}
-.opt.train{border-color:#3d5a6e}.opt.train.on{background:#1f3a4d;color:#dbe7ee;border-color:#4d7a99}
+.hintline{font-size:12px;color:var(--soft);margin-top:6px;line-height:1.4}
+.opt.train{border-color:var(--line-train)}.opt.train.on{background:var(--train-bg);color:var(--train-on-txt);border-color:var(--line-hi)}
 .opt.train.auto.on{border-style:dashed}
-.day.trn{color:#9fc3dc;font-style:italic}
-.day.sel{background:#15303f;border-left-color:var(--route)}
-.fork .cmp .ref{opacity:1;color:#d6e0e6;margin-bottom:8px;padding-left:8px;border-left:2px solid #4d7a99}
+.day.trn{color:var(--train-txt);font-style:italic}
+.day.sel{background:var(--card-hi);border-left-color:var(--route)}
+.fork .cmp .ref{opacity:1;color:var(--soft);margin-bottom:8px;padding-left:8px;border-left:2px solid var(--line-hi)}
 #favs{margin:6px 16px 0}#favs div{display:flex;gap:8px;align-items:center;font-size:12px;padding:4px 0;border-bottom:1px solid var(--line)}
-#favs div span{flex:1;cursor:pointer}#favs div b{color:#7fc4ff;cursor:pointer;font-weight:500}#favs div i{color:#b9c6cf;cursor:pointer;font-style:normal}
-#exp{width:calc(100% - 32px);margin:6px 16px;height:120px;font-size:11px;background:#0d1a22;color:#c9d6de;border:1px solid var(--line);border-radius:6px}
+#favs div span{flex:1;cursor:pointer}#favs div b{color:var(--link);cursor:pointer;font-weight:500}#favs div i{color:var(--mute);cursor:pointer;font-style:normal}
+#exp{width:calc(100% - 32px);margin:6px 16px;height:120px;font-size:11px;background:var(--field);color:var(--dim);border:1px solid var(--line);border-radius:6px}
 #basemap{font-size:11.5px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--dim);font-family:inherit;cursor:pointer}
-#attrib{position:absolute;right:6px;bottom:4px;z-index:3;font-size:10px;color:#3a4a55;background:rgba(255,255,255,.75);padding:1px 6px;border-radius:4px;pointer-events:none}#attrib:empty{display:none}
-body.lightmap #hint{background:rgba(255,255,255,.8);color:#3a4a55}
+#attrib{position:absolute;right:6px;bottom:4px;z-index:3;font-size:10px;color:var(--ink-light);background:var(--attrib-bg);padding:1px 6px;border-radius:4px;pointer-events:none}#attrib:empty{display:none}
+body.lightmap #hint{background:var(--hint-bg-light);color:var(--ink-light)}
 #topbtns{position:absolute;right:14px;top:12px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:60%}
-#pop{display:none;position:absolute;z-index:5;max-width:260px;cursor:pointer;background:#15303f;border:1px solid #4d7a99;border-radius:8px;padding:8px 10px;font-size:12.5px;color:#eef2f4;box-shadow:0 4px 16px rgba(0,0,0,.4)}
-#pop .ja{color:#c9d6de;margin-top:2px}#pop .sub{color:#8fa3b0;margin-top:3px;font-size:11.5px}#pop .links{margin-top:6px;display:flex;gap:10px;flex-wrap:wrap}#pop a{color:#7fc4ff;text-decoration:none;font-size:11.5px}
+#pop{display:none;position:absolute;z-index:5;max-width:260px;cursor:pointer;background:var(--card-hi);border:1px solid var(--line-hi);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--paper);box-shadow:0 4px 16px var(--shadow)}
+#pop .ja{color:var(--dim);margin-top:2px}#pop .sub{color:var(--mute2);margin-top:3px;font-size:11.5px}#pop .links{margin-top:6px;display:flex;gap:10px;flex-wrap:wrap}#pop a{color:var(--link);text-decoration:none;font-size:11.5px}
 #veh{font-size:11.5px;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--dim);cursor:pointer;font-family:inherit}
-body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8;border-color:#7fd1a8}
+body.opium #veh{color:var(--opium);border-color:var(--opium)}body.ebike #veh{color:var(--ebike);border-color:var(--ebike)}
 #lang{font-size:11.5px;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--dim);cursor:pointer;font-family:inherit}
 #fit{font-size:11.5px;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--dim);cursor:pointer;font-family:inherit}
 #fit:hover{color:var(--paper)}
-.cmp{font-size:12px;color:#e6edf1;margin:4px 0 0;line-height:1.45;font-variant-numeric:tabular-nums}
+.cmp{font-size:12px;color:var(--strong);margin:4px 0 0;line-height:1.45;font-variant-numeric:tabular-nums}
 .cmp div{display:flex;gap:6px;flex-wrap:wrap}.cmp b{color:var(--paper);font-weight:600;min-width:118px}
-.cmp .g{color:#8fd3a1}.cmp .r{color:#e8a13f}
-.layers .opt.on{background:#15303f;color:var(--paper);border-color:#2b4d63}
-#hint{position:absolute;left:14px;bottom:12px;font-size:11px;color:#b9c6cf}
+.cmp .g{color:var(--good)}.cmp .r{color:var(--warn)}
+.layers .opt.on{background:var(--card-hi);color:var(--paper);border-color:var(--line-layer-on)}
+#hint{position:absolute;left:14px;bottom:12px;font-size:11px;color:var(--mute)}
 #friendwrap{margin:2px 16px 14px}
-#strip{display:flex;height:16px;border-radius:3px;overflow:hidden;gap:1px;background:#0a141b}
+#strip{display:flex;height:16px;border-radius:3px;overflow:hidden;gap:1px;background:var(--well)}
 #strip div{min-width:1px;cursor:pointer}
 #friendleg{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;font-size:11px;color:var(--dim);align-items:center}
 #friendleg span{display:flex;align-items:center;gap:4px}
 #friendleg i{width:10px;height:10px;border-radius:2px;display:inline-block}
 #friendtog{cursor:pointer;border:1px solid var(--line);border-radius:5px;padding:2px 7px;color:var(--dim);margin-left:auto}
-#friendtog.on{background:#15303f;color:var(--paper);border-color:#2f5a72}
-#warn{margin:0 16px 12px;font-size:11.5px;color:#e8a13f}
+#friendtog.on{background:var(--card-hi);color:var(--paper);border-color:var(--line-on)}
+#warn{margin:0 16px 12px;font-size:11.5px;color:var(--warn)}
 /* --- folds, header row, exports menu --- */
 .fold{margin:0 0 6px}
 .foldhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 16px 8px;padding:8px 0 5px;border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
@@ -101,44 +168,44 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 .fsum{font-size:11.5px;color:var(--dim);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}
 .fold.closed .foldbody{display:none}
 #planhead{display:flex;justify-content:space-between;align-items:center;margin:14px 16px 0;min-height:24px}#planhead h1{margin:0}
-#tripbar{position:absolute;left:14px;top:12px;z-index:4;display:flex;align-items:center;gap:8px;max-width:calc(100% - 300px);padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:rgba(13,26,35,.92);font-size:12.5px;color:var(--dim);white-space:nowrap;overflow:hidden}
-#tripbar[hidden]{display:none}#tripbar b{color:var(--paper);font-weight:600}#tripbar #tbsub{overflow:hidden;text-overflow:ellipsis;color:#8fa3b0}
-#tripsback{color:#7fc4ff;cursor:pointer;padding-right:8px;border-right:1px solid var(--line)}
+#tripbar{position:absolute;left:14px;top:12px;z-index:4;display:flex;align-items:center;gap:8px;max-width:calc(100% - 300px);padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--tripbar-bg);font-size:12.5px;color:var(--dim);white-space:nowrap;overflow:hidden}
+#tripbar[hidden]{display:none}#tripbar b{color:var(--paper);font-weight:600}#tripbar #tbsub{overflow:hidden;text-overflow:ellipsis;color:var(--mute2)}
+#tripsback{color:var(--link);cursor:pointer;padding-right:8px;border-right:1px solid var(--line)}
 #more{margin-left:auto;padding:1px 9px;font-size:14px;line-height:1.3}
 #morebox{margin:0 0 6px}#morebox[hidden]{display:none}
-#tripbar svg{width:14px;height:14px;fill:none;stroke:#7fc4ff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}#tripbar{cursor:pointer}#tripbar:hover{border-color:#4d7a99}
-.back{font-size:11.5px;color:#7fc4ff;cursor:pointer;margin:14px 16px 0;display:inline-flex;align-items:center;gap:3px}.back[hidden]{display:none}.back svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}.back+#planhead{margin-top:2px}
+#tripbar svg{width:14px;height:14px;fill:none;stroke:var(--link);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}#tripbar{cursor:pointer}#tripbar:hover{border-color:var(--line-hi)}
+.back{font-size:11.5px;color:var(--link);cursor:pointer;margin:14px 16px 0;display:inline-flex;align-items:center;gap:3px}.back[hidden]{display:none}.back svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}.back+#planhead{margin-top:2px}
 #title{display:flex;align-items:center;gap:8px;flex-wrap:wrap}#title .badge{height:24px;min-width:24px;border-radius:12px;font-size:12px}#tsub{margin-top:2px}
-.badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:#eef2f4;color:#0a141b;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
-.badge.on{background:var(--route);color:#fff}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:var(--badge-major);color:var(--ink-invert);font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
+.badge.on{background:var(--route);color:var(--on-accent)}
 /* --- whole-trip profile --- */
-#profwrap{margin:0 16px 12px}#profwrap svg{display:block;width:100%;height:56px;border-radius:4px;background:#0a141b}
-#proflbl{display:flex;justify-content:space-between;font-size:10.5px;color:#8fa3b0;margin-top:3px}
+#profwrap{margin:0 16px 12px}#profwrap svg{display:block;width:100%;height:56px;border-radius:4px;background:var(--well)}
+#proflbl{display:flex;justify-content:space-between;font-size:10.5px;color:var(--mute2);margin-top:3px}
 /* --- direction --- */
 #dirrow{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0 0}#dirrow .opt{font-variant-numeric:tabular-nums}
 /* --- layer icons on the map --- */
 #layers{position:absolute;right:14px;top:50px;display:flex;flex-direction:column;gap:5px;margin:0}
 #layers .opt{width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;background:var(--panel)}
 #layers .opt svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-#layers .opt.on{background:#15303f;color:#fff;border-color:#2b4d63}
-#layers .opt[data-l=shop].on{color:#ffd166}#layers .opt[data-l=stay].on{color:#4da3ff}#layers .opt[data-l=bath].on{color:#c77dff}#layers .opt[data-l=water].on{color:#5ee0c8}
+#layers .opt.on{background:var(--card-hi);color:var(--on-accent);border-color:var(--line-layer-on)}
+#layers .opt[data-l=shop].on{color:var(--shop)}#layers .opt[data-l=stay].on{color:var(--stop)}#layers .opt[data-l=bath].on{color:var(--bath)}#layers .opt[data-l=water].on{color:var(--water)}
 /* --- trip picker --- */
 #pick[hidden]{display:none}body.picking #plan{display:none}
 #pickfilters{margin:0 16px 12px}
 #pickhead{display:flex;justify-content:space-between;align-items:baseline;margin:0 16px 8px}#pickhead h2{margin:0}
 #pickcards{margin:0 12px 16px;display:flex;flex-direction:column;gap:7px}
-.tcard{display:flex;gap:10px;align-items:center;padding:7px 8px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:#0f1e28}
-.tcard:hover,.tcard.hl{border-color:#4d7a99;background:#15303f}.tcard.on{border-color:var(--route)}
+.tcard{display:flex;gap:10px;align-items:center;padding:7px 8px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:var(--card)}
+.tcard:hover,.tcard.hl{border-color:var(--line-hi);background:var(--card-hi)}.tcard.on{border-color:var(--route)}
 .tcard svg{width:78px;height:54px;flex:none}.tcard .tb{flex:1;min-width:0}
 .tcard .tn{display:flex;flex-wrap:wrap;align-items:center;gap:4px 7px;font-size:14px;font-weight:600}.tcard .tn .pills{margin-left:auto;display:flex;gap:4px;flex:none}
-.tcard .ts{font-size:11.5px;color:var(--dim);margin-top:2px}.tcard .tm{font-size:11.5px;color:#b9c6cf;margin-top:2px;font-variant-numeric:tabular-nums}.tcard .tm i{color:#8fa3b0}
+.tcard .ts{font-size:11.5px;color:var(--dim);margin-top:2px}.tcard .tm{font-size:11.5px;color:var(--mute);margin-top:2px;font-variant-numeric:tabular-nums}.tcard .tm i{color:var(--mute2)}
 .tcard.dim{opacity:.35}
-.tcard .top{font-size:10px;font-weight:600;color:#ffd166;border:1px solid #6b5a2a;border-radius:9px;padding:1px 6px;white-space:nowrap}
+.tcard .top{font-size:10px;font-weight:600;color:var(--top);border:1px solid var(--line-top);border-radius:9px;padding:1px 6px;white-space:nowrap}
 .dl{font-size:10px;font-weight:600;border:1px solid;border-radius:9px;padding:1px 6px;white-space:nowrap}
-.dl0{color:#97C459;border-color:#4a6a2a}.dl1{color:#EF9F27;border-color:#7a5418}.dl2{color:#f07d3f;border-color:#7a3f1c}.dl3{color:#E24B4A;border-color:#7a2a2a}#pop .dl{margin-left:6px}
-.tcard .tw{font-size:11.5px;color:#9fb3c0;margin-top:2px;line-height:1.35}
-#pop .why{color:#c9d6de;margin-top:3px;font-size:11.5px;line-height:1.35}
-#pop .cta{color:#f0713f;margin-top:4px;font-size:11.5px}
+.dl0{color:var(--band-g);border-color:var(--line-dl0)}.dl1{color:var(--band-a);border-color:var(--line-dl1)}.dl2{color:var(--dl2);border-color:var(--line-dl2)}.dl3{color:var(--band-r);border-color:var(--line-dl3)}#pop .dl{margin-left:6px}
+.tcard .tw{font-size:11.5px;color:var(--why);margin-top:2px;line-height:1.35}
+#pop .why{color:var(--dim);margin-top:3px;font-size:11.5px;line-height:1.35}
+#pop .cta{color:var(--route);margin-top:4px;font-size:11.5px}
 .pkline{cursor:pointer}.pkbadge{cursor:pointer}
 /* --- phone --- */
 @media (max-width:760px){
@@ -166,7 +233,7 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 <div class="stats"><div><b id="sd"></b>days</div><div><b id="sk"></b>km</div><div><b id="sa"></b>m climbed</div><div id="srw"><b id="sr"></b>signed route</div></div>
 <div id="profwrap"><svg id="prof" viewBox="0 0 300 56" preserveAspectRatio="none"></svg><div id="proflbl"><span id="profhi"></span><span>coloured by day</span><span id="proflo"></span></div></div>
 <div id="friendwrap"><div id="strip" title="each leg, width by distance, colour by how bike-friendly it is"></div>
-<div id="friendleg"><span><i style="background:#97C459"></i>signed / quiet</span><span><i style="background:#EF9F27"></i>minor / mixed</span><span><i style="background:#E24B4A"></i>busy road</span><span id="friendtog" title="colour the route line on the map the same way">colour the map line</span></div></div>
+<div id="friendleg"><span><i style="background:var(--band-g)"></i>signed / quiet</span><span><i style="background:var(--band-a)"></i>minor / mixed</span><span><i style="background:var(--band-r)"></i>busy road</span><span id="friendtog" title="colour the route line on the map the same way">colour the map line</span></div></div>
 <div id="segcard" hidden></div>
 <div id="morebox" hidden><h2>Saved &amp; export</h2><div class="layers" id="routebar"><button class="opt" id="favsave">Save as favourite</button><button class="opt" id="copylink">Copy link</button><button class="opt" id="copycsv">Copy day list (CSV)</button><button class="opt" id="copygpx">Copy GPX</button></div>
 <div id="favs"></div><div id="expnote" class="hintline"></div><textarea id="exp" hidden></textarea></div>
@@ -202,6 +269,14 @@ body.opium #veh{color:#ffd166;border-color:#ffd166}body.ebike #veh{color:#7fd1a8
 <button class="opt" data-l="water" title="Drinking water"><svg viewBox="0 0 20 20"><path d="M10 3c3 4 5 6.5 5 9a5 5 0 0 1-10 0c0-2.5 2-5 5-9z"/></svg></button>
 </div></div></div>
 <script>
+/* --- the palette ------------------------------------------------------------------------------
+   C("route") is the value of --route in :root. The script paints the map by setting fill and
+   stroke attributes, which no stylesheet rule can reach, so it reads the same names the CSS uses
+   rather than carrying its own copies. Values are looked up once and kept; after swapping the
+   palette call recolour() and then render(). --------------------------------------------------- */
+var _PAL={};
+function C(n){ var v=_PAL[n]; if(v===undefined){ v=getComputedStyle(document.documentElement).getPropertyValue("--"+n).trim(); _PAL[n]=v; } return v; }
+function recolour(){ _PAL={}; }
 var CFG={"title": "Spain by bike", "slug": "spain", "by": "CT", "pickerDefault": "top", "routeWord": "famous routes", "landFill": true, "trips": [{"id": "ew", "num": "E–W", "name": "East–West crossing", "sub": "Cap de Creus → Fisterra", "slug": "spain", "kind": "crossing", "tags": ["crossing"], "s": "capcreus", "e": "fisterra", "note": "Mediterranean to Atlantic: the Ebro valley, then the Camino Francés from Logroño to Santiago and on to the end of the world", "geo": {"km": 1435, "asc": 13801, "eff": 2814, "n": 22, "line": [[42.3187, 3.316], [42.267, 2.9613], [42.0747, 2.9677], [42.0273, 2.8296], [41.9748, 2.8205], [41.9752, 2.3618], [41.9312, 2.2494], [41.8252, 2.1944], [41.7254, 1.8235], [41.7381, 1.4255], [41.6483, 1.1646], [41.6476, 0.6917], [41.6076, 0.5459], [41.5367, 0.493], [41.5191, 0.1218], [41.4623, -0.0212], [41.7006, -0.5856], [41.7159, -0.7118], [41.6488, -0.8891], [41.8983, -1.3898], [42.2394, -1.7541], [42.2367, -1.8539], [42.3371, -1.9963], [42.338, -2.2291], [42.4029, -2.3222], [42.4023, -2.4043], [42.4664, -2.4466], [42.4054, -2.625], [42.4509, -3.037], [42.3659, -3.3575], [42.394, -3.5392], [42.3585, -3.5625], [42.3099, -4.1738], [42.2584, -4.3807], [42.34, -4.6042], [42.3295, -4.8123], [42.3877, -5.1449], [42.4977, -5.415], [42.4685, -5.4994], [42.5987, -5.5671], [42.4463, -5.9459], [42.4891, -6.4411], [42.7086, -7.0352], [42.7588, -7.2257], [42.7394, -7.293], [42.775, -7.3084], [42.7656, -7.5284], [42.9143, -8.0137], [42.8777, -8.0972], [42.9183, -8.1475], [42.9064, -8.2194], [42.8387, -8.387], [42.9863, -9.1082], [42.9411, -9.237], [42.8837, -9.2718]]}}, {"id": "frances", "num": "C", "name": "Camino Francés", "sub": "Logroño → Santiago", "slug": "spain", "kind": "route", "tags": ["camino"], "s": "logrono", "e": "santiago", "p": {"logrono": "base", "ponferrada": "base"}, "note": "Rioja, Burgos, the Meseta, León, O Cebreiro, Sarria · the pilgrim road with an albergue in every village", "top": 1, "why": "the best-known long-distance route in Spain, and one of the most-ridden in the world", "geo": {"km": 641, "asc": 7064, "eff": 1347, "n": 11, "line": [[42.465, -2.4457], [42.4054, -2.625], [42.4474, -2.8875], [42.441, -2.9871], [42.4241, -3.013], [42.4509, -3.037], [42.4041, -3.2911], [42.3659, -3.3575], [42.3697, -3.4783], [42.394, -3.5392], [42.3585, -3.5625], [42.3675, -3.6039], [42.3378, -3.7092], [42.3534, -3.7868], [42.34, -3.9191], [42.288, -4.1383], [42.3099, -4.1738], [42.2775, -4.2473], [42.2584, -4.3807], [42.2688, -4.4475], [42.34, -4.6042], [42.3295, -4.8123], [42.366, -4.8751], [42.3877, -5.1449], [42.4977, -5.415], [42.4685, -5.4994], [42.5987, -5.5671], [42.5633, -5.6983], [42.4555, -5.9013], [42.4542, -6.1573], [42.4956, -6.3441], [42.4891, -6.4411], [42.5455, -6.5357], [42.5487, -6.6008], [42.5921, -6.6799], [42.6024, -6.8126], [42.6549, -6.8919], [42.6766, -7.0002], [42.7046, -7.0205], [42.6978, -7.09], [42.7588, -7.2257], [42.7386, -7.2736], [42.7404, -7.2948], [42.775, -7.3084], [42.7844, -7.4523], [42.7656, -7.5284], [42.8738, -7.8058], [42.8669, -7.93], [42.9112, -7.9952], [42.9081, -8.0534], [42.8777, -8.0972], [42.919, -8.1532], [42.8898, -8.2772], [42.8671, -8.3007], [42.8694, -8.355], [42.8387, -8.387], [42.8612, -8.4644], [42.8531, -8.4962], [42.8782, -8.5448]]}}, {"id": "norte", "num": "C", "name": "Camino del Norte", "sub": "Logroño → Santiago", "slug": "spain", "kind": "route", "tags": ["camino", "coast"], "s": "logrono", "e": "santiago", "p": {"logrono": "norte"}, "note": "Vitoria, Bilbao, Santander, the Asturian coast, Ribadeo, Lugo · the Cantabrian sea and green hills instead of the Meseta", "top": 2, "why": "the scenic camino: the whole north coast, cooler and greener, harder than the Francés", "geo": {"km": 830, "asc": 10397, "eff": 1869, "n": 9, "line": [[42.465, -2.4457], [42.6043, -2.4598], [42.6692, -2.3548], [42.7418, -2.4475], [42.8054, -2.459], [42.845, -2.6724], [43.015, -2.6114], [43.1552, -2.7723], [43.2079, -2.7695], [43.2415, -2.923], [43.3026, -2.9806], [43.3591, -3.206], [43.3976, -3.2418], [43.4033, -3.3124], [43.3791, -3.3219], [43.4122, -3.4079], [43.393, -3.4672], [43.4202, -3.5064], [43.4, -3.6442], [43.4225, -3.7383], [43.399, -3.8142], [43.4188, -3.8423], [43.4651, -3.8184], [43.3638, -4.0461], [43.309, -4.2388], [43.3219, -4.3184], [43.3899, -4.4046], [43.3714, -4.4725], [43.3949, -4.7289], [43.4228, -4.7626], [43.4383, -4.9796], [43.4655, -5.0649], [43.3734, -5.2727], [43.3548, -5.4391], [43.3935, -5.8005], [43.3593, -5.8955], [43.408, -6.0523], [43.4947, -6.1106], [43.4444, -6.2935], [43.4882, -6.3598], [43.479, -6.4442], [43.5201, -6.5285], [43.5498, -6.5323], [43.5316, -6.5702], [43.5532, -6.6538], [43.5376, -6.7571], [43.5692, -6.9426], [43.5014, -7.1072], [43.4851, -7.2888], [43.4372, -7.2894], [43.4123, -7.3356], [43.1986, -7.4284], [43.165, -7.4824], [43.0097, -7.556], [43.047, -7.6205], [43.0209, -7.819], [43.0404, -8.0233], [42.9618, -8.2813], [42.9656, -8.3398], [42.9087, -8.4234], [42.9179, -8.4896], [42.8782, -8.5448]]}}, {"id": "invierno", "num": "C", "name": "Camino de Invierno", "sub": "Ponferrada → Santiago", "slug": "spain", "kind": "route", "tags": ["camino", "valley"], "s": "ponferrada", "e": "santiago", "p": {"ponferrada": "invierno"}, "note": "O Barco, the Sil canyon, Monforte, Lalín · the quiet winter way round O Cebreiro", "geo": {"km": 258, "asc": 3922, "eff": 650, "n": 4, "line": [[42.546, -6.5911], [42.5635, -6.6325], [42.5632, -6.711], [42.5396, -6.7449], [42.5402, -6.7783], [42.5108, -6.8192], [42.5124, -6.8393], [42.5032, -6.8418], [42.5239, -6.9128], [42.512, -6.9313], [42.5015, -6.9168], [42.486, -6.9133], [42.4709, -6.8899], [42.4462, -6.9015], [42.4242, -6.9263], [42.4132, -6.9722], [42.4219, -7.006], [42.4058, -7.0416], [42.41, -7.0651], [42.3968, -7.0912], [42.3869, -7.1584], [42.3977, -7.1645], [42.3979, -7.1841], [42.406, -7.1815], [42.3964, -7.1909], [42.3982, -7.2115], [42.4502, -7.2206], [42.4471, -7.245], [42.475, -7.303], [42.467, -7.3109], [42.4752, -7.3248], [42.4691, -7.3312], [42.5094, -7.3451], [42.5395, -7.3997], [42.5197, -7.5153], [42.5484, -7.5689], [42.5447, -7.5905], [42.5579, -7.5933], [42.5826, -7.6248], [42.5949, -7.6737], [42.6183, -7.6848], [42.6305, -7.7019], [42.6161, -7.7918], [42.6274, -7.8236], [42.6246, -7.8576], [42.6326, -7.886], [42.6024, -7.9521], [42.6112, -7.97], [42.6151, -8.0116], [42.6323, -8.0224], [42.6515, -8.0559], [42.6602, -8.1143], [42.6944, -8.1187], [42.7546, -8.1522], [42.7804, -8.1483], [42.792, -8.1567], [42.7996, -8.1971], [42.7934, -8.2376], [42.8023, -8.2518], [42.7943, -8.2845], [42.839, -8.3421], [42.8261, -8.3446], [42.8424, -8.381], [42.851, -8.4423], [42.858, -8.4461], [42.8612, -8.4646], [42.8531, -8.4962], [42.8612, -8.4974], [42.8591, -8.5187], [42.8782, -8.5448]]}}, {"id": "fisterra", "num": "C", "name": "Camino a Fisterra", "sub": "Santiago → Fisterra", "slug": "spain", "kind": "route", "tags": ["camino", "coast"], "s": "santiago", "e": "fisterra", "note": "the last stage beyond Santiago to the Atlantic cape", "geo": {"km": 87, "asc": 1427, "eff": 229, "n": 1, "line": [[42.8782, -8.5448], [42.8679, -8.5618], [42.8668, -8.5706], [42.8733, -8.5855], [42.8758, -8.5849], [42.8776, -8.5938], [42.876, -8.6007], [42.8793, -8.603], [42.8817, -8.6124], [42.8791, -8.6223], [42.8854, -8.6282], [42.8879, -8.6356], [42.8898, -8.6504], [42.8889, -8.6609], [42.8862, -8.664], [42.8902, -8.6667], [42.8945, -8.6855], [42.9036, -8.689], [42.9058, -8.6955], [42.9017, -8.7073], [42.9086, -8.7262], [42.9041, -8.7368], [42.9071, -8.7396], [42.9073, -8.7493], [42.9109, -8.7527], [42.9114, -8.7695], [42.917, -8.7831], [42.9235, -8.7905], [42.925, -8.8017], [42.9311, -8.8095], [42.9311, -8.8202], [42.9368, -8.8421], [42.9443, -8.847], [42.9464, -8.8552], [42.956, -8.8616], [42.9553, -8.889], [42.9624, -8.8947], [42.9645, -8.9059], [42.9636, -8.9116], [42.957, -8.9192], [42.9581, -8.9244], [42.9557, -8.9294], [42.9594, -8.948], [42.9626, -8.9518], [42.9684, -8.9712], [42.9573, -8.996], [42.9619, -9.0043], [42.9614, -9.0166], [42.9645, -9.0203], [42.9667, -9.035], [42.9672, -9.0422], [42.9629, -9.0441], [42.9691, -9.0617], [42.9675, -9.0647], [42.9791, -9.0713], [42.9864, -9.0858], [42.9837, -9.0916], [42.9856, -9.1134], [42.9841, -9.1192], [42.9769, -9.1246], [42.9802, -9.1257], [42.9827, -9.1356], [42.9823, -9.1489], [42.9845, -9.1554], [42.9797, -9.1641], [42.9695, -9.1685], [42.9623, -9.1759], [42.9568, -9.1757], [42.9554, -9.181], [42.95, -9.1801], [42.9527, -9.1914], [42.9395, -9.1928], [42.9396, -9.1986], [42.9358, -9.2068], [42.9377, -9.2149], [42.9442, -9.2189], [42.9411, -9.237], [42.9288, -9.2385], [42.9281, -9.2523], [42.9198, -9.2643], [42.9137, -9.2668], [42.9103, -9.2631], [42.8947, -9.2639], [42.8932, -9.2676], [42.8837, -9.2718]]}}, {"id": "pyrenees", "num": "◆", "name": "Pyrenean foothills", "sub": "Figueres → Logroño", "slug": "spain", "kind": "section", "tags": ["mountain"], "s": "figueres", "e": "logrono", "p": {"figueres": "pyrenees"}, "note": "Olot, Ripoll, La Seu d'Urgell, Sort, Aínsa, Jaca, Sangüesa, Pamplona · the mountain way west", "geo": {"km": 709, "asc": 11629, "eff": 1870, "n": 11, "line": [[42.2671, 2.9614], [42.2337, 2.9512], [42.2231, 2.8616], [42.2068, 2.8512], [42.2222, 2.8056], [42.1935, 2.7524], [42.2216, 2.5479], [42.2047, 2.4925], [42.1806, 2.4861], [42.2149, 2.3051], [42.237, 2.2827], [42.2047, 2.1774], [42.308, 2.1645], [42.3198, 2.0053], [42.3449, 1.9784], [42.3505, 1.9944], [42.3674, 1.9594], [42.3526, 1.9334], [42.3862, 1.9081], [42.3626, 1.8163], [42.3745, 1.6362], [42.3582, 1.4534], [42.3194, 1.3585], [42.3652, 1.2957], [42.3413, 1.2976], [42.3778, 1.2243], [42.3763, 1.1676], [42.4135, 1.1311], [42.3267, 1.0671], [42.3435, 0.9618], [42.3249, 0.9375], [42.3588, 0.8905], [42.3531, 0.828], [42.3938, 0.7854], [42.3893, 0.7461], [42.4385, 0.6994], [42.4292, 0.6183], [42.3437, 0.564], [42.4075, 0.4206], [42.3781, 0.385], [42.3827, 0.2715], [42.4648, 0.1769], [42.4115, 0.1382], [42.4503, 0.0575], [42.3996, -0.011], [42.4142, -0.1209], [42.3908, -0.3188], [42.4088, -0.3903], [42.5442, -0.4868], [42.5708, -0.5442], [42.557, -0.7331], [42.5069, -0.7868], [42.547, -0.895], [42.5286, -1.0787], [42.5819, -1.2109], [42.5739, -1.2823], [42.6139, -1.2771], [42.658, -1.4208], [42.7592, -1.629], [42.7703, -1.6111], [42.8128, -1.6457], [42.7418, -1.7646], [42.6725, -1.8128], [42.6787, -1.9367], [42.6518, -1.9732], [42.6715, -2.0317], [42.603, -2.1109], [42.5135, -2.3836], [42.465, -2.4457]]}}, {"id": "ebro", "num": "◆", "name": "Girona and the Ebro valley", "sub": "Figueres → Logroño", "slug": "spain", "kind": "section", "tags": ["valley"], "s": "figueres", "e": "logrono", "p": {"figueres": "base", "girona": "base"}, "note": "Vic, Manresa, Lleida, Zaragoza, Tudela · the flat way along the Ebro", "geo": {"km": 662, "asc": 4828, "eff": 1144, "n": 9, "line": [[42.2671, 2.9614], [42.0747, 2.9677], [42.0273, 2.8296], [41.9748, 2.8205], [41.9787, 2.7018], [41.9582, 2.6347], [41.993, 2.567], [41.9525, 2.4671], [41.9752, 2.3618], [41.9392, 2.3207], [41.9312, 2.2494], [41.8603, 2.2384], [41.8252, 2.1944], [41.7976, 2.0018], [41.7254, 1.8235], [41.7466, 1.5864], [41.7225, 1.4683], [41.7381, 1.4255], [41.7253, 1.3601], [41.6949, 1.3445], [41.6637, 1.2623], [41.6483, 1.1646], [41.6726, 1.0935], [41.6508, 1.0519], [41.6627, 0.9268], [41.6319, 0.7835], [41.6476, 0.6917], [41.6103, 0.6226], [41.6076, 0.5459], [41.5367, 0.493], [41.5135, 0.2777], [41.5191, 0.1218], [41.503, 0.0611], [41.4649, 0.0269], [41.4623, -0.0212], [41.4828, -0.1232], [41.5514, -0.2063], [41.591, -0.3569], [41.6721, -0.4813], [41.7006, -0.5856], [41.7159, -0.7118], [41.6895, -0.7679], [41.6955, -0.8115], [41.6488, -0.8891], [41.7692, -1.0762], [41.7731, -1.153], [41.8983, -1.3898], [41.9902, -1.4804], [42.0217, -1.5641], [42.0618, -1.6046], [42.1387, -1.6249], [42.1739, -1.6994], [42.2394, -1.7541], [42.2525, -1.8365], [42.2367, -1.8539], [42.3371, -1.9963], [42.322, -2.0121], [42.3337, -2.0795], [42.321, -2.0978], [42.348, -2.1772], [42.338, -2.2291], [42.4029, -2.3222], [42.4023, -2.4043], [42.4593, -2.4199], [42.465, -2.4457]]}}, {"id": "barcelona", "num": "◆", "name": "Via Barcelona", "sub": "Girona → Lleida", "slug": "spain", "kind": "section", "tags": ["city"], "s": "girona", "e": "lleida", "p": {"figueres": "base", "girona": "barcelona"}, "note": "the coast to Barcelona, then Vilafranca and Montblanc inland", "geo": {"km": 298, "asc": 2228, "eff": 521, "n": 4, "line": [[41.9793, 2.8214], [41.9268, 2.7919], [41.8514, 2.7733], [41.8048, 2.7185], [41.792, 2.6842], [41.7513, 2.6608], [41.7299, 2.6302], [41.712, 2.5377], [41.6697, 2.4737], [41.6699, 2.4383], [41.634, 2.3976], [41.6251, 2.3681], [41.6372, 2.3529], [41.6333, 2.3292], [41.6106, 2.3], [41.6116, 2.2817], [41.5716, 2.2723], [41.533, 2.2232], [41.4912, 2.1943], [41.4613, 2.1895], [41.4278, 2.2115], [41.3962, 2.1822], [41.3366, 2.0975], [41.3465, 2.0473], [41.3066, 2.0111], [41.3074, 1.9841], [41.326, 1.9496], [41.3389, 1.8956], [41.3342, 1.8632], [41.347, 1.8569], [41.365, 1.7407], [41.3489, 1.7], [41.314, 1.652], [41.3151, 1.634], [41.2947, 1.5783], [41.3003, 1.5689], [41.2929, 1.5063], [41.2685, 1.4633], [41.2819, 1.4293], [41.2819, 1.399], [41.2916, 1.3774], [41.285, 1.3612], [41.2961, 1.3216], [41.2833, 1.2429], [41.2966, 1.203], [41.3152, 1.1805], [41.3481, 1.1778], [41.3868, 1.1567], [41.3967, 1.1078], [41.3819, 1.079], [41.4028, 1.0397], [41.4252, 1.0289], [41.4499, 1.0377], [41.492, 1.0063], [41.5063, 0.9809], [41.501, 0.9545], [41.5359, 0.9322], [41.5935, 0.8023], [41.6068, 0.7863], [41.6299, 0.7814], [41.6365, 0.7149], [41.6476, 0.6917], [41.6224, 0.6525], [41.6103, 0.6226], [41.6176, 0.62]]}}], "networks": {"spain": [[[42.319, 3.316], [42.322, 3.295], [42.289, 3.27], [42.297, 3.192], [42.272, 3.151], [42.298, 3.098], [42.267, 2.961]], [[42.267, 2.961], [42.075, 2.968], [42.066, 2.904], [42.043, 2.858], [42.023, 2.856], [42.027, 2.83], [41.979, 2.821]], [[41.979, 2.821], [41.979, 2.702], [41.958, 2.635], [41.986, 2.603], [41.992, 2.557], [41.952, 2.467], [41.97, 2.436], [41.955, 2.399], [41.975, 2.362], [41.953, 2.317], [41.939, 2.321], [41.93, 2.255]], [[41.93, 2.255], [41.86, 2.238], [41.825, 2.194], [41.798, 2.002], [41.729, 1.826]], [[41.729, 1.826], [41.729, 1.654], [41.747, 1.586], [41.723, 1.468], [41.738, 1.422], [41.725, 1.36], [41.695, 1.344], [41.67, 1.272]], [[41.67, 1.272], [41.648, 1.145], [41.673, 1.094], [41.65, 1.045], [41.662, 0.918], [41.632, 0.784], [41.648, 0.692], [41.618, 0.62]], [[41.618, 0.62], [41.608, 0.546], [41.537, 0.493], [41.522, 0.349]], [[41.522, 0.349], [41.519, 0.122], [41.503, 0.061], [41.465, 0.027], [41.462, -0.021], [41.483, -0.123], [41.551, -0.206], [41.591, -0.357], [41.672, -0.481], [41.701, -0.586], [41.716, -0.712], [41.69, -0.768], [41.696, -0.811], [41.649, -0.889]], [[41.649, -0.889], [41.769, -1.076], [41.773, -1.153], [41.898, -1.39], [41.99, -1.48], [42.021, -1.563], [42.062, -1.605]], [[42.062, -1.605], [42.139, -1.625], [42.174, -1.699], [42.239, -1.754], [42.253, -1.837], [42.237, -1.854], [42.337, -1.996], [42.322, -2.012], [42.334, -2.08], [42.321, -2.098], [42.348, -2.177], [42.338, -2.229], [42.403, -2.322], [42.402, -2.404], [42.459, -2.42], [42.465, -2.446]], [[42.465, -2.446], [42.405, -2.625], [42.447, -2.887], [42.44, -2.953]], [[42.44, -2.953], [42.424, -3.013], [42.451, -3.037], [42.406, -3.282], [42.366, -3.357], [42.37, -3.478], [42.394, -3.539], [42.385, -3.561], [42.359, -3.561], [42.367, -3.604], [42.341, -3.702]], [[42.341, -3.702], [42.353, -3.787], [42.34, -3.918], [42.292, -4.102], [42.29, -4.148], [42.31, -4.174], [42.278, -4.247], [42.287, -4.262], [42.258, -4.365], [42.267, -4.406]], [[42.267, -4.406], [42.269, -4.448], [42.34, -4.604], [42.33, -4.812], [42.366, -4.875], [42.371, -5.03]], [[42.371, -5.03], [42.388, -5.145], [42.498, -5.415], [42.469, -5.499], [42.599, -5.567]], [[42.599, -5.567], [42.563, -5.698], [42.465, -5.866], [42.446, -5.946], [42.458, -6.056]], [[42.458, -6.056], [42.454, -6.157], [42.496, -6.344], [42.489, -6.441], [42.527, -6.485], [42.546, -6.591]], [[42.546, -6.591], [42.592, -6.68], [42.602, -6.813], [42.655, -6.892], [42.673, -6.993], [42.708, -7.042]], [[42.708, -7.042], [42.698, -7.09], [42.759, -7.226], [42.739, -7.293], [42.775, -7.308], [42.781, -7.414]], [[42.781, -7.414], [42.766, -7.528], [42.874, -7.806], [42.867, -7.93], [42.914, -8.014]], [[42.914, -8.014], [42.878, -8.097], [42.918, -8.148], [42.898, -8.197], [42.906, -8.219], [42.867, -8.301], [42.868, -8.358], [42.839, -8.387], [42.861, -8.464], [42.853, -8.496], [42.878, -8.545]], [[42.878, -8.545], [42.867, -8.571], [42.911, -8.77], [42.956, -8.862], [42.963, -9.044], [42.986, -9.086], [42.984, -9.155], [42.939, -9.193], [42.941, -9.237], [42.884, -9.272]], [[42.267, 2.961], [42.234, 2.951], [42.217, 2.904], [42.223, 2.862], [42.207, 2.851], [42.222, 2.806], [42.193, 2.752], [42.222, 2.548], [42.205, 2.492], [42.182, 2.489]], [[42.182, 2.489], [42.215, 2.305], [42.237, 2.283], [42.201, 2.191]], [[42.201, 2.191], [42.21, 2.17], [42.308, 2.164], [42.32, 2.005], [42.345, 1.978], [42.351, 1.994], [42.367, 1.959], [42.353, 1.933], [42.386, 1.908], [42.372, 1.897], [42.363, 1.816], [42.374, 1.77], [42.359, 1.685], [42.375, 1.636], [42.358, 1.458]], [[42.358, 1.458], [42.319, 1.358], [42.365, 1.296], [42.341, 1.298], [42.378, 1.224], [42.376, 1.168], [42.413, 1.13]], [[42.413, 1.13], [42.327, 1.067], [42.324, 1.042], [42.344, 0.962], [42.325, 0.937], [42.368, 0.861], [42.353, 0.828], [42.394, 0.785], [42.389, 0.746], [42.408, 0.742]], [[42.408, 0.742], [42.438, 0.699], [42.425, 0.688], [42.429, 0.618], [42.344, 0.564], [42.408, 0.421], [42.378, 0.385], [42.383, 0.272], [42.465, 0.177], [42.417, 0.139]], [[42.417, 0.139], [42.45, 0.057], [42.4, -0.011], [42.414, -0.121], [42.39, -0.281], [42.403, -0.378], [42.544, -0.487], [42.57, -0.55]], [[42.57, -0.55], [42.554, -0.611], [42.557, -0.733], [42.507, -0.787], [42.515, -0.846], [42.547, -0.895], [42.529, -1.079], [42.582, -1.211], [42.574, -1.283]], [[42.574, -1.283], [42.614, -1.277], [42.658, -1.421], [42.759, -1.629], [42.77, -1.611], [42.813, -1.646]], [[42.813, -1.646], [42.742, -1.765], [42.67, -1.82], [42.679, -1.937], [42.652, -1.973], [42.671, -2.032]], [[42.671, -2.032], [42.603, -2.111], [42.513, -2.384], [42.465, -2.446]], [[41.979, 2.821], [41.851, 2.773], [41.792, 2.684], [41.733, 2.637], [41.712, 2.538], [41.634, 2.398], [41.633, 2.329], [41.612, 2.282], [41.572, 2.272], [41.491, 2.194], [41.461, 2.189], [41.432, 2.215], [41.387, 2.169]], [[41.387, 2.169], [41.337, 2.097], [41.347, 2.047], [41.307, 2.011], [41.363, 1.769], [41.345, 1.698]], [[41.345, 1.698], [41.314, 1.652], [41.293, 1.506], [41.268, 1.463], [41.292, 1.377], [41.283, 1.243], [41.297, 1.203], [41.376, 1.162]], [[41.376, 1.162], [41.396, 1.128], [41.382, 1.079], [41.403, 1.04], [41.45, 1.038], [41.492, 1.006], [41.501, 0.955], [41.536, 0.932], [41.593, 0.802], [41.63, 0.781], [41.648, 0.692], [41.618, 0.62]], [[42.465, -2.446], [42.52, -2.432], [42.604, -2.46], [42.612, -2.42], [42.669, -2.355], [42.677, -2.39], [42.742, -2.448], [42.805, -2.459], [42.831, -2.565], [42.828, -2.644], [42.847, -2.673]], [[42.847, -2.673], [42.963, -2.617], [42.988, -2.642], [43.015, -2.611], [43.155, -2.772], [43.208, -2.769], [43.242, -2.923], [43.263, -2.935]], [[43.263, -2.935], [43.279, -2.979], [43.303, -2.981], [43.317, -3.063], [43.349, -3.112], [43.359, -3.206], [43.398, -3.242], [43.403, -3.312], [43.379, -3.322], [43.412, -3.408], [43.393, -3.467], [43.42, -3.506], [43.4, -3.644], [43.405, -3.717], [43.422, -3.738], [43.399, -3.814], [43.419, -3.842], [43.462, -3.81]], [[43.462, -3.81], [43.437, -3.905], [43.364, -4.046], [43.352, -4.129], [43.309, -4.239], [43.322, -4.318], [43.39, -4.405], [43.371, -4.473], [43.376, -4.532], [43.395, -4.59], [43.395, -4.729], [43.404, -4.76], [43.421, -4.756]], [[43.421, -4.756], [43.421, -4.846], [43.443, -4.881], [43.438, -4.98], [43.466, -5.075], [43.449, -5.134], [43.394, -5.192], [43.373, -5.273], [43.379, -5.351], [43.355, -5.439], [43.394, -5.666], [43.376, -5.728], [43.394, -5.801], [43.362, -5.849]], [[43.362, -5.849], [43.361, -5.905], [43.389, -5.941], [43.405, -6.048], [43.447, -6.056], [43.45, -6.084], [43.495, -6.111], [43.467, -6.159], [43.444, -6.294], [43.477, -6.329], [43.473, -6.365], [43.488, -6.36], [43.473, -6.391], [43.479, -6.444], [43.514, -6.483], [43.52, -6.529], [43.542, -6.535]], [[43.542, -6.535], [43.532, -6.579], [43.553, -6.66], [43.538, -6.757], [43.569, -6.943], [43.536, -7.04]], [[43.536, -7.04], [43.501, -7.107], [43.507, -7.167], [43.485, -7.289], [43.437, -7.289], [43.412, -7.336], [43.368, -7.337], [43.229, -7.43], [43.199, -7.428], [43.165, -7.482], [43.01, -7.556]], [[43.01, -7.556], [43.042, -7.581], [43.047, -7.62], [43.021, -7.819], [43.04, -8.023], [43.017, -8.061], [43.017, -8.118], [42.999, -8.136], [42.962, -8.281], [42.966, -8.34], [42.944, -8.346], [42.909, -8.423], [42.918, -8.49], [42.878, -8.545]], [[42.546, -6.591], [42.564, -6.633], [42.563, -6.711], [42.503, -6.842], [42.524, -6.913], [42.512, -6.931], [42.471, -6.89], [42.446, -6.902], [42.424, -6.926], [42.416, -6.983]], [[42.416, -6.983], [42.387, -7.158], [42.406, -7.181], [42.398, -7.211], [42.45, -7.221], [42.469, -7.331], [42.509, -7.345], [42.539, -7.4], [42.522, -7.514]], [[42.522, -7.514], [42.545, -7.59], [42.63, -7.702], [42.616, -7.792], [42.633, -7.886], [42.602, -7.957], [42.615, -8.012], [42.651, -8.056], [42.66, -8.112]], [[42.66, -8.112], [42.792, -8.157], [42.794, -8.285], [42.839, -8.342], [42.826, -8.345], [42.858, -8.446], [42.853, -8.496], [42.878, -8.545]]]}, "lang": {"local": "es", "localLabel": "Nombres locales", "romanise": null}, "proj": {"kx": 41.3108242303873, "bx": 383.0133068520358, "ky": -2366.9358766079695, "by": 2002.0147408697737}, "forkLabels": {"figueres": "At Figueres", "girona": "At Girona", "logrono": "At Logroño", "ponferrada": "At Ponferrada"}, "optionNames": {"pyrenees": "Pyrenean foothills to Pamplona", "barcelona": "Via Barcelona", "norte": "Cantabrian coast (Camino del Norte)", "invierno": "Camino de Invierno (Sil valley)"}, "defaultOptionNames": {"figueres": "Girona and the Ebro valley", "girona": "Vic and Manresa", "logrono": "Rioja, Burgos and the Meseta", "ponferrada": "O Cebreiro and Sarria"}, "skippable": [], "neverSkip": [], "skipRule": null, "vehicles": {"names": {"bike": "Bicycle", "ebike": "E-bike (pedelec)", "opium": "S-pedelec (45 km/h)"}, "defaultTarget": {"bike": 120, "ebike": 110, "opium": 180}, "minDay": {"bike": 40, "ebike": 32, "opium": 38}, "maxDay": {"bike": 300, "ebike": 160, "opium": 280}, "targetRange": {"bike": [65, 300], "ebike": [45, 160], "opium": [50, 280]}, "moped": {"enabled": true, "reroute_if_motorfree_share_at_least": 0.05, "keep_bicycle_line": []}}, "signedRoutes": {"label": "Prefer signed cycle routes"}, "basemap": {"sources": {"national": {"name": "IGN Spain", "url": "https://tms-mapa-raster.ign.es/1.0.0/mapa-raster/{z}/{x}/{-y}.jpeg", "s": "", "min": 6, "max": 18, "attr": "© Instituto Geográfico Nacional de España", "light": 1}}}};
 document.getElementById("ttext").textContent=CFG.title; document.getElementById("ptitle").innerHTML=CFG.title+(CFG.by?' <span class="by">by '+CFG.by+'</span>':""); document.title=CFG.title+" - journey planner";
 (function(){ var T=CFG.trips||[]; if(T.length<2) return; var n=function(k){return T.filter(function(t){return t.kind===k}).length;}, parts=[];
@@ -355,7 +430,7 @@ function applyCode(code){ try{ var st=JSON.parse(decodeURIComponent(escape(atob(
 function routeSummary(){ var ride=LASTDAYS.filter(function(d){return d.mode==="ride"}); var vars=[]; for(var k in pick) if(pick[k]!==P.forks.filter(function(f){return f.node===k})[0].options[0]) vars.push(optName(k,pick[k]));
  return (VEH==="bike"?"":VEHNAME[VEH].split(" ")[0]+" · ")+NODE[document.getElementById("start").value].name+" → "+NODE[document.getElementById("end").value].name+" · "+ride.length+" days · "+(VEH==="opium"?"":"effort ")+document.getElementById("eff").value+(VEH==="opium"?" km/day":"")+(SIGNED&&VEH!=="opium"?" · signed routes":"")+(vars.length?" · "+vars.join(", "):""); }
 function favList(){ try{ return JSON.parse(localStorage.getItem("favs")||"[]"); }catch(e){ return []; } }
-function favRender(){ var h=document.getElementById("favs"), L=favList(); h.innerHTML=L.length?"":'<div style="border:0;color:#b9c6cf">No favourites saved yet in this browser.</div>';
+function favRender(){ var h=document.getElementById("favs"), L=favList(); h.innerHTML=L.length?"":'<div style="border:0;color:var(--mute)">No favourites saved yet in this browser.</div>';
  L.forEach(function(f,i){ var d=document.createElement("div"); d.innerHTML='<span title="load this route">'+f.name+'</span><b>load</b><i title="remove">✕</i>';
   d.querySelector("span").onclick=d.querySelector("b").onclick=function(){ if(applyCode(f.code)){ setLangBtn(); render(); } };
   d.querySelector("i").onclick=function(){ var L2=favList(); L2.splice(i,1); try{localStorage.setItem("favs",JSON.stringify(L2));}catch(e){} favRender(); };
@@ -406,8 +481,8 @@ function drawLabels(){
   if(placed.some(function(p){return Math.abs(p.x-l.x)*ppu<90&&Math.abs(p.y-l.y)*ppu<14})) return;
   placed.push(l);
   var t=document.createElementNS(NS,"text"); t.setAttribute("x",l.x+7/ppu); t.setAttribute("y",l.y+4/ppu);
-  var LM=bmLight(); t.setAttribute("font-size",fs); t.setAttribute("fill",LM?(l.kind==="day"?"#0d1a23":"#3a4a55"):(l.kind==="day"?"#dbe7ee":"#8fa3b0")); t.setAttribute("font-weight",l.kind==="day"?"600":"400");
-  t.setAttribute("stroke",LM?"#ffffff":"#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit");
+  var LM=bmLight(); t.setAttribute("font-size",fs); t.setAttribute("fill",LM?(l.kind==="day"?C("maplbl-day-light"):C("maplbl-light")):(l.kind==="day"?C("maplbl-day"):C("maplbl"))); t.setAttribute("font-weight",l.kind==="day"?"600":"400");
+  t.setAttribute("stroke",LM?C("casing"):C("halo")); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit");
   t.textContent=l.name; gT.appendChild(t);});
  if(vb[2]>34) return;                                    // ~60 km across: add road stations and sights
  POIS=[]; var pois=[], x0=vb[0]-2,x1=vb[0]+vb[2]+2,y0=vb[1]-2,y1=vb[1]+vb[3]+2;
@@ -419,10 +494,10 @@ function drawLabels(){
  pois.forEach(function(l){ if(n>=45)return;
   if(placed.some(function(p){return Math.abs(p.x-l.x)*ppu<110&&Math.abs(p.y-l.y)*ppu<13})) return;
   placed.push(l); n++; POIS.push(l);
-  var m=document.createElementNS(NS,"circle"); m.setAttribute("cx",l.x); m.setAttribute("cy",l.y); m.setAttribute("r",2.5/ppu); m.setAttribute("fill",l.kind==="mne"?"#7fd1a8":"#e7c46a"); gT.appendChild(m);
+  var m=document.createElementNS(NS,"circle"); m.setAttribute("cx",l.x); m.setAttribute("cy",l.y); m.setAttribute("r",2.5/ppu); m.setAttribute("fill",l.kind==="mne"?C("mne"):C("sight")); gT.appendChild(m);
   var t=document.createElementNS(NS,"text"); t.setAttribute("x",l.x+6/ppu); t.setAttribute("y",l.y+4/ppu);
-  t.setAttribute("font-size",fs2); t.setAttribute("fill",bmLight()?(l.kind==="mne"?"#1d6b45":"#7a5a00"):(l.kind==="mne"?"#9fe0bf":"#e7c46a")); t.setAttribute("font-style",l.kind==="mne"?"normal":"italic");
-  t.setAttribute("stroke",bmLight()?"#ffffff":"#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit");
+  t.setAttribute("font-size",fs2); t.setAttribute("fill",bmLight()?(l.kind==="mne"?C("mne-lbl-light"):C("sight-lbl-light")):(l.kind==="mne"?C("mne-lbl"):C("sight-lbl"))); t.setAttribute("font-style",l.kind==="mne"?"normal":"italic");
+  t.setAttribute("stroke",bmLight()?C("casing"):C("halo")); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit");
   t.textContent=l.name; gT.appendChild(t);});
  if(vb[2]>7) return;                                     // ~12 km across: name the facility dots in view
  var fs3=10.5/ppu, m2=0;
@@ -430,8 +505,8 @@ function drawLabels(){
   var nm=(LANG==="local"&&d.ja)?d.ja:d.en; if(/^(Toilets|Drinking water|Convenience store|Supermarket|Hotel|Guest house|Campsite|Station|Laundry|Repair stand|Bath house|Hot spring)$/.test(nm))return;
   if(placed.some(function(p){return Math.abs(p.x-d.x)*ppu<100&&Math.abs(p.y-d.y)*ppu<12})) return;
   placed.push(d); m2++;
-  var t=document.createElementNS(NS,"text"); t.setAttribute("x",d.x+7/ppu); t.setAttribute("y",d.y+4/ppu); t.setAttribute("font-size",fs3); t.setAttribute("fill",bmLight()?"#2b3a44":"#b9c6cf");
-  t.setAttribute("stroke",bmLight()?"#ffffff":"#0a141b"); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit"); t.textContent=nm; gT.appendChild(t);});}
+  var t=document.createElementNS(NS,"text"); t.setAttribute("x",d.x+7/ppu); t.setAttribute("y",d.y+4/ppu); t.setAttribute("font-size",fs3); t.setAttribute("fill",bmLight()?C("fac-lbl-light"):C("fac-lbl"));
+  t.setAttribute("stroke",bmLight()?C("casing"):C("halo")); t.setAttribute("stroke-width",3/ppu); t.setAttribute("paint-order","stroke"); t.setAttribute("font-family","inherit"); t.textContent=nm; gT.appendChild(t);});}
 applyVehicle(); setLangBtn(); favRender();
 document.getElementById("favsave").addEventListener("click",function(){ var L=favList(); L.unshift({name:routeSummary(),code:stateCode()}); try{localStorage.setItem("favs",JSON.stringify(L.slice(0,30)));}catch(e){} favRender(); });
 document.getElementById("copylink").addEventListener("click",function(){ copyText(location.href.split("#")[0]+"#r="+stateCode(),"Link"); });
@@ -440,19 +515,19 @@ document.getElementById("copygpx").addEventListener("click",function(){ copyText
 function showCallout(x,y,text){
  while(gP.firstChild)gP.removeChild(gP.firstChild);
  var ppu=pxPerUnit(),fs=12/ppu,w=(text.length*7+14)/ppu,h=22/ppu;
- var r=document.createElementNS(NS,"rect"); r.setAttribute("x",x+8/ppu); r.setAttribute("y",y-h/2); r.setAttribute("width",w); r.setAttribute("height",h); r.setAttribute("rx",4/ppu); r.setAttribute("fill","#15303f"); r.setAttribute("stroke","#4d7a99"); r.setAttribute("stroke-width",1/ppu);
- var t=document.createElementNS(NS,"text"); t.setAttribute("x",x+15/ppu); t.setAttribute("y",y+4/ppu); t.setAttribute("font-size",fs); t.setAttribute("fill","#eef2f4"); t.setAttribute("font-family","inherit"); t.textContent=text;
+ var r=document.createElementNS(NS,"rect"); r.setAttribute("x",x+8/ppu); r.setAttribute("y",y-h/2); r.setAttribute("width",w); r.setAttribute("height",h); r.setAttribute("rx",4/ppu); r.setAttribute("fill",C("card-hi")); r.setAttribute("stroke",C("line-hi")); r.setAttribute("stroke-width",1/ppu);
+ var t=document.createElementNS(NS,"text"); t.setAttribute("x",x+15/ppu); t.setAttribute("y",y+4/ppu); t.setAttribute("font-size",fs); t.setAttribute("fill",C("paper")); t.setAttribute("font-family","inherit"); t.textContent=text;
  gP.appendChild(r); gP.appendChild(t);}
 svg.addEventListener("click",function(e){ if(tapBlock){tapBlock=false;return;} if(PICKING) return; tapAt(e.clientX,e.clientY); });
 var tapBlock=false;
 var LAND=!!CFG.landFill;   // config graph.land_fill: a closed border gets a land tone; a coastline made of pieces (Japan) stays a line
 P.coast.forEach(function(s){var p=document.createElementNS(NS,LAND?"polygon":"polyline");
- p.setAttribute("points",s);p.setAttribute("fill",LAND?"#13242f":"none");p.setAttribute("stroke","#4a6a80");p.setAttribute("stroke-linejoin","round");   // colour does the work, not weight
+ p.setAttribute("points",s);p.setAttribute("fill",LAND?C("land"):"none");p.setAttribute("stroke",C("coast-line"));p.setAttribute("stroke-linejoin","round");   // colour does the work, not weight
  p.setAttribute("stroke-width","1");gC.appendChild(p);});
 (P.water?P.water.lakes:[]).forEach(function(l){var p=document.createElementNS(NS,"polygon");     // lakes and big rivers (step 12), under the routes
- p.setAttribute("points",l.pts);p.setAttribute("fill","#1b3f55");p.setAttribute("stroke","#35678a");p.setAttribute("stroke-width",".6");p.setAttribute("class","lake");gW.appendChild(p);});
+ p.setAttribute("points",l.pts);p.setAttribute("fill",C("lake"));p.setAttribute("stroke",C("lake-line"));p.setAttribute("stroke-width",".6");p.setAttribute("class","lake");gW.appendChild(p);});
 (P.water?P.water.rivers:[]).forEach(function(r){var p=document.createElementNS(NS,"polyline");
- p.setAttribute("points",r.pts);p.setAttribute("fill","none");p.setAttribute("stroke","#3f7a9e");p.setAttribute("stroke-width","1.2");p.setAttribute("stroke-linejoin","round");p.setAttribute("stroke-linecap","round");p.setAttribute("class","river");gW.appendChild(p);});
+ p.setAttribute("points",r.pts);p.setAttribute("fill","none");p.setAttribute("stroke",C("river"));p.setAttribute("stroke-width","1.2");p.setAttribute("stroke-linejoin","round");p.setAttribute("stroke-linecap","round");p.setAttribute("class","river");gW.appendChild(p);});
 var xs=[],ys=[];P.segments.forEach(function(s){if(!s.line)return;
  s.line.split(" ").forEach(function(v){var a=v.split(",");xs.push(+a[0]);ys.push(+a[1]);});});
 var full=[Math.min.apply(null,xs)-120,Math.min.apply(null,ys)-60,
@@ -525,7 +600,7 @@ function setVB(b){vb=b;svg.setAttribute("viewBox",b.join(" "));
  gC.querySelectorAll("polygon,polyline").forEach(function(p){p.setAttribute("stroke-width",1*k)});
  gG.querySelectorAll("polyline").forEach(function(p){p.setAttribute("stroke-width",1.6*k)});
  var LM=bmLight(); gR.querySelectorAll("polyline").forEach(function(p){ var cas=p.classList.contains("cas"); p.setAttribute("stroke-width",(cas?6.2:LM?3.4:2.6)*k); if(cas) p.style.display=LM?"":"none"; });
- gS.querySelectorAll("circle").forEach(function(c){c.setAttribute("r",LM?3.2*k:2.6*k); c.setAttribute("stroke",LM?"#fff":"none"); c.setAttribute("stroke-width",1*k);});}
+ gS.querySelectorAll("circle").forEach(function(c){c.setAttribute("r",LM?3.2*k:2.6*k); c.setAttribute("stroke",LM?C("casing"):"none"); c.setAttribute("stroke-width",1*k);});}
 
 /* --- data layer: facilities and elevation live on segments; a day inherits its slices --- */
 function segKm(v,k){return v.rev?v.km-k:k;}          // planner-direction km -> stored-segment km
@@ -549,15 +624,15 @@ function spark(pr,km){
  if(pr.length<2)return '';
  var W=300,H=26,mx=Math.max.apply(null,pr.map(function(p){return p[1]})),top=Math.max(100,mx);
  var pts=pr.map(function(p){return (p[0]/km*W).toFixed(1)+','+(H-2-(p[1]/top)*(H-6)).toFixed(1)}).join(' ');
- return '<svg class="spark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><polyline points="0,'+(H-2)+' '+pts+' '+W+','+(H-2)+'" fill="#f0713f" fill-opacity=".18" stroke="none"/>'+
-  '<polyline points="'+pts+'" fill="none" stroke="#f0713f" stroke-width="1.2" vector-effect="non-scaling-stroke"/>'+
-  '<text x="'+(W-2)+'" y="8" fill="#b9c6cf" font-size="8" text-anchor="end">'+Math.round(mx)+' m</text></svg>';}
+ return '<svg class="spark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><polyline points="0,'+(H-2)+' '+pts+' '+W+','+(H-2)+'" fill="'+C("route")+'" fill-opacity=".18" stroke="none"/>'+
+  '<polyline points="'+pts+'" fill="none" stroke="'+C("route")+'" stroke-width="1.2" vector-effect="non-scaling-stroke"/>'+
+  '<text x="'+(W-2)+'" y="8" fill="'+C("mute")+'" font-size="8" text-anchor="end">'+Math.round(mx)+' m</text></svg>';}
 var layers={};
 function ptAt(v,k){var pts=v.line.split(" ").map(function(p){var a=p.split(",");return [+a[0],+a[1]]});
  var L=[0];for(var i=1;i<pts.length;i++)L.push(L[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
  var f=k/v.km*L[L.length-1],i=1;while(i<L.length-1&&L[i]<f)i++;
  var t=(f-L[i-1])/((L[i]-L[i-1])||1);return [pts[i-1][0]+(pts[i][0]-pts[i-1][0])*t,pts[i-1][1]+(pts[i][1]-pts[i-1][1])*t];}
-var LCOL={shop:"#ffd166",stay:"#4da3ff",bath:"#c77dff",rail:"#eef2f4",water:"#5ee0c8"};
+var LCOL={shop:C("shop"),stay:C("stop"),bath:C("bath"),rail:C("rail"),water:C("water")};
 function drawLayers(ch){
  while(gL.firstChild)gL.removeChild(gL.firstChild); DOTS=[];
  var k=vb[2]/full[2];
@@ -582,7 +657,7 @@ function tapAt(clientX,clientY){
   if(bp){ var ll=toLL(bp[0],bp[1]); best={x:bp[0],y:bp[1],en:"Point on the route",ja:null,sub:selDay.frm+" → "+selDay.to+" · "+ll[0].toFixed(4)+", "+ll[1].toFixed(4),place:true}; } }
  while(gP.firstChild)gP.removeChild(gP.firstChild); hidePop();
  if(best){ showPop(best.x,best.y,best.en,best.ja,best.sub,best.place);
-  var ring=document.createElementNS(NS,"circle"); ring.setAttribute("cx",best.x); ring.setAttribute("cy",best.y); ring.setAttribute("r",9/ppu); ring.setAttribute("fill","none"); ring.setAttribute("stroke","#fff"); ring.setAttribute("stroke-width",1.5/ppu); gP.insertBefore(ring,gP.firstChild);} }
+  var ring=document.createElementNS(NS,"circle"); ring.setAttribute("cx",best.x); ring.setAttribute("cy",best.y); ring.setAttribute("r",9/ppu); ring.setAttribute("fill","none"); ring.setAttribute("stroke",C("on-accent")); ring.setAttribute("stroke-width",1.5/ppu); gP.insertBefore(ring,gP.firstChild);} }
 function sizeDots(){var ppu=pxPerUnit(),k=vb[2]/full[2]; gL.querySelectorAll("circle").forEach(function(c){c.setAttribute("r",Math.max(1.4*k,vb[2]<=40?6/ppu:4.5/ppu))});}
 
 function asTrain(v){return {id:v.id,mode:"train",frm:v.frm,to:v.to,km:v.km,ascent:0,effort:0,cand:[],rev:v.rev};}
@@ -620,7 +695,7 @@ function forkCompare(target){
   var chains={}; f.options.forEach(function(o){ pick[f.node]=o; chains[o]=chain(); });
   pick[f.node]=saved[f.node];
   var ids=f.options.map(function(o){return chains[o].map(function(v){return v.id});});
-  if(ids.some(function(a){return !a.length})){host.innerHTML='<div style="color:#b9c6cf">not reachable on this journey</div>';return;}
+  if(ids.some(function(a){return !a.length})){host.innerHTML='<div style="color:var(--mute)">not reachable on this journey</div>';return;}
   var pct=function(v){return v==null?'–':Math.round(v*100)+'%'};
   var name=function(o){return optName(f.node,o);};
   var row=function(diff,nm,cls){
@@ -637,8 +712,8 @@ function forkCompare(target){
    var dO=chains[o].filter(function(v){return !inA[v.id]}), dR=chains[f.options[0]].filter(function(v){return !inB[v.id]});
    if(!dO.length&&!dR.length) return; any=true;
    html+=row(dO,name(o))+row(dR,'instead of '+name(f.options[0]),'ref');});
-  if(!any){host.innerHTML='<div style="color:#b9c6cf">not on the current journey</div>';return;}
-  host.innerHTML='<div style="color:#b9c6cf">the stretch that differs:</div>'+html;
+  if(!any){host.innerHTML='<div style="color:var(--mute)">not on the current journey</div>';return;}
+  host.innerHTML='<div style="color:var(--mute)">the stretch that differs:</div>'+html;
  });}
 function applySkipsQuiet(ch){ var on={}; Object.keys(skipOn).forEach(function(id){on[id]=1;}); return ch.map(function(v){return on[v.id]?asTrain(v):v;}); }
 
@@ -664,7 +739,7 @@ function zoomDay(d,el){
  selDay=d; if(el)el.classList.add("sel");
  var pts=dayPoints(d); if(pts.length<2) return;
  var p=document.createElementNS(NS,"polyline"); p.setAttribute("points",pts.map(function(q){return q[0]+","+q[1]}).join(" "));
- p.setAttribute("fill","none"); p.setAttribute("stroke","#ffd166"); p.setAttribute("stroke-linecap","round"); p.setAttribute("stroke-linejoin","round"); gH.appendChild(p);
+ p.setAttribute("fill","none"); p.setAttribute("stroke",C("shop")); p.setAttribute("stroke-linecap","round"); p.setAttribute("stroke-linejoin","round"); gH.appendChild(p);
  var xs=pts.map(function(q){return q[0]}),ys=pts.map(function(q){return q[1]});
  var x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y0=Math.min.apply(null,ys),y1=Math.max.apply(null,ys);
  var r=svg.getBoundingClientRect(),asp=r.width/r.height, w=Math.max(x1-x0,(y1-y0)*asp,6)*1.5, h=w/asp;
@@ -679,24 +754,24 @@ document.getElementById("lang").addEventListener("click",function(){ LANG=LANG==
 
 var FRIEND=true;try{if(localStorage.getItem("friend")==="0")FRIEND=false;}catch(e){}
 function friendBand(id){var sc=SC[id];if(!sc)return null;var r=sc.route_any||0,b=sc.busy||0;return (r>=0.55&&b<0.12)?"g":(b>=0.25?"r":"a");}
-var FRIENDCOL={g:"#97C459",a:"#EF9F27",r:"#E24B4A"};
-function friendCol(id){return FRIENDCOL[friendBand(id)]||"#f0713f";}
+var FRIENDCOL={g:C("band-g"),a:C("band-a"),r:C("band-r")};
+function friendCol(id){return FRIENDCOL[friendBand(id)]||C("route");}
 function nodeName(id){return (typeof NODE!=="undefined"&&NODE[id]&&NODE[id].name)||id;}
 function drawStrip(ch){var box=document.getElementById("strip");if(!box)return;box.innerHTML="";
  var legs=ch.filter(function(s){return s.mode==="ride"&&s.line});
  legs.forEach(function(s){var band=friendBand(s.id),sc=SC[s.id]||{};
-  var d=document.createElement("div");d.style.flexGrow=Math.max(s.km,1);d.style.background=FRIENDCOL[band]||"#3a5566";
+  var d=document.createElement("div");d.style.flexGrow=Math.max(s.km,1);d.style.background=FRIENDCOL[band]||C("band-none");
   d.dataset.seg=s.id;d.addEventListener("click",function(){selectSeg(s);});
   d.title=nodeName(s.frm)+" \u2192 "+nodeName(s.to)+" \u00b7 "+Math.round(s.km)+" km \u00b7 signed "+Math.round(100*(sc.route_any||0))+"% \u00b7 busy "+Math.round(100*(sc.busy||0))+"%";
   box.appendChild(d);});}
 function forkSummary(){var v=[];(P.forks||[]).forEach(function(f){var p=pick[f.node]||f.options[0];if(p!==f.options[0])v.push(optName(f.node,p));});return v.length?"Main line \u00b7 "+v.join(" \u00b7 "):"Main line";}
 var VFRIEND={};(function(){var agg={};(P.segments||[]).forEach(function(s){var sc=SC[s.id];if(!sc)return;var km=sc.km||s.km||0;var a=agg[s.variant]=agg[s.variant]||{km:0,r:0,b:0};a.km+=km;a.r+=(sc.route_any||0)*km;a.b+=(sc.busy||0)*km;});for(var v in agg){var a=agg[v],r=a.km?a.r/a.km:0,b=a.km?a.b/a.km:0;VFRIEND[v]=(r>=0.55&&b<0.12)?"g":(b>=0.25?"r":"a");}})();
-function optDot(o){return FRIENDCOL[VFRIEND[o]]||"#5a6b78";}
+function optDot(o){return FRIENDCOL[VFRIEND[o]]||C("dot-none");}
 var SELSEG=null;
 function markStrip(){document.querySelectorAll("#strip div").forEach(function(d){d.classList.toggle("sel",d.dataset.seg===SELSEG);});}
-function redrawSel(){if(typeof gSEL==="undefined"||!gSEL)return;while(gSEL.firstChild)gSEL.removeChild(gSEL.firstChild);if(!SELSEG)return;var s=SEG[SELSEG];if(!s||!s.line)return;var k=vb[2]/full[2];var p=document.createElementNS(NS,"polyline");p.setAttribute("points",s.line);p.setAttribute("fill","none");p.setAttribute("stroke","#7fc4ff");p.setAttribute("stroke-width",3.6*k);p.setAttribute("stroke-linecap","round");p.setAttribute("stroke-linejoin","round");gSEL.appendChild(p);}
+function redrawSel(){if(typeof gSEL==="undefined"||!gSEL)return;while(gSEL.firstChild)gSEL.removeChild(gSEL.firstChild);if(!SELSEG)return;var s=SEG[SELSEG];if(!s||!s.line)return;var k=vb[2]/full[2];var p=document.createElementNS(NS,"polyline");p.setAttribute("points",s.line);p.setAttribute("fill","none");p.setAttribute("stroke",C("link"));p.setAttribute("stroke-width",3.6*k);p.setAttribute("stroke-linecap","round");p.setAttribute("stroke-linejoin","round");gSEL.appendChild(p);}
 function clearSeg(){SELSEG=null;var c=document.getElementById("segcard");if(c)c.hidden=true;redrawSel();markStrip();}
-function selectSeg(s){SELSEG=s.id;var sc=SC[s.id]||{},sd=SD[s.id]||{},fac=sd.fac||{};var shops=(fac.shop||[]).length,beds=(fac.stay||[]).length,sights=sc.sights||0;var r=Math.round(100*(sc.route_any||0)),b=Math.round(100*(sc.busy||0)),clj=Math.round((s.ascent!=null?s.ascent:(SEG[s.id]?SEG[s.id].ascent:0))||0);var c=document.getElementById("segcard");if(!c)return;c.hidden=false;c.innerHTML='<div class="schead"><b>'+nodeName(s.frm)+' \u2192 '+nodeName(s.to)+'</b><span class="scx" title="close">\u00d7</span></div><div class="scmeta">'+Math.round(s.km)+' km \u00b7 '+clj+' m climb</div><div class="scbar"><i style="width:'+r+'%;background:#97C459"></i><i style="width:'+b+'%;background:#E24B4A"></i></div><div class="scmeta">signed '+r+'% \u00b7 busy '+b+'% \u00b7 '+shops+' shops \u00b7 '+beds+' beds \u00b7 '+sights+' sights</div><div class="scbtns"><button class="opt" id="sHere">start here</button><button class="opt" id="eHere">end here</button></div>';c.querySelector(".scx").onclick=clearSeg;c.querySelector("#sHere").onclick=function(){document.getElementById("start").value=s.frm;clearSeg();render();};c.querySelector("#eHere").onclick=function(){document.getElementById("end").value=s.to;clearSeg();render();};redrawSel();markStrip();}
+function selectSeg(s){SELSEG=s.id;var sc=SC[s.id]||{},sd=SD[s.id]||{},fac=sd.fac||{};var shops=(fac.shop||[]).length,beds=(fac.stay||[]).length,sights=sc.sights||0;var r=Math.round(100*(sc.route_any||0)),b=Math.round(100*(sc.busy||0)),clj=Math.round((s.ascent!=null?s.ascent:(SEG[s.id]?SEG[s.id].ascent:0))||0);var c=document.getElementById("segcard");if(!c)return;c.hidden=false;c.innerHTML='<div class="schead"><b>'+nodeName(s.frm)+' \u2192 '+nodeName(s.to)+'</b><span class="scx" title="close">\u00d7</span></div><div class="scmeta">'+Math.round(s.km)+' km \u00b7 '+clj+' m climb</div><div class="scbar"><i style="width:'+r+'%;background:var(--band-g)"></i><i style="width:'+b+'%;background:var(--band-r)"></i></div><div class="scmeta">signed '+r+'% \u00b7 busy '+b+'% \u00b7 '+shops+' shops \u00b7 '+beds+' beds \u00b7 '+sights+' sights</div><div class="scbtns"><button class="opt" id="sHere">start here</button><button class="opt" id="eHere">end here</button></div>';c.querySelector(".scx").onclick=clearSeg;c.querySelector("#sHere").onclick=function(){document.getElementById("start").value=s.frm;clearSeg();render();};c.querySelector("#eHere").onclick=function(){document.getElementById("end").value=s.to;clearSeg();render();};redrawSel();markStrip();}
 function selMaintain(ch){if(SELSEG&&ch.some(function(x){return x.id===SELSEG})){redrawSel();markStrip();}else{clearSeg();}}
 function render(){
  var ch=chain(),target=+document.getElementById("eff").value;
@@ -741,12 +816,12 @@ function render(){
  P.segments.forEach(function(s){if(!s.line)return;
   var p=document.createElementNS(NS,"polyline");p.setAttribute("points",s.line);
   p.setAttribute("fill","none");p.setAttribute("stroke-linecap","round");p.setAttribute("stroke-linejoin","round");
-  if(inChain[s.id]){ var cas=p.cloneNode(false); cas.setAttribute("stroke","#ffffff"); cas.setAttribute("stroke-opacity",".85"); cas.setAttribute("class","cas"); gR.insertBefore(cas,gR.firstChild);   // white casing, shown on a light map underlay
-   p.setAttribute("stroke",FRIEND?friendCol(s.id):"#f0713f");gR.appendChild(p);}
-  else{p.setAttribute("stroke","#2a4150");p.setAttribute("stroke-dasharray","4 4");gG.appendChild(p);}});
+  if(inChain[s.id]){ var cas=p.cloneNode(false); cas.setAttribute("stroke",C("casing")); cas.setAttribute("stroke-opacity",".85"); cas.setAttribute("class","cas"); gR.insertBefore(cas,gR.firstChild);   // white casing, shown on a light map underlay
+   p.setAttribute("stroke",FRIEND?friendCol(s.id):C("route"));gR.appendChild(p);}
+  else{p.setAttribute("stroke",C("ghost"));p.setAttribute("stroke-dasharray","4 4");gG.appendChild(p);}});
  ride.forEach(function(d){if(d.x===undefined)return;
   var c=document.createElementNS(NS,"circle");c.setAttribute("cx",d.x);c.setAttribute("cy",d.y);
-  c.setAttribute("fill","#4da3ff");c.setAttribute("fill-opacity",".9");gS.appendChild(c);});
+  c.setAttribute("fill",C("stop"));c.setAttribute("fill-opacity",".9");gS.appendChild(c);});
  var box=document.getElementById("days");box.innerHTML="";
  var maxE=Math.max.apply(null,ride.map(function(d){return d.eff}));var n=0, PROFS=[];
  days.forEach(function(d){var el=document.createElement("div");
@@ -872,12 +947,12 @@ function drawProfile(PR){
  var W=300,H=56,tot=0,lo=Infinity,hi=-Infinity; PR.forEach(function(p){tot+=p.km; p.prof.forEach(function(q){lo=Math.min(lo,q[1]);hi=Math.max(hi,q[1]);});});
  document.getElementById("profwrap").style.display=(tot>0&&hi>lo)?"":"none"; if(!(tot>0&&hi>lo)) return;
  var span=Math.max(hi-lo,150); lo=Math.max(0,hi-span); var off=0, pts=[];
- PR.forEach(function(p,i){ var w=p.km/tot*W; var r=document.createElementNS(NS,"rect"); r.setAttribute("x",off);r.setAttribute("y",0);r.setAttribute("width",w);r.setAttribute("height",H);r.setAttribute("fill",i%2?"#132836":"#0f2130"); g.appendChild(r);
-  if(w>16){ var t=document.createElementNS(NS,"text"); t.setAttribute("x",off+3);t.setAttribute("y",H-4);t.setAttribute("font-size","9");t.setAttribute("fill","#6d8492");t.setAttribute("font-family","inherit");t.textContent=(i+1); g.appendChild(t); }
+ PR.forEach(function(p,i){ var w=p.km/tot*W; var r=document.createElementNS(NS,"rect"); r.setAttribute("x",off);r.setAttribute("y",0);r.setAttribute("width",w);r.setAttribute("height",H);r.setAttribute("fill",i%2?C("prof-b"):C("prof-a")); g.appendChild(r);
+  if(w>16){ var t=document.createElementNS(NS,"text"); t.setAttribute("x",off+3);t.setAttribute("y",H-4);t.setAttribute("font-size","9");t.setAttribute("fill",C("head"));t.setAttribute("font-family","inherit");t.textContent=(i+1); g.appendChild(t); }
   p.prof.forEach(function(q){ pts.push([off+q[0]/p.km*w, 4+(1-(q[1]-lo)/span)*(H-12)]); }); off+=w; });
  if(pts.length<2) return; var d=pts.map(function(q){return q[0].toFixed(1)+","+q[1].toFixed(1)}).join(" ");
- var f=document.createElementNS(NS,"polyline"); f.setAttribute("points","0,"+H+" "+d+" "+W+","+H); f.setAttribute("fill","#f0713f"); f.setAttribute("fill-opacity",".2"); f.setAttribute("stroke","none"); g.appendChild(f);
- var l=document.createElementNS(NS,"polyline"); l.setAttribute("points",d); l.setAttribute("fill","none"); l.setAttribute("stroke","#f0713f"); l.setAttribute("stroke-width","1.3"); l.setAttribute("vector-effect","non-scaling-stroke"); g.appendChild(l);
+ var f=document.createElementNS(NS,"polyline"); f.setAttribute("points","0,"+H+" "+d+" "+W+","+H); f.setAttribute("fill",C("route")); f.setAttribute("fill-opacity",".2"); f.setAttribute("stroke","none"); g.appendChild(f);
+ var l=document.createElementNS(NS,"polyline"); l.setAttribute("points",d); l.setAttribute("fill","none"); l.setAttribute("stroke",C("route")); l.setAttribute("stroke-width","1.3"); l.setAttribute("vector-effect","non-scaling-stroke"); g.appendChild(l);
  document.getElementById("profhi").textContent="▲ "+Math.round(hi).toLocaleString()+" m"; document.getElementById("proflo").textContent="▼ "+Math.round(lo).toLocaleString()+" m"; }
 /* folds and the ... menu */
 document.querySelectorAll(".fold").forEach(function(f){ var id=f.id; try{ var v=localStorage.getItem("fold:"+id); if(v==="0")f.classList.add("closed"); if(v==="1")f.classList.remove("closed"); }catch(e){}
@@ -890,8 +965,8 @@ function coastBox(){ var xs=[],ys=[]; (P.coast||[]).forEach(function(c){ c.split
  var x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y0=Math.min.apply(null,ys),y1=Math.max.apply(null,ys); return [x0,y0,x1-x0,y1-y0]; }
 var CBOX=coastBox();
 function tripThumb(t){ var b=CBOX, k=Math.max(b[2]/78,b[3]/54), vb=[b[0]-4*k,b[1]-4*k,b[2]+8*k,b[3]+8*k];
- var h='<svg viewBox="'+vb.join(" ")+'" preserveAspectRatio="xMidYMid meet">'; (P.coast||[]).forEach(function(c){ h+='<'+(LAND?'polygon':'polyline')+' points="'+c+'" fill="'+(LAND?'#13242f':'none')+'" stroke="#3d5a70" stroke-width="'+(1.2*k)+'"/>'; });
- h+='<polyline points="'+tripPoints(t).map(function(p){return p[0].toFixed(1)+","+p[1].toFixed(1)}).join(" ")+'" fill="none" stroke="#f0713f" stroke-width="'+(2.6*k)+'" stroke-linejoin="round" stroke-linecap="round"/></svg>'; return h; }
+ var h='<svg viewBox="'+vb.join(" ")+'" preserveAspectRatio="xMidYMid meet">'; (P.coast||[]).forEach(function(c){ h+='<'+(LAND?'polygon':'polyline')+' points="'+c+'" fill="'+(LAND?C("land"):'none')+'" stroke="'+C("coast-pick")+'" stroke-width="'+(1.2*k)+'"/>'; });
+ h+='<polyline points="'+tripPoints(t).map(function(p){return p[0].toFixed(1)+","+p[1].toFixed(1)}).join(" ")+'" fill="none" stroke="'+C("route")+'" stroke-width="'+(2.6*k)+'" stroke-linejoin="round" stroke-linecap="round"/></svg>'; return h; }
 var PKFILTER=CFG.pickerDefault||"all";
 var DLEVEL=[[8,"easy"],[14,"moderate"],[20,"hard"],[1e9,"very hard"]];   // metres of climb per km, computed from the trip, never tagged
 function diffLevel(st){ if(!st||!st.km) return -1; var r=st.asc/st.km; for(var i=0;i<DLEVEL.length;i++) if(r<DLEVEL[i][0]) return i; return 3; }
@@ -918,9 +993,9 @@ function pkSelect(id,card){ if(PKCLEAR){clearTimeout(PKCLEAR);PKCLEAR=null;} var
 function pkLeave(){ if(PKCLEAR) clearTimeout(PKCLEAR); PKCLEAR=setTimeout(function(){ PKCLEAR=null; pkSelect(null,false); },220); }   // a moment's grace to reach the popup
 function restylePicker(){ var ppu=pxPerUnit();
  Object.keys(PKEL).forEach(function(id){ var e=PKEL[id], hl=PKSEL===id, dim=PKSEL&&!hl, mj=e.mj;
-  e.line.setAttribute("stroke",hl?"#f0713f":mj?"#9fbfd6":"#557386"); e.line.setAttribute("stroke-width",(hl?4:mj?2.6:1.8)/ppu); e.line.setAttribute("opacity",dim?".3":"1");
+  e.line.setAttribute("stroke",hl?C("route"):mj?C("net-major"):C("net")); e.line.setAttribute("stroke-width",(hl?4:mj?2.6:1.8)/ppu); e.line.setAttribute("opacity",dim?".3":"1");
   if(e.crossing){ if(hl) e.line.removeAttribute("stroke-dasharray"); else e.line.setAttribute("stroke-dasharray",(6/ppu)+" "+(4/ppu)); }
-  e.badge.setAttribute("opacity",dim?".35":"1"); e.rect.setAttribute("fill",hl?"#f0713f":mj?"#eef2f4":"#7f9cb0"); e.text.setAttribute("fill",hl?"#fff":"#0a141b");
+  e.badge.setAttribute("opacity",dim?".35":"1"); e.rect.setAttribute("fill",hl?C("route"):mj?C("badge-major"):C("badge-minor")); e.text.setAttribute("fill",hl?C("on-accent"):C("ink-invert"));
   if(hl){ gPK.appendChild(e.line); gPK.appendChild(e.hit); gPK.appendChild(e.badge); } }); }
 function tripPop(t,x,y){ var st=tripStats(t), r=svg.getBoundingClientRect(),stg=document.getElementById("stage").getBoundingClientRect(),ppu=pxPerUnit();
  var px=(x-vb[0])*ppu+(r.left-stg.left), py=(y-vb[1])*ppu+(r.top-stg.top);
@@ -930,7 +1005,7 @@ function tripPop(t,x,y){ var st=tripStats(t), r=svg.getBoundingClientRect(),stg=
 function drawPicker(){
  while(gPK.firstChild)gPK.removeChild(gPK.firstChild); if(!PICKING) return;
  var ppu=pxPerUnit(), NW=CFG.networks||{};
- function ghost(points){ var p=document.createElementNS(NS,"polyline"); p.setAttribute("points",points); p.setAttribute("fill","none"); p.setAttribute("stroke","#223744"); p.setAttribute("stroke-width",1.3/ppu); p.setAttribute("stroke-dasharray",(4/ppu)+" "+(4/ppu)); p.setAttribute("pointer-events","none"); gPK.appendChild(p); }
+ function ghost(points){ var p=document.createElementNS(NS,"polyline"); p.setAttribute("points",points); p.setAttribute("fill","none"); p.setAttribute("stroke",C("ghost-pick")); p.setAttribute("stroke-width",1.3/ppu); p.setAttribute("stroke-dasharray",(4/ppu)+" "+(4/ppu)); p.setAttribute("pointer-events","none"); gPK.appendChild(p); }
  P.segments.forEach(function(s){ if(s.line) ghost(s.line); });
  Object.keys(NW).forEach(function(slug){ if(slug===CFG.slug) return; NW[slug].forEach(function(line){ ghost(line.map(function(ll){var q=toXY(ll[0],ll[1]);return q[0].toFixed(1)+","+q[1].toFixed(1);}).join(" ")); }); });
  PKEL={}; var rows=TRIPS.map(function(t){return {t:t,st:tripStats(t),pts:tripPoints(t)};}).filter(function(r){return tripVisible(r.t,r.st)&&r.pts.length>1;});
@@ -939,7 +1014,7 @@ function drawPicker(){
  var starts={}; rows.forEach(function(r){ var q=r.pts[0], k=Math.round(q[0])+","+Math.round(q[1]); (starts[k]=starts[k]||[]).push(r.t.id); });
  rows.forEach(function(r){ var t=r.t, hl=PKSEL===t.id, dim=PKSEL&&!hl, mj=major(t);
   var p=document.createElementNS(NS,"polyline"); p.setAttribute("points",r.pts.map(function(q){return q[0].toFixed(1)+","+q[1].toFixed(1)}).join(" ")); p.setAttribute("fill","none"); p.setAttribute("class","pkline");
-  p.setAttribute("stroke",hl?"#f0713f":mj?"#9fbfd6":"#557386"); p.setAttribute("stroke-width",(hl?4:mj?2.6:1.8)/ppu); p.setAttribute("stroke-linejoin","round"); p.setAttribute("stroke-linecap","round"); p.setAttribute("opacity",dim?".3":"1");
+  p.setAttribute("stroke",hl?C("route"):mj?C("net-major"):C("net")); p.setAttribute("stroke-width",(hl?4:mj?2.6:1.8)/ppu); p.setAttribute("stroke-linejoin","round"); p.setAttribute("stroke-linecap","round"); p.setAttribute("opacity",dim?".3":"1");
   if(t.kind==="crossing"&&!hl) p.setAttribute("stroke-dasharray",(6/ppu)+" "+(4/ppu));
   gPK.appendChild(p);
   var hit=p.cloneNode(false); hit.setAttribute("stroke","transparent"); hit.setAttribute("stroke-width",16/ppu); hit.removeAttribute("stroke-dasharray"); hit.removeAttribute("opacity");
@@ -949,8 +1024,8 @@ function drawPicker(){
   if(sib.length>1){ var ang=-Math.PI/2+sib.indexOf(t.id)*2*Math.PI/sib.length, rad=(sib.length>3?18:14)/ppu; ox=rad*Math.cos(ang); oy=rad*Math.sin(ang); }
   var g=document.createElementNS(NS,"g"); g.setAttribute("class","pkbadge"); g.setAttribute("transform","translate("+(q[0]+ox)+","+(q[1]+oy)+") scale("+(1/ppu)+")"); g.setAttribute("opacity",dim?".35":"1");
   var lab=t.num||"•", w=Math.max(mj?20:16,lab.length*7+8);
-  var bh=mj?20:16; var c=document.createElementNS(NS,"rect"); c.setAttribute("x",-w/2); c.setAttribute("y",-bh/2); c.setAttribute("width",w); c.setAttribute("height",bh); c.setAttribute("rx",bh/2); c.setAttribute("fill",hl?"#f0713f":mj?"#eef2f4":"#7f9cb0"); c.setAttribute("stroke","#0a141b"); c.setAttribute("stroke-width","1.5"); g.appendChild(c);
-  var tx=document.createElementNS(NS,"text"); tx.setAttribute("y",mj?"4":"3.5"); tx.setAttribute("text-anchor","middle"); tx.setAttribute("font-size",mj?"11":"9"); tx.setAttribute("font-weight","700"); tx.setAttribute("fill",hl?"#fff":"#0a141b"); tx.setAttribute("font-family","inherit"); tx.textContent=lab; g.appendChild(tx);
+  var bh=mj?20:16; var c=document.createElementNS(NS,"rect"); c.setAttribute("x",-w/2); c.setAttribute("y",-bh/2); c.setAttribute("width",w); c.setAttribute("height",bh); c.setAttribute("rx",bh/2); c.setAttribute("fill",hl?C("route"):mj?C("badge-major"):C("badge-minor")); c.setAttribute("stroke",C("ink-invert")); c.setAttribute("stroke-width","1.5"); g.appendChild(c);
+  var tx=document.createElementNS(NS,"text"); tx.setAttribute("y",mj?"4":"3.5"); tx.setAttribute("text-anchor","middle"); tx.setAttribute("font-size",mj?"11":"9"); tx.setAttribute("font-weight","700"); tx.setAttribute("fill",hl?C("on-accent"):C("ink-invert")); tx.setAttribute("font-family","inherit"); tx.textContent=lab; g.appendChild(tx);
   g.addEventListener("mouseenter",function(){pkSelect(t.id,true);}); g.addEventListener("mouseleave",pkLeave); g.addEventListener("click",function(e){e.stopPropagation(); loadTrip(t);});
   gPK.appendChild(g); PKEL[t.id]={line:p,hit:hit,badge:g,rect:c,text:tx,mj:mj,crossing:t.kind==="crossing"}; }); restylePicker(); }
 function showPicker(keep){ PICKING=true; PKSEL=keep||null; try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} document.getElementById("side").scrollTop=0; document.getElementById("tripbar").hidden=true; document.body.classList.add("picking"); document.getElementById("pick").hidden=false;

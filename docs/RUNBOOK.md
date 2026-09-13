@@ -103,6 +103,19 @@ its size is roughly 8 MB per 100 segments with facilities, double that with mope
   repository (Spain, Switzerland north–south) `--page` lifts the graph out of the published page and writes the redrawn lines
   straight back into it; re-render with `tools/retemplate.py` afterwards. Cost: Japan's page grew 14.3 → 15.1 MB, Britain's
   0.37 → 0.56 MB; load time unchanged.
+- **Colours.** Every colour on the page is named in the `:root` block at the top of `planner/template.html` — about 70
+  variables, grouped as surfaces, borders, text, accents, the map and the trip picker's map. The stylesheet reads them with
+  `var(--x)`; the script, which paints the map by setting `fill` and `stroke` straight onto SVG shapes where no stylesheet rule
+  can reach, reads the same names through `C("route")`. Nothing below `:root` contains a hex code, so a different look is a
+  different block of values and nothing else. Names describe the role, not the shade (`--card-hi`, `--mute2`, `--maplbl-day`),
+  and the same shade used for two jobs has two names, because the two jobs part company in another palette. After swapping a
+  palette at runtime call `recolour()` (it drops the script's cached values) and then `render()`.
+  `tools/preview.js <page.html> <palette.css> <out.png> [tripId] [zoom]` does exactly that against a built page, so a palette can
+  be seen before anything is committed.
+- `tools/pixcheck.js <page.html> <out-dir> [tripId]` screenshots a page in ten states (picker, a loaded trip, zoomed, facility
+  layers, the moped, friendliness colours, a selected leg, light and no map, folds closed) with real tiles. Run it on two builds
+  and compare the images to prove a change alters nothing it should not. Compare with Pillow, not by eye — and when images differ,
+  re-run the reference against itself first: a tile that has not arrived yet shows up as tens of thousands of changed pixels.
 - `tools/ridecheck.js <a.html> <b.html> [tripsFile] [slug]` opens two builds of a page headless and prints every trip's km, climb,
   effort and leg count side by side, with console errors and page weight — the test ride to run before handing over any change
   that should not move the numbers. `tools/shot.js <page.html> <prefix> [tripId] [zoom]` screenshots a page with real map tiles
